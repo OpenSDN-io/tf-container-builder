@@ -13,9 +13,10 @@ LABEL name=$CONTAINER_NAME \
 RUN \
     source /functions.sh && \
     yum install -y podman contrail-nodemgr && \
+    yum install -y python3-devel gcc-c++ && \
     yum clean all -y && \
     rm -rf /var/cache/yum && \
-    python2 -m pip install --no-compile --no-binary=protobuf "docker==2.4.2" "grpcio==1.29.0" "protobuf==3.17.3" "containerd==1.5.2"
+    python3 -m pip install --no-compile --no-binary=protobuf "docker==2.4.2" "grpcio==1.29.0" "protobuf==3.17.3" "containerd==1.5.2" "lxml==4.0.0" "netaddr==0.10.1" "greenlet==1.0.0" "gevent==1.4.0" "bottle" "fysom" "future" "six" "PyYAML>=5.1" "psutil"
 
 COPY contrail-status.py /root
 COPY entrypoint.sh /

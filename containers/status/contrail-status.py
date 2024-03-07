@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 
 import logging
 import operator
@@ -131,7 +131,7 @@ class PodmanContainersInterface:
     def _execute(self, arguments_, timeout_=10):
         a = ["podman"]
         a.extend(arguments_)
-        p = subprocess.Popen(a, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen(a, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, encoding='utf-8')
         try:
             o, e = p.communicate(timeout_)
         except subprocess.TimeoutExpired:
@@ -772,7 +772,7 @@ def main():
 
     vrouter_driver = False
     try:
-        lsmod = subprocess.Popen('lsmod', stdout=subprocess.PIPE).communicate()[0]
+        lsmod = subprocess.Popen('lsmod', stdout=subprocess.PIPE, text=True, encoding='utf-8').communicate()[0]
         if lsmod.find('vrouter') != -1:
             vrouter_driver = True
             msg = "vrouter kernel module is PRESENT"
@@ -782,7 +782,7 @@ def main():
         print_debug('lsmod FAILED: {0}'.format(ex))
     try:
         lsof = (subprocess.Popen(
-            ['netstat', '-xl'], stdout=subprocess.PIPE).communicate()[0])
+            ['netstat', '-xl'], stdout=subprocess.PIPE, text=True, encoding='utf-8').communicate()[0])
         if lsof.find('dpdk_netlink') != -1:
             vrouter_driver = True
             msg = "vrouter DPDK module is PRESENT"
