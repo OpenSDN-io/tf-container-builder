@@ -112,6 +112,8 @@ if [[ "$1" == rabbitmq* ]] && [ "$(id -u)" = '0' ]; then
 	CONTRAIL_UID=$( id -u rabbitmq )
 	CONTRAIL_GID=$( id -g rabbitmq )
 
+	# for host with rocky9 is mandatory in rabbitmq-server ver.3.7.28-1
+	ulimit -n 65536
 	do_run_service "$@"
 
 fi
@@ -411,4 +413,6 @@ fi
 CONTRAIL_UID=$( id -u rabbitmq )
 CONTRAIL_GID=$( id -g rabbitmq )
 
+# for host with rocky9 is mandatory in rabbitmq-server ver.3.7.28-1
+ulimit -n 65536
 do_run_service "$@"
