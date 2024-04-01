@@ -1,5 +1,10 @@
 #!/usr/bin/python3
 
+# to avoid warning and recursive calls during imporint ssl
+# See https://github.com/gevent/gevent/issues/1016
+import gevent.monkey
+gevent.monkey.patch_all()
+
 import logging
 import operator
 import optparse
