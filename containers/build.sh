@@ -240,6 +240,7 @@ function update_yum_repos() {
     update_file "general-base/$dfile" "$content"
     # this is special case - image derived directly from ubuntu image
     update_file "vrouter/kernel-build-init/$dfile" "$content"
+    update_file "vrouter/kernel-init/$dfile" "$content"
   done
 }
 
