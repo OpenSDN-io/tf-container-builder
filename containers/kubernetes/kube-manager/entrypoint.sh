@@ -7,7 +7,12 @@ K8S_TOKEN_FILE=${K8S_TOKEN_FILE:-'/var/run/secrets/kubernetes.io/serviceaccount/
 K8S_TOKEN=${K8S_TOKEN:-"$(cat $K8S_TOKEN_FILE)"}
 
 host_ip=$(get_listen_ip_for_node KUBEMANAGER)
-cassandra_server_list=$(echo $CONFIGDB_SERVERS | sed 's/,/ /g')
+
+if [[ "$CONFIGDB_CASSANDRA_DRIVER" == "cql" ]] ; then
+    cassandra_server_list=$(echo $CONFIGDB_CQL_SERVERS | sed 's/,/ /g')
+else
+    cassandra_server_list=$(echo $CONFIGDB_SERVERS | sed 's/,/ /g')
+fi
 
 mkdir -p /etc/contrail
 cat > /etc/contrail/contrail-kubernetes.conf << EOM
@@ -46,6 +51,7 @@ rabbit_port=$RABBITMQ_NODE_PORT
 $rabbit_config
 $kombu_ssl_config
 
+cassandra_driver=$CONFIGDB_CASSANDRA_DRIVER
 cassandra_server_list=$cassandra_server_list
 cassandra_use_ssl=${CASSANDRA_SSL_ENABLE,,}
 cassandra_ca_certs=$CASSANDRA_SSL_CA_CERTFILE
