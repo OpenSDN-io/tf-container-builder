@@ -70,3 +70,30 @@ wget -nv -t3 -P centos/7/os/x86_64/Packages http://mirror.centos.org/centos/7/os
 wget -nv -t3 -P opensdn-io/tf-third-party-cache/blob/master/libthrift https://github.com/opensdn-io/tf-third-party-cache/blob/master/libthrift/libthrift-0.13.0.jar?raw=true
 
 wget -nv -t3 -P thelastpickle/cassandra-reaper/releases/download/3.2.1 https://github.com/thelastpickle/cassandra-reaper/releases/download/3.2.1/reaper-3.2.1-1.x86_64.rpm
+
+# get kernel packages for rocky
+# rocky9 kernel for 9.0
+wget -nv -t3 -P vault/rocky/9.0/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.0/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-70.30.1.el9_0.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.0/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.0/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-70.30.1.el9_0.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.0/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.0/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-70.30.1.el9_0.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.0/AppStream/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.0/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-70.30.1.el9_0.x86_64.rpm
+
+# rocky9 kernel for 9.1
+wget -nv -t3 -P vault/rocky/9.1/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.1/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-162.23.1.el9_1.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.1/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.1/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-162.23.1.el9_1.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.1/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.1/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-162.23.1.el9_1.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.1/AppStream/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.1/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-162.23.1.el9_1.x86_64.rpm
+
+# rocky9 kernel for 9.2
+wget -nv -t3 -P vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/ https://dl.rockylinux.org/vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-284.30.1.el9_2.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/ https://dl.rockylinux.org/vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-284.30.1.el9_2.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/ https://dl.rockylinux.org/vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-284.30.1.el9_2.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/ https://dl.rockylinux.org/vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-284.30.1.el9_2.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.2/AppStream/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.2/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-284.30.1.el9_2.x86_64.rpm
+
+# rocky9 kernel for 9.3
+wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-5.14.0-362.el9s.x86_64.rpm
+wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-core-5.14.0-362.el9s.x86_64.rpm
+wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-modules-5.14.0-362.el9s.x86_64.rpm
+wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-modules-core-5.14.0-362.el9s.x86_64.rpm
+wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-devel-5.14.0-362.el9s.x86_64.rpm
