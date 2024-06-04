@@ -15,5 +15,9 @@ LABEL name=$CONTAINER_NAME \
 
 COPY entrypoint.sh /
 
+# TODO: Remove RUN stage`
+# Copy sandesh to appropriate directory 
+RUN cp -r /usr/lib/python3.6/site-packages/tf_snmp_collector/sandesh /usr/local/lib/python3.6/site-packages/
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/tf-topology", "-c", "/etc/contrail/tf-topology.conf"]
