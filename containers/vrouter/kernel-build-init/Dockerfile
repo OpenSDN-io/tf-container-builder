@@ -44,6 +44,7 @@ RUN \
     echo "${contrail_version}" > /contrail_version && \
     export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
+    apt-get -y --allow-downgrades install libc6=2.35-0ubuntu3.7 libc6=2.35-0ubuntu3.7 && \
     apt-get install -y --no-install-recommends dkms libelf-dev g++ && \
     apt-get install -y --no-install-recommends dnf rpm2cpio cpio ca-certificates && \
     dnf install -y contrail-vrouter-source && \
