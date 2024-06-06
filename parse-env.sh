@@ -266,8 +266,10 @@ if [[ "$VROUTER_DPDK" == True ]] ; then
     export VROUTER_KERNEL_INIT_IMAGE='contrail-vrouter-kernel-init-dpdk'
 elif [[ "$LINUX_DISTR" =~ 'ubuntu' ]] ; then
     export VROUTER_KERNEL_INIT_IMAGE='contrail-vrouter-kernel-build-init'
-else
+elif [[ "$LINUX_DISTR" =~ 'rocky' ]] ; then
     export VROUTER_KERNEL_INIT_IMAGE='contrail-vrouter-kernel-init'
+else
+    export VROUTER_KERNEL_INIT_IMAGE='contrail-vrouter-kernel-init-centos'
 fi
 
 # export vendor label info for containers
