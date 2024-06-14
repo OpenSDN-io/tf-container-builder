@@ -23,6 +23,8 @@ LABEL vendor=$VENDOR_NAME \
 
 COPY *.repo /etc/yum.repos.d/
 COPY *.sh /
+COPY __network-functions-vrouter-kernel  __network-functions-vrouter  __network-functions-vrouter-kernel-env /
+COPY __ifup-vhost __ifdown-vhost __dhclient-vhost0.conf /
 
 RUN \
     mkdir -p /opt/contrail && \
