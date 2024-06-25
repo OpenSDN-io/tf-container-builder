@@ -5,7 +5,10 @@ FROM ${CONTRAIL_REGISTRY}/contrail-controller-config-base:${CONTRAIL_CONTAINER_T
 ARG SITE_MIRROR
 ARG CONTAINER_NAME
 ENV SERVICE_NAME=device-manager \
-    CONTAINER_NAME=$CONTAINER_NAME
+    CONTAINER_NAME=$CONTAINER_NAME \
+    LC_ALL=en_US.UTF-8 \
+    LANG=en_US.UTF-8 
+
 LABEL name=$CONTAINER_NAME \
       summary="Contrail Device Manager" \
       description="Contrail Device Manager is used to manage network devices in the Contrail system." \
@@ -14,25 +17,33 @@ LABEL name=$CONTAINER_NAME \
 
 # git rpm cannot be remove as it removes contrail-utils, and common by deps
 # use direct download to be able to download from cache instead of `ansible-galaxy install Juniper.junos,2.4.2`
-RUN python2 -m pip install --no-compile \
-        "markdown==3.1.1" \
-        "markupSafe==1.1.1" \
-        "ansible==2.8.2" \
-        "colorama==0.4.3" \
-        "configparser==4.0.2" \
-        "icdiff==1.9.1" \
-        "inflection==0.3.1" \
-        "jinja2==2.11.1" \
-        "jsnapy==1.3.2" \
-        "junos-eznc==2.5.3" \
-        "jxmlease==1.0.1" \
-        "lxml==4.5.0" \
-        "ncclient==0.6.3" \
-        "pyserial==3.4" \
-        "python-jsonschema-objects==0.3.12" \
-        "scp==0.13.2" \
-        "selectors2==2.0.1" \
-        "timeout-decorator==0.4.1" && \
+
+# Fix ASCII codec error by setting locale to UTF-8
+RUN yum install -y libffi-devel && \
+    python3 -m pip install --upgrade pip setuptools
+
+# Fix for cryptography rust error
+RUN python3 -m pip install --no-compile "cryptography==3.4.8"
+    
+RUN python3 -m pip install --no-compile --no-binary :all: ansible ansible-core && \
+    python3 -m pip install --no-compile \
+        "markdown" \
+        "markupSafe" \
+        "colorama" \
+        "configparser" \
+        "icdiff" \
+        "inflection" \
+        "jinja2" \
+        "jsnapy" \
+        "junos-eznc" \
+        "jxmlease" \
+        "lxml" \
+        "ncclient" \
+        "pyserial" \
+        "python-jsonschema-objects" \
+        "scp" \
+        "selectors2" \
+        "timeout-decorator" && \
     yum install -y git iputils && \
     yum clean all -y && \
     rm -rf /var/cache/yum && \
