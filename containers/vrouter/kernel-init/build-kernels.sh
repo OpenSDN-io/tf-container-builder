@@ -28,7 +28,7 @@ function build_kernel() {
   kernels=""
   for kernel in $kernels_list ; do
     kernel_name=$(echo $kernel | awk -F'/' '{print $NF}' )
-    download_package https://dl.rockylinux.org $kernel /tmp/$kernel_name --no-check-certificate
+    download_package $original_site $kernel /tmp/$kernel_name --no-check-certificate
     kernels+="/tmp/$kernel_name "
   done
   dnf install -y $kernels
@@ -57,21 +57,21 @@ kernels="
 build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-162.23.1.el9_1.x86_64"
 # TODO: build 9.2, 9.3, 9.4
 # rocky9 kernel for 9.2
-# kernels="
-#   vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-284.30.1.el9_2.x86_64.rpm
-#   vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-284.30.1.el9_2.x86_64.rpm
-#   vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-284.30.1.el9_2.x86_64.rpm
-#   vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-284.30.1.el9_2.x86_64.rpm
-#   vault/rocky/9.2/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-284.30.1.el9_2.x86_64.rpm
-# "
-# build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-284.30.1.el9_2.x86_64"
+kernels="
+  vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-284.30.1.el9_2.x86_64.rpm
+  vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-284.30.1.el9_2.x86_64.rpm
+  vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-284.30.1.el9_2.x86_64.rpm
+  vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-284.30.1.el9_2.x86_64.rpm
+  vault/rocky/9.2/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-284.30.1.el9_2.x86_64.rpm
+"
+build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-284.30.1.el9_2.x86_64"
 # rocky9 kernel for 9.3
 # TODO: maybe use images from https://dl.rockylinux.org/vault/rocky or https://download.rockylinux.org/pub/rocky
-# kernels="
-#   kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-5.14.0-362.el9s.x86_64.rpm
-#   kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-core-5.14.0-362.el9s.x86_64.rpm
-#   kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-modules-5.14.0-362.el9s.x86_64.rpm
-#   kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-modules-core-5.14.0-362.el9s.x86_64.rpm
-#   kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-devel-5.14.0-362.el9s.x86_64.rpm
-# "
-# build_kernel "$kernels" https://cbs.centos.org "5.14.0-284.30.1.el9_2.x86_64"
+kernels="
+  vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-362.13.1.el9_3.x86_64.rpm
+  vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-362.13.1.el9_3.x86_64.rpm
+  vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-362.13.1.el9_3.x86_64.rpm
+  vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-362.13.1.el9_3.x86_64.rpm
+  vault/rocky/9.3/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-362.13.1.el9_3.x86_64.rpm
+"
+build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-362.13.1.el9_3.x86_64"
