@@ -291,3 +291,19 @@ function reload_config() {
   [ -n "$mypid" ] || mypid=1
   kill -HUP $mypid
 }
+
+function wait_for_cassandra() {
+  local cassandra=$(echo $CONFIGDB_NODES | cut -d ',' -f 1)
+  for ((i=1; i<=30; i++)) ; do
+    if echo -e '\035\nquit' | nc -z $cassandra $CONFIGDB_CQL_PORT ; then
+      echo "INFO: Cassandra is connected"
+      sleep 5
+      return 0
+    else
+      echo "INFO: Waiting for cassandra $((i+1))/30"
+      sleep 10
+    fi
+  done
+  echo "Unable connect to cassandra"
+  return 1
+}

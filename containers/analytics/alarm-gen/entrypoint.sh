@@ -5,6 +5,7 @@ export ALARMGEN_REDIS_AGGREGATE_DB_OFFSET=${ALARMGEN_REDIS_AGGREGATE_DB_OFFSET:-
 
 pre_start_init
 wait_redis_certs_if_ssl_enabled
+wait_for_cassandra
 
 host_ip=$(get_listen_ip_for_node ANALYTICS_ALARM)
 

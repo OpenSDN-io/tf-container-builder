@@ -29,7 +29,7 @@ RUN \
         python2 -m pip install --no-compile "gevent==1.1.2"  "greenlet<2.0.0" && \
         yum install -y python-kazoo python2-requests ; \
     fi && \
-    yum install -y gcc-c++ gcc python3-devel contrail-lib contrail-setup contrail-utils python-contrail python3-contrail && \
+    yum install -y nc gcc-c++ gcc python3-devel contrail-lib contrail-setup contrail-utils python-contrail python3-contrail && \
     python3 -m pip install --no-compile "future==0.18.2" "six==1.13.0" remote-pdb && \
     yum clean all -y && \
     rm -rf /var/cache/yum && \

@@ -2,6 +2,7 @@
 source /common.sh
 
 pre_start_init
+wait_for_cassandra
 
 K8S_TOKEN_FILE=${K8S_TOKEN_FILE:-'/var/run/secrets/kubernetes.io/serviceaccount/token'}
 K8S_TOKEN=${K8S_TOKEN:-"$(cat $K8S_TOKEN_FILE)"}

@@ -3,6 +3,7 @@
 source /common.sh
 
 pre_start_init
+wait_for_cassandra
 
 host_ip=$(get_listen_ip_for_node CONFIG)
 if [[ "$CONFIGDB_CASSANDRA_DRIVER" == "cql" ]] ; then
