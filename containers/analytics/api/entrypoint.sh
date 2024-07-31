@@ -5,6 +5,7 @@ source /common.sh
 pre_start_init
 wait_redis_certs_if_ssl_enabled
 wait_analytics_api_certs_if_ssl_enabled
+wait_for_cassandra
 
 host_ip=$(get_listen_ip_for_node ANALYTICS)
 

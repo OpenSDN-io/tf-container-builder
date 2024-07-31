@@ -4,6 +4,7 @@ source /common.sh
 export SNMPCONFPATH=${SNMPCONFPATH:-/etc/contrail}
 
 pre_start_init
+wait_for_cassandra
 
 host_ip=$(get_listen_ip_for_node ANALYTICS_SNMP)
 rabbitmq_server_list=$(echo $RABBITMQ_SERVERS | sed 's/,/ /g')

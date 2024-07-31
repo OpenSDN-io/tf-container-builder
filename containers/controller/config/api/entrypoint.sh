@@ -4,6 +4,7 @@ source /common.sh
 
 pre_start_init
 wait_config_api_certs_if_ssl_enabled
+wait_for_cassandra
 
 host_ip='0.0.0.0'
 if ! is_enabled ${CONFIG_API_LISTEN_ALL}; then
