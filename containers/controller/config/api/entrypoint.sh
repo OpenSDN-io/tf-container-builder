@@ -103,7 +103,7 @@ done
 if (( CONFIG_API_WORKER_COUNT > 1 )) ; then
   # Twice the supported max number of objects(1024 * 1000) * number of bytes of UUID(16)
   buffer_size=$(( 1024 * 1000 * 16 ))
-  service_cmd="$(which uwsgi) /etc/contrail/contrail-api-uwsgi.ini"
+  service_cmd="uwsgi /etc/contrail/contrail-api-uwsgi.ini"
   cat > /etc/contrail/contrail-api-uwsgi.ini <<EOM
 [uwsgi]
 strict
@@ -111,7 +111,7 @@ master
 single-interpreter
 vacuum
 need-app
-plugins = python, gevent
+plugins = python36, python36_gevent
 workers = ${CONFIG_API_WORKER_COUNT}
 gevent = ${CONFIG_API_MAX_REQUESTS}
 buffer-size = ${buffer_size}
