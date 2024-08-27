@@ -13,20 +13,15 @@ COPY *.sh /
 
 # run _prepare_packages.sh as a last step cause it can break some repositories
 RUN \
-    mkdir -p /opt/contrail/site-packages /opt/contrail_python3/site-packages && \
-    python2 -m pip install --no-compile --target=/opt/contrail/site-packages future && \
-    python3 -m pip install --no-compile --target=/opt/contrail_python3/site-packages "future==0.18.2" && \
-    rpm -Uvh --nodeps $(repoquery -q --location python-contrail) && \
+    mkdir -p /opt/contrail/site-packages && \
+    python3 -m pip install --no-compile --target=/opt/contrail/site-packages "future==0.18.2" && \
+    rpm -Uvh --nodeps $(repoquery -q --location python3-contrail) && \
     rpm -Uvh --nodeps $(repoquery -q --location neutron-plugin-contrail) && \
-    cp -rf /usr/lib/python2.7/site-packages/neutron_plugin_contrail* /opt/contrail/site-packages && \
-    cp -rf /usr/lib/python2.7/site-packages/vnc_api* /opt/contrail/site-packages && \
-    cp -rf /usr/lib/python2.7/site-packages/cfgm_common* /opt/contrail/site-packages && \
-    cp -rf /usr/lib/python2.7/site-packages/neutron_plugin_contrail* /opt/contrail_python3/site-packages && \
-    cp -rf /usr/lib/python2.7/site-packages/vnc_api* /opt/contrail_python3/site-packages && \
-    cp -rf /usr/lib/python2.7/site-packages/cfgm_common* /opt/contrail_python3/site-packages && \
-    yum autoremove -y python-contrail neutron-plugin-contrail && \
+    cp -rf /usr/lib/python3.6/site-packages/neutron_plugin_contrail* /opt/contrail/site-packages && \
+    cp -rf /usr/lib/python3.6/site-packages/vnc_api* /opt/contrail/site-packages && \
+    cp -rf /usr/lib/python3.6/site-packages/cfgm_common* /opt/contrail/site-packages && \
+    yum autoremove -y python3-contrail neutron-plugin-contrail && \
     yum clean all -y && \
-    rm -rf /var/cache/yum && \
-    /_prepare_packages.sh && rm -f /_prepare_packages.sh
+    rm -rf /var/cache/yum
 
 ENTRYPOINT ["/entrypoint.sh"]

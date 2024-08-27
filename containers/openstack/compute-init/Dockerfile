@@ -17,9 +17,9 @@ RUN rpm -Uvh --nodeps $(repoquery -q --location contrail-vrouter-agent) && \
     mv /vrouter-port-control /opt/contrail/bin/vrouter-port-control && \
     chmod a+x /opt/contrail/bin/vrouter-port-control && \
     cp /usr/bin/vrouter-port-control /opt/contrail/bin/vrouter-port-control.py && \
-    cp -rf /usr/lib/python2.7/site-packages/vif_plug_vrouter* /opt/contrail/site-packages && \
-    cp -rf /usr/lib/python2.7/site-packages/vif_plug_contrail_vrouter* /opt/contrail/site-packages && \
-    cp -rf /usr/lib/python2.7/site-packages/nova_contrail_vif* /opt/contrail/site-packages && \
+    cp -rf /usr/lib/python3.6/site-packages/vif_plug_vrouter* /opt/contrail/site-packages && \
+    cp -rf /usr/lib/python3.6/site-packages/vif_plug_contrail_vrouter* /opt/contrail/site-packages && \
+    cp -rf /usr/lib/python3.6/site-packages/nova_contrail_vif* /opt/contrail/site-packages && \
     yum autoremove -y contrail-vrouter-agent contrail-nova-vif && \
     yum clean all -y && \
     rm -rf /var/cache/yum
