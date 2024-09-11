@@ -19,7 +19,7 @@ RUN \
         echo "INFO: importing gpg keys from any newly installed repos" ; \
         [ -d /etc/pki/rpm-gpg ] && rpm --import /etc/pki/rpm-gpg/* ; \
     fi && \
-    yum install -y nc gcc-c++ gcc python3-devel contrail-lib contrail-setup contrail-utils python-contrail python3-contrail && \
+    yum install -y nc gcc-c++ gcc python3-devel contrail-lib contrail-setup contrail-utils python3-contrail && \
     python3 -m pip install --no-compile "future==0.18.2" "six==1.13.0" remote-pdb && \
     yum clean all -y && \
     rm -rf /var/cache/yum && \
