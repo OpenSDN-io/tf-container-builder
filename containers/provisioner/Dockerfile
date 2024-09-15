@@ -14,7 +14,7 @@ LABEL name=$CONTAINER_NAME \
 COPY *.sh /
 
 RUN \
-    python3 -m pip install "netaddr==0.10.1" "requests"
+    python3 -m pip install "netaddr<1" "requests"
 
 ENTRYPOINT ["/entrypoint.sh"]
 
