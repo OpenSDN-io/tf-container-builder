@@ -12,18 +12,20 @@ ARG BASE_EXTRA_RPMS=""
 # and one more next step is to install python modules from sources without creating RPM.
 # WARNING! all pip deps must be installed with pinned version to avoid breakages when pypi is upgraded.
 RUN \
-    BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') && \
+    BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
     if [[ -n "$BASE_EXTRA_RPMS" ]] ; then \
         echo "INFO: contrail-base: install $BASE_EXTRA_RPMS" ; \
         yum install -y $BASE_EXTRA_RPMS ; \
         echo "INFO: importing gpg keys from any newly installed repos" ; \
         [ -d /etc/pki/rpm-gpg ] && rpm --import /etc/pki/rpm-gpg/* ; \
-    fi && \
-    yum install -y nc gcc-c++ gcc python3-devel && \
-    yum install -y contrail-lib contrail-setup contrail-utils python3-contrail && \
-    python3 -m pip install --no-compile "future==0.18.2" "six==1.13.0" remote-pdb && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
+    fi ; \
+    yum install -y nc gcc-c++ gcc python3-devel ; \
+    yum install -y contrail-lib contrail-setup contrail-utils python3-contrail 2>&1 | tee /tmp/log ; \
+    grep -i "error:" /tmp/log && exit 1 ; \
+    # for debug purposes
+    python3 -m pip install --no-compile remote-pdb ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum ; \
     ldconfig
 
 COPY *.sh /

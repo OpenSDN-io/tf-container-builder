@@ -13,9 +13,10 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN   yum install -y contrail-vrouter-agent python-contrail-vrouter-api && \
-      yum clean all -y && \
-      rm -rf /var/cache/yum
+RUN yum install -y contrail-vrouter-agent python-contrail-vrouter-api 2>&1 | tee /tmp/log ; \
+    grep -i "error:" /tmp/log && exit 1 ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum
 
 COPY *.sh /
 

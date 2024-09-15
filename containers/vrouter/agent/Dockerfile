@@ -12,12 +12,13 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
 RUN \
-    pkgs='dhclient contrail-vrouter-agent haproxy libvirt-client' && \
-    pkgs+=' python-opencontrail-vrouter-netns python-contrail-vrouter-api' && \
-    yum install -y $pkgs && \
-    rpm -qi contrail-vrouter-agent | awk '/Version/{print($3)}' > /contrail_build_version && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
+    pkgs='dhclient contrail-vrouter-agent haproxy libvirt-client' ; \
+    pkgs+=' python-opencontrail-vrouter-netns python-contrail-vrouter-api' ; \
+    yum install -y $pkgs 2>&1 | tee /tmp/log ; \
+    grep -i "error:" /tmp/log && exit 1 ; \
+    rpm -qi contrail-vrouter-agent | awk '/Version/{print($3)}' > /contrail_build_version ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum ; \
     ldconfig
 
 COPY *.sh /

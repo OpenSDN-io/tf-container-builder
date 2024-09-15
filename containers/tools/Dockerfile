@@ -12,13 +12,14 @@ LABEL name=$CONTAINER_NAME \
 
 # tshark is needed for sandump tool which is included into contrail-tools package
 RUN \
-      source /etc/os-release && \
-      pkgs='sudo openssh-clients bzip2 contrail-tools contrail-vrouter-dpdk-tools' && \
+      source /etc/os-release ; \
+      pkgs='sudo openssh-clients bzip2 contrail-tools contrail-vrouter-dpdk-tools' ; \
       pkgs+=' python-paramiko python-yaml python-crypto python-prettytable' ; \
-      yum install -y $pkgs && \
-      yum clean all -y && \
-      rm -rf /var/cache/yum && \
-      source /functions.sh && \
+      yum install -y $pkgs 2>&1 | tee /tmp/log ; \
+      grep -i "error:" /tmp/log && exit 1 ; \
+      yum clean all -y ; \
+      rm -rf /var/cache/yum ; \
+      source /functions.sh ; \
       ln -s /usr/bin/tshark /usr/sbin/tshark3_2
 
 ENV PS1="\033[1m($CONTAINER_NAME)\033[m\017[$(id -un)@$(hostname -s) $(pwd)]$ "

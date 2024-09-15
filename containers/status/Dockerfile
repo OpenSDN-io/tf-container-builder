@@ -10,12 +10,15 @@ LABEL name=$CONTAINER_NAME \
       description="Display a list of all components of a Contrail server node and report their current status of active or inactive." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
+# TODO: add this after adding requirements.txt to nodemgr
+#    yum install -y podman contrail-nodemgr 2>&1 | tee /tmp/log ; \
+#    grep -i "error:" /tmp/log && exit 1 ; \
 RUN \
-    source /functions.sh && \
-    yum install -y podman contrail-nodemgr && \
-    yum install -y python3-devel gcc-c++ && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
+    source /functions.sh ; \
+    yum install -y podman contrail-nodemgr ; \
+    yum install -y python3-devel gcc-c++ ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum ; \
     python3 -m pip install --no-compile --no-binary=protobuf "docker==2.4.2" "grpcio==1.29.0" "protobuf==3.17.3" "containerd==1.5.2" "lxml==4.0.0" "netaddr<1" "greenlet==1.0.0" "gevent==1.4.0" "bottle" "fysom" "future" "six" "PyYAML>=5.1" "psutil"
 
 COPY contrail-status.py /root

@@ -6,15 +6,16 @@ ARG BASE_EXTRA_RPMS=""
 ENV NODE_TYPE=webui
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
-RUN BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') && \
+RUN BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
     if [[ -n "$BASE_EXTRA_RPMS" ]] ; then \
         echo "INFO: contrail-base: install $BASE_EXTRA_RPMS" ; \
         yum install -y $BASE_EXTRA_RPMS ; \
     fi && \
     yum module disable -y nodejs || true; \
-    yum install -y nodejs-0.10.48 contrail-web-controller contrail-web-core && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
+    yum install -y nodejs-0.10.48 contrail-web-controller contrail-web-core 2>&1 | tee /tmp/log ; \
+    grep -i "error:" /tmp/log && exit 1 ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum ; \
     chown -R $CONTRAIL_USER:$CONTRAIL_USER /usr/src/contrail
 
 COPY custom-images/logo.png /opt/contrail/images/logo.png

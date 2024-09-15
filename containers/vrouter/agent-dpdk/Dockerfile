@@ -27,9 +27,10 @@ RUN \
     rm -rf /usr/tmp/*ice*
 
 RUN \
-    yum install -y dhclient contrail-vrouter-dpdk && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
+    yum install -y dhclient contrail-vrouter-dpdk 2>&1 | tee /tmp/log ; \
+    grep -i "error:" /tmp/log && exit 1 ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum ; \
     ldconfig
 
 COPY entrypoint.sh /
