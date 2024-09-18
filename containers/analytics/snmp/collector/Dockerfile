@@ -15,9 +15,5 @@ LABEL name=$CONTAINER_NAME \
 
 COPY entrypoint.sh /
 
-# TODO: Remove RUN stage
-# Copy sandesh to appropriate directory 
-RUN cp -r /usr/lib/python3.6/site-packages/tf_snmp_collector/sandesh /usr/local/lib/python3.6/site-packages/
-
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/tf-snmp-collector", "-c", "/etc/contrail/tf-snmp-collector.conf", "--device-config-file", "/etc/contrail/device.ini"]

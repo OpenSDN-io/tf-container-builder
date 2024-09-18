@@ -44,32 +44,34 @@ COPY *.sh /
 # do not upgrade coreutils: https://bugzilla.redhat.com/show_bug.cgi?id=1764152
 
 RUN \
-    source /etc/os-release && \
-    YUM_ENABLE_REPOS=$(echo $YUM_ENABLE_REPOS | tr -d '"') && \
+    source /etc/os-release ; \
+    YUM_ENABLE_REPOS=$(echo $YUM_ENABLE_REPOS | tr -d '"') ; \
     if [[ -n "$YUM_ENABLE_REPOS" ]] ; then \
-        echo "INFO: contrail-general-base: enable repos $YUM_ENABLE_REPOS" && \
+        echo "INFO: contrail-general-base: enable repos $YUM_ENABLE_REPOS" ; \
         if ! type -p yum-config-manager ; then \
             yum install -y yum-utils ; \
-        fi && \
-        yum-config-manager --enable $YUM_ENABLE_REPOS && \
+        fi ; \
+        yum-config-manager --enable $YUM_ENABLE_REPOS ; \
         yum clean metadata ; \
-    fi && \
-    yum update -y -x "redhat-release*" -x "coreutils*" && \
-    yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical && \
-    pkgs="hostname iproute less wget openssl" && \
-    GENERAL_EXTRA_RPMS=$(echo $GENERAL_EXTRA_RPMS | tr -d '"' | tr ',' ' ') && \
+    fi ; \
+    yum update -y -x "redhat-release*" -x "coreutils*"  \
+    yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \
+    pkgs="hostname iproute less wget openssl" ; \
+    GENERAL_EXTRA_RPMS=$(echo $GENERAL_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
     if [[ -n "$GENERAL_EXTRA_RPMS" ]] ; then \
         pkgs+=" $GENERAL_EXTRA_RPMS" ; \
-    fi && \
+    fi ; \
     if [[ "$ID" == 'rhel' && "${PLATFORM_ID//*:/}" == 'el8' ]] ; then \
         pkgs+=" yum-utils glibc-langpack-en compat-openssl10" ; \
-    fi && \
-    yum install -y $pkgs && \
-    source /functions.sh && \
-    yum install -y python3 python3-setuptools && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
-    groupadd --gid $CONTRAIL_GID --system $CONTRAIL_USER && \
+    fi ; \
+    yum install -y $pkgs ; \
+    source /functions.sh ; \
+    yum install -y python3 python3-pip ; \
+    # pip9 is too old and breaks install of gevent with c++ errors
+    python3 -m pip install --upgrade pip setuptools ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum ; \
+    groupadd --gid $CONTRAIL_GID --system $CONTRAIL_USER ; \
     useradd -md /home/contrail --uid $CONTRAIL_UID --shell /sbin/nologin --system --gid $CONTRAIL_GID $CONTRAIL_USER
 
 CMD ["/usr/bin/tail","-f","/dev/null"]
