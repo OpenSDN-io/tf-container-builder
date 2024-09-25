@@ -14,7 +14,7 @@ LABEL name=$CONTAINER_NAME \
 
 RUN \
     source /functions.sh && \
-    download_package https://downloadmirror.intel.com 30590/eng/800%20series%20comms%20binary%20package%201.3.30.0.zip /usr/tmp/downloaded_ice_comms-1.3.30.0.zip && \
+    download_package https://downloadmirror.intel.com 30590/eng/800_series_comms_binary_package_1.3.30.0.zip /usr/tmp/downloaded_ice_comms-1.3.30.0.zip && \
     cd /usr/tmp && \
     yum -y install unzip && \
     unzip -o -d /usr/tmp downloaded_ice_comms-1.3.30.0.zip && \
