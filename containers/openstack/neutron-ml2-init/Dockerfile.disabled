@@ -11,8 +11,6 @@ LABEL name=$CONTAINER_NAME \
 
 COPY *.sh /
 
-# run _prepare_packages.sh as a last step cause it can break some repositories
-# to be able to run 'python setup.py' without accessing internet
 RUN \
     mkdir -p /opt/contrail/python3/site-packages && \
     python3 -m pip install --no-compile --target=/opt/contrail/site-packages future && \
