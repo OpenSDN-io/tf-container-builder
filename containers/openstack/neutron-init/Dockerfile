@@ -11,7 +11,6 @@ LABEL name=$CONTAINER_NAME \
 
 COPY *.sh /
 
-# run _prepare_packages.sh as a last step cause it can break some repositories
 RUN \
     mkdir -p /opt/contrail/site-packages && \
     python3 -m pip install --no-compile --target=/opt/contrail/site-packages "future==0.18.2" && \
