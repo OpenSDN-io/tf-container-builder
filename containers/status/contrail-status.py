@@ -20,7 +20,6 @@ import docker
 from lxml import etree
 import requests
 from sandesh_common.vns import constants as vns_constants
-import six
 from urllib3.exceptions import SubjectAltNameWarning
 import yaml
 from nodemgr.common import utils as utils
@@ -536,7 +535,7 @@ def contrail_pod_status(pod_name, pod_services, options):
         print_msg('')
         return
 
-    for service, internal_svc_name in six.iteritems(pod_map):
+    for service, internal_svc_name in pod_map.items():
         if service not in INDEXED_SERVICES:
             container = pod_services.get(service)
             status = contrail_service_status(container, pod_name, service, internal_svc_name, options)
@@ -655,7 +654,7 @@ def print_containers(containers):
     hdr = ['Pod', 'Service', 'Original Name', 'Original Version', 'State', 'Id', 'Status']
     items = list()
     items.extend([v[hdr[0]], v[hdr[1]], v[hdr[2]], v[hdr[3]], v[hdr[4]], v[hdr[5]], v[hdr[6]]]
-                 for k, v in six.iteritems(containers))
+                 for k, v in containers.items())
     items.sort(key=operator.itemgetter(0, 1))
     items.insert(0, hdr)
 
@@ -754,7 +753,7 @@ def main():
     # first check and store containers dict as a tree
     fail = False
     pods = dict()
-    for k, v in six.iteritems(containers):
+    for k, v in containers.items():
         pod = v['Pod']
         service = v['Service']
         if service in INDEXED_SERVICES:

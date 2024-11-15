@@ -13,7 +13,6 @@ COPY *.sh /
 
 RUN \
     mkdir -p /opt/contrail/python3/site-packages && \
-    python3 -m pip install --no-compile --target=/opt/contrail/site-packages future && \
     python3 -m pip install 'pbr>=2.0' && \
     rpm -Uvh --nodeps $(repoquery -q --location python3-contrail) && \
     yum install -y git && \

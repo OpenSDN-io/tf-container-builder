@@ -13,7 +13,6 @@ COPY *.sh /
 
 RUN \
     mkdir -p /opt/contrail/site-packages && \
-    python3 -m pip install --no-compile --target=/opt/contrail/site-packages "future==0.18.2" "six==1.13.0" && \
     rpm -Uvh --nodeps $(repoquery -q --location python3-contrail) && \
     rpm -Uvh --nodeps $(repoquery -q --location contrail-heat) && \
     cp -rf /usr/lib/python3.6/site-packages/contrail_heat* /opt/contrail/site-packages && \

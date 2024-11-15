@@ -13,7 +13,6 @@ COPY *.sh /
 
 RUN \
     mkdir -p /opt/contrail/site-packages && \
-    python3 -m pip install --no-compile --target=/opt/contrail/site-packages "future==0.18.2" && \
     rpm -Uvh --nodeps $(repoquery -q --location python3-contrail) && \
     rpm -Uvh --nodeps $(repoquery -q --location neutron-plugin-contrail) && \
     cp -rf /usr/lib/python3.6/site-packages/neutron_plugin_contrail* /opt/contrail/site-packages && \
