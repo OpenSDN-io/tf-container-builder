@@ -20,30 +20,7 @@ LABEL name=$CONTAINER_NAME \
 
 # Fix ASCII codec error by setting locale to UTF-8
 RUN yum install -y libffi-devel && \
-    python3 -m pip install --upgrade pip setuptools
-
-# Fix for cryptography rust error
-RUN python3 -m pip install --no-compile "cryptography==3.4.8"
-    
-RUN python3 -m pip install --no-compile --no-binary :all: ansible ansible-core && \
-    python3 -m pip install --no-compile \
-        "markdown" \
-        "markupSafe" \
-        "colorama" \
-        "configparser" \
-        "icdiff" \
-        "inflection" \
-        "jinja2" \
-        "jsnapy" \
-        "junos-eznc" \
-        "jxmlease" \
-        "lxml" \
-        "ncclient" \
-        "pyserial" \
-        "python-jsonschema-objects" \
-        "scp" \
-        "selectors2" \
-        "timeout-decorator" && \
+    python3 -m pip install --no-compile --no-binary :all: ansible ansible-core && \
     yum install -y git iputils && \
     yum clean all -y && \
     rm -rf /var/cache/yum && \
