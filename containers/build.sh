@@ -213,6 +213,7 @@ function update_yum_repos() {
     # this is special case - image derived directly from ubuntu image
     update_file "vrouter/kernel-build-init/$dfile" "$content"
     update_file "vrouter/kernel-init/$dfile" "$content"
+    update_file "vrouter/kernel-init-centos/$dfile" "$content"
   done
 }
 

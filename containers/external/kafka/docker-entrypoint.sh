@@ -4,6 +4,8 @@ set -e
 
 source /common.sh
 
+export JAVA_HOME=$(find /usr/lib/jvm/ -name java-1.8.0*)/jre
+export PATH=$JAVA_HOME/bin:$PATH
 : ${KAFKA_LISTEN_ADDRESS='auto'}
 my_ip=''
 my_index=1

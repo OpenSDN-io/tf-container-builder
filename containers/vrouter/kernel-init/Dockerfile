@@ -29,7 +29,7 @@ RUN set -e ; \
     mkdir -p /opt/contrail ; \
     for item in `ls /__*` ; do mv $item /${item:3} ; done ; \
     dnf clean all -y ; dnf makecache ; \
-    find /etc/yum.repos.d/ | grep -i centos | xargs rm ; ls -l /etc/yum.repos.d/ ; \
+    find /etc/yum.repos.d/ | grep -i centos | xargs -r rm ; ls -l /etc/yum.repos.d/ ; \
     dnf install -y wget make gcc gcc-c++ contrail-vrouter-source ; \
     mkdir -p /opt/contrail/src /vrouter_src ; \
     contrail_version=${CONTRAIL_VERSION:-$CONTRAIL_CONTAINER_TAG} ; \

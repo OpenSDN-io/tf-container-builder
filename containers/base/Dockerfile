@@ -29,8 +29,9 @@ RUN set -e ; \
     # TODO: rework utils with extra_scripts in setup.py
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "contrail_config_utils==0.1.dev0" ; \
     mkdir -p /opt/contrail/utils ; \
-    ls -l /usr/local/lib/python3.6/site-packages/ ; \
-    cp /usr/local/lib/python3.6/site-packages/contrail_config_utils/* /opt/contrail/utils/ ; \
+    pkg_path=$(find /usr/local/lib -name contrail_config_utils) ; \
+    ls -l $pkg_path ; \
+    cp $pkg_path/* /opt/contrail/utils/ ; \
     chmod a+x /opt/contrail/utils/* ; \
     rm -rf /tmp/utils ; \
     # for debug purposes

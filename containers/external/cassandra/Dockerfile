@@ -31,8 +31,8 @@ COPY *.sh /
 RUN set -e ; \
     CASSANDRA_VERSION=3.11.3 && \
     set -ex && for item in `ls /__*` ; do mv $item /${item:3} ; done && \
-    yum install -y numactl which jemalloc && \
-    yum install -y --exclude="*slowdebug*" --exclude="*fastdebug*" "java-1.8.0-openjdk < 1:1.8.0_332" && \
+    yum install -y numactl which jemalloc procps-ng && \
+    yum install -y --exclude="*slowdebug*" --exclude="*fastdebug*" "java-1.8.0-openjdk" && \
     groupadd -f -g ${CASSANDRA_GID} ${CASSANDRA_GROUP} && adduser -u ${CASSANDRA_UID} -M -g ${CASSANDRA_GROUP} ${CASSANDRA_USER} && \
     usermod -a -G $CONTRAIL_GID ${CASSANDRA_USER} && \
     source /functions.sh && \

@@ -17,7 +17,12 @@ COPY vrouter-port-control *.sh /
 # which has all those packages
 # TODO: move vrouter-port-control out of agent package
 RUN set -e ; \
-    rpm -Uvh --nodeps $(repoquery -q --location contrail-vrouter-agent) ; \
+    source /etc/os-release && \
+    ver=$(echo $VERSION_ID | cut -d '.' -f 1) && \
+    if [[ ${ver} == 9 ]]; then \
+        DNF="dnf" ; \
+    fi && \
+    rpm -Uvh --nodeps $(${DNF} repoquery -q --location contrail-vrouter-agent) ; \
     mkdir -p /opt/contrail/bin /opt/contrail/site-packages ; \
     mv /vrouter-port-control /opt/contrail/bin/vrouter-port-control ; \
     chmod a+x /opt/contrail/bin/vrouter-port-control ; \

@@ -16,7 +16,7 @@ LABEL name=$CONTAINER_NAME \
 # for building from rpms
 # install chrony, ntp and iputils-clockdiff to enable checking time sync by nodemgr
 RUN set -e ; \
-    yum install -y autogen-libopts.x86_64 chrony podman 2>&1 | tee /tmp/log ; \
+    yum install -y chrony podman 2>&1 | tee /tmp/log ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "nodemgr==0.1.dev0" ; \

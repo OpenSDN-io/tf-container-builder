@@ -22,14 +22,14 @@ COPY conf/* /etc/scripts/
 RUN set -e ; \
     yum install -y gcc make xz && \
     source /functions.sh && \
-    download_package https://thekelleys.org.uk dnsmasq/dnsmasq-2.80.tar.xz dnsmasq-2.80.tar.xz "--no-check-certificate" && \
-    tar -xvf dnsmasq-2.80.tar.xz && \
-    rm -f dnsmasq-2.80.tar.xz && \
-    pushd dnsmasq-2.80 && \
+    download_package https://thekelleys.org.uk dnsmasq/dnsmasq-2.90.tar.xz dnsmasq-2.90.tar.xz "--no-check-certificate" && \
+    tar -xvf dnsmasq-2.90.tar.xz && \
+    rm -f dnsmasq-2.90.tar.xz && \
+    pushd dnsmasq-2.90 && \
     make && \
     make install && \
     popd && \
-    rm -rf dnsmasq-2.80 && \
+    rm -rf dnsmasq-2.90 && \
     yum autoremove -y gcc make && \
     echo "conf-dir=/etc/dnsmasq,*.conf" > /etc/dnsmasq.conf && \
     yum clean all -y && \

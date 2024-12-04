@@ -19,8 +19,19 @@ RUN set -e ; \
             sed -i 's|#\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/rdo-* ; \
         fi ; \
     fi ; \
-    yum module disable -y nodejs || true; \
-    yum install -y nodejs-0.10.48 contrail-web-controller contrail-web-core ; \
+    source /etc/os-release && \
+    ver=$(echo $VERSION_ID | cut -d '.' -f 1) ; \
+    if [[ ${ver} == 9 ]]; then \
+        NODEJS_VERSION="0.10.48" ; \
+        yum install -y nodejs-${NODEJS_VERSION} ; \
+        yum install -y npm-1:8.19.4 ; \
+        npm install -g coffeescript livescript ; \
+    else \
+        NODEJS_VERSION="0.10.48" ; \
+        yum module disable -y nodejs || true; \
+        yum install -y nodejs-${NODEJS_VERSION} ; \
+    fi && \
+    yum install -y contrail-web-controller contrail-web-core ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     chown -R $CONTRAIL_USER:$CONTRAIL_USER /usr/src/contrail

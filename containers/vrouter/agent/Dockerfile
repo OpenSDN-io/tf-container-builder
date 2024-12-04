@@ -13,7 +13,7 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
 RUN set -e ; \
-    yum install -y dhclient contrail-vrouter-agent haproxy libvirt-client ; \
+    yum install -y iptables dhclient contrail-vrouter-agent haproxy libvirt-client ; \
     rpm -qi contrail-vrouter-agent | awk '/Version/{print($3)}' > /contrail_build_version ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
