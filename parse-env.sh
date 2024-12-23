@@ -86,68 +86,6 @@ export GENERAL_EXTRA_RPMS=${GENERAL_EXTRA_RPMS-""}
 # use some stable OpenStack repo for Contrail's dependencies
 export BASE_EXTRA_RPMS=${BASE_EXTRA_RPMS-"https://repos.fedorapeople.org/repos/openstack/EOL/openstack-queens/rdo-release-queens-2.noarch.rpm"}
 export DOCKER_REPO=${DOCKER_REPO:-'https://download.docker.com/linux/centos/docker-ce.repo'}
-export YUM_ENABLE_REPOS=${YUM_ENABLE_REPOS:-}
-if [[ "$LINUX_DISTR" =~ 'rhel' ]] ; then
-  export RHEL_FORCE_REGISTRATION=${RHEL_FORCE_REGISTRATION:-'false'}
-  export RHEL_USER_NAME=${RHEL_USER_NAME:-}
-  export RHEL_USER_PASSWORD=${RHEL_USER_PASSWORD:-}
-  export RHEL_POOL_ID=${RHEL_POOL_ID:-}
-  export RHEL_ORG=${RHEL_ORG:-}
-  export RHEL_ACTIVATION_KEY=${RHEL_ACTIVATION_KEY:-}
-  if [[ -z "${RHEL_HOST_REPOS+x}" ]] ; then
-    export RHEL_HOST_REPOS=''
-    rhel_os_repo_num=''
-    case "$OPENSTACK_VERSION" in
-      newton)
-        rhel_os_repo_num='10'
-        ;;
-      ocata)
-        rhel_os_repo_num='11'
-        ;;
-      pike)
-        rhel_os_repo_num='12'
-        ;;
-      queens)
-        rhel_os_repo_num='13'
-        ;;
-      rocky)
-        rhel_os_repo_num='14'
-        ;;
-      stein)
-        rhel_os_repo_num='15'
-        ;;
-      train)
-        rhel_os_repo_num='16.2'
-        ;;
-      *)
-        echo "ERROR: unsupported OS $OPENSTACK_VERSION for RHEL"
-        exit 1
-    esac
-    if [[ "$LINUX_DISTR" =~ 'ubi8' ]] ; then
-      RHEL_HOST_REPOS+=",rhel-8-for-x86_64-baseos-rpms"
-      RHEL_HOST_REPOS+=",rhel-8-for-x86_64-appstream-rpms"
-      RHEL_HOST_REPOS+=",rhel-8-for-x86_64-appstream-debug-rpms"
-      RHEL_HOST_REPOS+=",codeready-builder-for-rhel-8-x86_64-rpms"
-      RHEL_HOST_REPOS+=",openstack-$rhel_os_repo_num-for-rhel-8-x86_64-rpms"
-      RHEL_HOST_REPOS+=",ansible-2-for-rhel-8-x86_64-rpms"
-      RHEL_HOST_REPOS+=",rhocp-4.6-for-rhel-8-x86_64-rpms"
-    else
-      # generic repos
-      RHEL_HOST_REPOS+=",rhel-7-server-rpms,rhel-7-server-extras-rpms,rhel-7-server-optional-rpms"
-      # openstack repos
-      RHEL_HOST_REPOS+=",rhel-7-server-openstack-${rhel_os_repo_num}-rpms"
-      RHEL_HOST_REPOS+=",rhel-7-server-openstack-${rhel_os_repo_num}-devtools-rpms"
-    fi
-    RHEL_HOST_REPOS="${RHEL_HOST_REPOS##,}"
-  fi
-  # add repos to be explicitly enabled inside containers
-  # byt default only basic repos are enabled inside.
-  YUM_ENABLE_REPOS+=",${RHEL_HOST_REPOS}"
-  YUM_ENABLE_REPOS="${YUM_ENABLE_REPOS##,}"
-  YUM_ENABLE_REPOS=$(echo $YUM_ENABLE_REPOS | tr ',' '\n' | sort -u | tr '\n' ',')
-  YUM_ENABLE_REPOS="${YUM_ENABLE_REPOS##,}"
-  YUM_ENABLE_REPOS="${YUM_ENABLE_REPOS%%,}"
-fi
 
 export CONTROLLER_NODES=${CONTROLLER_NODES:-$HOST_IP}
 export AGENT_NODES=${AGENT_NODES:-$CONTROLLER_NODES}

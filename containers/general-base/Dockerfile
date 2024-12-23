@@ -61,9 +61,6 @@ RUN \
     if [[ -n "$GENERAL_EXTRA_RPMS" ]] ; then \
         pkgs+=" $GENERAL_EXTRA_RPMS" ; \
     fi ; \
-    if [[ "$ID" == 'rhel' && "${PLATFORM_ID//*:/}" == 'el8' ]] ; then \
-        pkgs+=" yum-utils glibc-langpack-en compat-openssl10" ; \
-    fi ; \
     yum install -y $pkgs ; \
     source /functions.sh ; \
     yum install -y python3 python3-pip ; \

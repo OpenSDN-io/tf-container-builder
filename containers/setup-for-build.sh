@@ -14,10 +14,6 @@ echo 'Contrail container tag: '$CONTRAIL_CONTAINER_TAG
 echo 'Contrail registry: '$CONTRAIL_REGISTRY
 echo 'Contrail repository: '$CONTRAIL_REPOSITORY
 
-if [[ "$LINUX_ID" == 'rhel' ]] ; then
-  sudo -E $DIR/rhel-prepare-system.sh
-fi
-
 sudo -u root /bin/bash << EOS
 if [[ "$LINUX_ID" == 'ubuntu' ]] ; then
   apt-get -y install rsync

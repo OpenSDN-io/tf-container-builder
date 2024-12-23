@@ -49,7 +49,6 @@ log "Contrail registry: $CONTRAIL_REGISTRY"
 log "Contrail repository: $CONTRAIL_REPOSITORY"
 log "Contrail generic base extra rpms: $GENERAL_EXTRA_RPMS"
 log "Contrail base extra rpms: $BASE_EXTRA_RPMS"
-log "Openstack version: $OPENSTACK_VERSION"
 log "yum additional repos to enable: $YUM_ENABLE_REPOS"
 log "Parallel build: $CONTRAIL_PARALLEL_BUILD"
 log "Keep log files: $CONTRAIL_KEEP_LOG_FILES"
@@ -89,28 +88,6 @@ function process_container() {
   log "Building $container_name" | append_log_file $logfile true
 
   local build_arg_opts='--network host'
-  if [[ "$LINUX_ID" == 'rhel' && "${LINUX_VER_ID//.[0-9]*/}" == '8' ]] ; then
-    # podman case
-    build_arg_opts+=' --format docker'
-    build_arg_opts+=' --cap-add=all --security-opt label=disable --security-opt seccomp=unconfined'
-    build_arg_opts+=' -v /etc/resolv.conf:/etc/resolv.conf:ro'
-    # to make posible use subscription inside container run from container in podman
-    if [ -e /run/secrets/etc-pki-entitlement ] ; then
-      build_arg_opts+=' -v /run/secrets/etc-pki-entitlement:/run/secrets/etc-pki-entitlement:ro'
-    fi
-  fi
-  if [[ "$docker_ver" < '17.06' ]] ; then
-    # old docker can't use ARG-s before FROM:
-    # comment all ARG-s before FROM
-    cat ${docker_file} | awk '{if(ncmt!=1 && $1=="ARG"){print("#"$0)}else{print($0)}; if($1=="FROM"){ncmt=1}}' > ${docker_file}.nofromargs
-    # and then change FROM-s that uses ARG-s
-    sed -i \
-      -e "s|^FROM \${CONTRAIL_REGISTRY}/\([^:]*\):\${CONTRAIL_CONTAINER_TAG}|FROM ${CONTRAIL_REGISTRY}/\1:${tag}|" \
-      -e "s|^FROM \$LINUX_DISTR:\$LINUX_DISTR_VER|FROM $LINUX_DISTR:$LINUX_DISTR_VER|" \
-      -e "s|^FROM \$UBUNTU_DISTR:\$UBUNTU_DISTR_VERSION|FROM $UBUNTU_DISTR:$UBUNTU_DISTR_VERSION|" \
-      ${docker_file}.nofromargs
-    docker_file="${docker_file}.nofromargs"
-  fi
   build_arg_opts+=" --build-arg CONTRAIL_REGISTRY=${CONTRAIL_REGISTRY}"
   build_arg_opts+=" --build-arg CONTRAIL_CONTAINER_TAG=${tag}"
   build_arg_opts+=" --build-arg SITE_MIRROR=${SITE_MIRROR}"
