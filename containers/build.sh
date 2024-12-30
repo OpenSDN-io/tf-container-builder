@@ -88,6 +88,7 @@ function process_container() {
   log "Building $container_name" | append_log_file $logfile true
 
   local build_arg_opts='--network host'
+  build_arg_opts+=" --build-arg PIP_REPOSITORY=${PIP_REPOSITORY}"
   build_arg_opts+=" --build-arg CONTRAIL_REGISTRY=${CONTRAIL_REGISTRY}"
   build_arg_opts+=" --build-arg CONTRAIL_CONTAINER_TAG=${tag}"
   build_arg_opts+=" --build-arg SITE_MIRROR=${SITE_MIRROR}"

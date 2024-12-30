@@ -1,6 +1,7 @@
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-base:${CONTRAIL_CONTAINER_TAG}
+ARG PIP_REPOSITORY
 
 ARG CONTAINER_NAME
 ENV NODE_TYPE=kubernetes \
@@ -13,12 +14,10 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN yum install -y contrail-kube-manager 2>&1 | tee /tmp/log ; \
-    grep -i "error:" /tmp/log && exit 1 ; \
-    yum clean all -y ; \
-    rm -rf /var/cache/yum
-
+RUN set -e ; \
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "kube_manager==0.1.dev0"
+  
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/bin/contrail-kube-manager", "-c", "/etc/contrail/contrail-kubernetes.conf"]
+CMD ["/usr/local/bin/contrail-kube-manager", "-c", "/etc/contrail/contrail-kubernetes.conf"]

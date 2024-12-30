@@ -1,6 +1,7 @@
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-general-base:${CONTRAIL_CONTAINER_TAG}
+ARG PIP_REPOSITORY
 
 ARG CONTAINER_NAME
 ENV CONTAINER_NAME=$CONTAINER_NAME
@@ -11,15 +12,13 @@ LABEL name=$CONTAINER_NAME \
 
 COPY *.sh /
 
+# don't install deps to minimize footprint
+# at deploy step all files will be copied into parent contnaier
+# which has all those packages
 RUN \
     mkdir -p /opt/contrail/site-packages && \
-    rpm -Uvh --nodeps $(repoquery -q --location python3-contrail) && \
-    rpm -Uvh --nodeps $(repoquery -q --location contrail-heat) && \
-    cp -rf /usr/lib/python3.6/site-packages/contrail_heat* /opt/contrail/site-packages && \
-    cp -rf /usr/lib/python3.6/site-packages/vnc_api* /opt/contrail/site-packages && \
-    cp -rf /usr/lib/python3.6/site-packages/cfgm_common* /opt/contrail/site-packages && \
-    yum autoremove -y python3-contrail contrail-heat && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum
+    python3 -m pip install --no-deps -t /opt/contrail/site-packages --no-compile --extra-index-url $PIP_REPOSITORY \
+        "contrail_api_client==0.1.dev0" \
+        "contrail_heat==0.1.dev0"
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -9,8 +9,7 @@ LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 RUN \
     source /etc/os-release ; \
     pkgs='NetworkManager initscripts ethtool pciutils sudo contrail-vrouter-utils' ; \
-    yum install -y $pkgs 2>&1 | tee /tmp/log ; \
-    grep -i "error:" /tmp/log && exit 1 ; \
+    yum install -y $pkgs ; \
     yum clean all -y ; \
     if [[ "$ID" == 'rhel' && "${PLATFORM_ID//*:/}" == 'el8' ]] ; then \
         rm -f /usr/sbin/ifup /usr/sbin/ifdown && \

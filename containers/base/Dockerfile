@@ -4,6 +4,7 @@ ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-general-base:${CONTRAIL_CONTAINER_TAG}
 ARG BASE_EXTRA_RPMS=""
+ARG PIP_REPOSITORY
 
 # note: ldconfig looks strange. contrail-lib installs shared libraries but do not call it...
 # note: we decide to install python3 packages by pip because they are absent in RHEL7/CentOS7 repos.
@@ -19,9 +20,18 @@ RUN \
         echo "INFO: importing gpg keys from any newly installed repos" ; \
         [ -d /etc/pki/rpm-gpg ] && rpm --import /etc/pki/rpm-gpg/* ; \
     fi ; \
-    yum install -y nc gcc-c++ gcc python3-devel ; \
-    yum install -y contrail-lib contrail-setup contrail-utils python3-contrail 2>&1 | tee /tmp/log ; \
-    grep -i "error:" /tmp/log && exit 1 ; \
+    # net-tools has netstat which is used by tf-test inside kubemanager container
+    yum install -y nc gcc python3-devel contrail-lib net-tools ; \
+    # TODO: try to find a way to install deps by utils/requirements.txt
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
+        "contrail-api-client==0.1.dev0" "sandesh==0.1.dev0" "sandesh_common==0.1.dev0" \
+        "contrail-config-common==0.1.dev0" requests "netaddr<1" ; \
+    # utils must be installed into /opt/contrail/utils
+    python3 -m pip install -t /tmp/utils --no-deps --no-compile --extra-index-url $PIP_REPOSITORY "contrail_config_utils==0.1.dev0" ; \
+    mkdir -p /opt/contrail/utils ; \
+    cp /tmp/utils/* /opt/contrail/utils/ ; \
+    chmod a+x /opt/contrail/utils/* ; \
+    rm -rf /tmp/utils ; \
     # for debug purposes
     python3 -m pip install --no-compile remote-pdb ; \
     yum clean all -y ; \

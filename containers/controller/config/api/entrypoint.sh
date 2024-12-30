@@ -123,7 +123,7 @@ so-keepalive
 reuse-port
 EOM
 else
-  service_cmd="/usr/bin/contrail-api --conf_file /etc/contrail/contrail-api-0.conf --conf_file /etc/contrail/contrail-keystone-auth.conf --worker_id 0"
+  service_cmd="/usr/local/bin/contrail-api --conf_file /etc/contrail/contrail-api-0.conf --conf_file /etc/contrail/contrail-keystone-auth.conf --worker_id 0"
 fi
 
 set_third_party_auth_config

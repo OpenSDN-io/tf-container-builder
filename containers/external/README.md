@@ -10,11 +10,11 @@ Container is built based on a stock one with own custom entrypoint script (contr
 This way is an easiest one from the deployment orchestration point of view. A disavantage is a necessity to maintain your own container, e.g. it is needed to host it somewhere and follow for updates of stock container to rebuild own one (e.g. if a security update released for stock container).
     - Containers:
         ```
-        contrail-container-builder/containers/external/rabbitmq
-        contrail-container-builder/containers/external/zookeeper
-        contrail-container-builder/containers/external/cassandra
+        tf-container-builder/containers/external/rabbitmq
+        tf-container-builder/containers/external/zookeeper
+        tf-container-builder/containers/external/cassandra
         ```
     - An example of Kubernetes deployment configuration:
       ```
-        contrail-container-builder/kubernetes/external/contrail-template.yaml
+        tf-container-builder/kubernetes/external/contrail-template.yaml
       ```

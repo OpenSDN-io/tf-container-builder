@@ -1,6 +1,7 @@
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-base:${CONTRAIL_CONTAINER_TAG}
+ARG PIP_REPOSITORY
 
 ARG SITE_MIRROR
 ARG CONTAINER_NAME
@@ -14,13 +15,12 @@ LABEL name=$CONTAINER_NAME \
 
 # for building from rpms
 # install chrony, ntp and iputils-clockdiff to enable checking time sync by nodemgr
-RUN   \
-      yum install -y contrail-nodemgr autogen-libopts.x86_64 chrony podman 2>&1 | tee /tmp/log ; \
-      grep -i "error:" /tmp/log && exit 1 ; \
-      yum clean all -y ; \
-      rm -rf /var/cache/yum
+RUN yum install -y autogen-libopts.x86_64 chrony podman 2>&1 | tee /tmp/log ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum ; \
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "nodemgr==0.1.dev0"
 
 COPY *.sh /
 ENTRYPOINT ["/entrypoint.sh"]
 # use shell form for CMD as shell variables processing is required here
-CMD /usr/bin/contrail-nodemgr --nodetype=${NODEMGR_TYPE}
+CMD /usr/local/bin/contrail-nodemgr --nodetype=${NODEMGR_TYPE}

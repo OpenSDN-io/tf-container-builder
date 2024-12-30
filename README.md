@@ -133,14 +133,14 @@ These manifests are also stored and published in a container "contrail-k8s-manif
 * Create docker container
 ``` docker create --name k8s-manifests opensdn/contrail-k8s-manifests```
 * Copy content from container to local folder
-``` docker cp k8s-manifests:contrail-container-builder .```
+``` docker cp k8s-manifests:tf-container-builder .```
 * Remove container
 ``` docker rm -fv k8s-manifests```
-* Check list of manifests in folder contrail-container-builder/kubernetes/manifests/
-* Create required common.env in folder contrail-container-builder
+* Check list of manifests in folder tf-container-builder/kubernetes/manifests/
+* Create required common.env in folder tf-container-builder
 * Prepare manifest with simple manifests (or use your own one)
-``` contrail-container-builder/kubernetes/manifests/resolve-manifest.sh contrail-standalone-kubernetes.yaml > contrail.yaml```
-* Additionally you can use contrail-container-builder for any development or viewing purposes.
+``` tf-container-builder/kubernetes/manifests/resolve-manifest.sh contrail-standalone-kubernetes.yaml > contrail.yaml```
+* Additionally you can use tf-container-builder for any development or viewing purposes.
 
 ### Adding new container
 

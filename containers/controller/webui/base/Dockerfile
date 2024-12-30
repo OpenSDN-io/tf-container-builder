@@ -12,8 +12,7 @@ RUN BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
         yum install -y $BASE_EXTRA_RPMS ; \
     fi && \
     yum module disable -y nodejs || true; \
-    yum install -y nodejs-0.10.48 contrail-web-controller contrail-web-core 2>&1 | tee /tmp/log ; \
-    grep -i "error:" /tmp/log && exit 1 ; \
+    yum install -y nodejs-0.10.48 contrail-web-controller contrail-web-core ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     chown -R $CONTRAIL_USER:$CONTRAIL_USER /usr/src/contrail

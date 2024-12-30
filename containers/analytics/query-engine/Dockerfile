@@ -15,5 +15,10 @@ LABEL name=$CONTAINER_NAME \
 
 COPY entrypoint.sh /
 
+RUN sed -e '/^tsflags=nodocs/d' -i /etc/yum.conf ; \
+    yum install -y contrail-analytics ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum
+
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/contrail-query-engine","--conf_file","/etc/contrail/contrail-query-engine.conf"]

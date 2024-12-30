@@ -1,6 +1,7 @@
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-analytics-base:${CONTRAIL_CONTAINER_TAG}
+ARG PIP_REPOSITORY
 
 ARG CONTAINER_NAME
 ENV SERVICE_NAME=api \
@@ -13,5 +14,8 @@ LABEL name=$CONTAINER_NAME \
 
 COPY entrypoint.sh /
 
+RUN set -e ; \
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "opserver==0.1.dev0"
+
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/bin/contrail-analytics-api", "-c", "/etc/contrail/contrail-analytics-api.conf", "-c", "/etc/contrail/contrail-keystone-auth.conf"]
+CMD ["/usr/local/bin/contrail-analytics-api", "-c", "/etc/contrail/contrail-analytics-api.conf", "-c", "/etc/contrail/contrail-keystone-auth.conf"]

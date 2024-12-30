@@ -446,8 +446,8 @@ compute_node_address=$COMPUTE_NODE_ADDRESS
 $vrouter_opts
 
 [SERVICE-INSTANCE]
-netns_command=/usr/bin/opencontrail-vrouter-netns
-docker_command=/usr/bin/opencontrail-vrouter-docker
+netns_command=/usr/local/bin/opencontrail-vrouter-netns
+docker_command=/usr/local/bin/opencontrail-vrouter-docker
 
 [HYPERVISOR]
 type = $HYPERVISOR_TYPE

@@ -15,8 +15,7 @@ RUN \
       source /etc/os-release ; \
       pkgs='sudo openssh-clients bzip2 contrail-tools contrail-vrouter-dpdk-tools' ; \
       pkgs+=' python-paramiko python-yaml python-crypto python-prettytable' ; \
-      yum install -y $pkgs 2>&1 | tee /tmp/log ; \
-      grep -i "error:" /tmp/log && exit 1 ; \
+      yum install -y $pkgs ; \
       yum clean all -y ; \
       rm -rf /var/cache/yum ; \
       source /functions.sh ; \

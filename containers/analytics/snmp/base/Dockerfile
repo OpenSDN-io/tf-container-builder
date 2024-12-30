@@ -2,12 +2,12 @@ ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-base:${CONTRAIL_CONTAINER_TAG}
 
-ENV NODE_TYPE=control
+ENV NODE_TYPE=analytics-snmp
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
-RUN yum install -y contrail-control contrail-dns ; \
-    mkdir -p /opt/contrail_dns ; \
-    cp -r /etc/contrail/dns/* /opt/contrail_dns/ ; \
+# required to install python's snmp package
+RUN sed -e '/^tsflags=nodocs/d' -i /etc/yum.conf ; \
+    yum install -y net-snmp-devel ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum
 

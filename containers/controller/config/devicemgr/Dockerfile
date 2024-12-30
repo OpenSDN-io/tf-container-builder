@@ -1,6 +1,7 @@
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-controller-config-base:${CONTRAIL_CONTAINER_TAG}
+ARG PIP_REPOSITORY
 
 ARG SITE_MIRROR
 ARG CONTAINER_NAME
@@ -15,21 +16,22 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-# git rpm cannot be remove as it removes contrail-utils, and common by deps
-# use direct download to be able to download from cache instead of `ansible-galaxy install Juniper.junos,2.4.2`
-
-# Fix ASCII codec error by setting locale to UTF-8
-RUN yum install -y libffi-devel && \
-    python3 -m pip install --no-compile --no-binary :all: ansible ansible-core && \
-    yum install -y git iputils && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
-    source /functions.sh && \
-    download_package https://github.com Juniper/ansible-junos-stdlib/archive/2.4.2.tar.gz Juniper.junos && \
-    ansible-galaxy install Juniper.junos && \
-    rm -f Juniper.junos
+# pin cryptography - newer version requires rust compiler just for install.
+# but we don't want to install this useless component
+RUN set -e ; \
+    yum install -y libffi-devel ; \
+    python3 -m pip install "cryptography<3.5" ; \
+    python3 -m pip install --no-compile --no-binary :all: ansible ansible-core ; \
+    yum install -y iputils ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum ; \
+    source /functions.sh ; \
+    download_package https://github.com Juniper/ansible-junos-stdlib/archive/2.4.2.tar.gz Juniper.junos ; \
+    ansible-galaxy install Juniper.junos ; \
+    rm -f Juniper.junos ; \
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "device_manager==0.1.dev0" "fabric_ansible==0.1.dev0"
 
 COPY *.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/bin/contrail-device-manager", "--conf_file", "/etc/contrail/contrail-device-manager.conf", "--conf_file", "/etc/contrail/contrail-keystone-auth.conf"]
+CMD ["/usr/local/bin/contrail-device-manager", "--conf_file", "/etc/contrail/contrail-device-manager.conf", "--conf_file", "/etc/contrail/contrail-keystone-auth.conf"]

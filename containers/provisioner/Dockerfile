@@ -14,5 +14,4 @@ LABEL name=$CONTAINER_NAME \
 COPY *.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
-
 CMD ["/usr/bin/tail","-f","/dev/null"]

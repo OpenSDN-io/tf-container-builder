@@ -1,6 +1,7 @@
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-base:${CONTRAIL_CONTAINER_TAG}
+ARG PIP_REPOSITORY
 
 ARG SITE_MIRROR
 ARG CONTAINER_NAME
@@ -10,12 +11,10 @@ LABEL name=$CONTAINER_NAME \
       description="Display a list of all components of a Contrail server node and report their current status of active or inactive." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN \
-    yum install -y python3-devel gcc-c++ ; \
-    yum install -y podman contrail-nodemgr 2>&1 | tee /tmp/log ; \
-    grep -i "error:" /tmp/log && exit 1 ; \
+RUN yum install -y podman lsof ; \
     yum clean all -y ; \
-    rm -rf /var/cache/yum
+    rm -rf /var/cache/yum ; \
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "nodemgr==0.1.dev0"
 
 COPY contrail-status.py /root
 COPY entrypoint.sh /

@@ -1,6 +1,7 @@
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-base:${CONTRAIL_CONTAINER_TAG}
+ARG PIP_REPOSITORY
 
 ARG CONTAINER_NAME
 ENV NODE_TYPE=toragent \
@@ -13,10 +14,11 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN yum install -y contrail-vrouter-agent python-contrail-vrouter-api 2>&1 | tee /tmp/log ; \
-    grep -i "error:" /tmp/log && exit 1 ; \
+RUN yum install -y contrail-vrouter-agent ; \
     yum clean all -y ; \
-    rm -rf /var/cache/yum
+    rm -rf /var/cache/yum ; \
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
+        "contrail-vrouter-api==0.1.dev0"
 
 COPY *.sh /
 

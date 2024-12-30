@@ -1,6 +1,7 @@
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-controller-config-base:${CONTRAIL_CONTAINER_TAG}
+ARG PIP_REPOSITORY
 
 ARG CONTAINER_NAME
 ENV SERVICE_NAME=schema \
@@ -13,5 +14,8 @@ LABEL name=$CONTAINER_NAME \
 
 COPY *.sh /
 
+RUN set -e ; \
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "schema_transformer==0.1.dev0"
+
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["/usr/bin/contrail-schema", "--conf_file", "/etc/contrail/contrail-schema.conf", "--conf_file", "/etc/contrail/contrail-keystone-auth.conf"]
+CMD ["/usr/local/bin/contrail-schema", "--conf_file", "/etc/contrail/contrail-schema.conf", "--conf_file", "/etc/contrail/contrail-keystone-auth.conf"]

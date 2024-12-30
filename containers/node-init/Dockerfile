@@ -9,11 +9,6 @@ LABEL name=$CONTAINER_NAME \
       description="Container is used to configure operating system for Contrail services." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN \
-    yum install -y --downloadonly --downloaddir=/ contrail-tripleo-puppet && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum
-
 COPY *.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
