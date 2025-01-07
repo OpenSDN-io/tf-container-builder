@@ -429,7 +429,7 @@ else
 fi
 
 # first group is used in analytics and control services
-# second group is used in config service, kubernetes_manager, ironic_notification_manager
+# second group is used in config service, kubernetes_manager
 read -r -d '' rabbitmq_config << EOM || true
 rabbitmq_vhost=$RABBITMQ_VHOST
 rabbitmq_user=$RABBITMQ_USER

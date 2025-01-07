@@ -270,38 +270,6 @@ function get_physical_nic_and_mac()
   echo $nic $mac
 }
 
-# Find the overlay interface on a ContrailVM
-# ContrailVM is spawned with nic ens160, which is the primary/mgmt interface
-# Secondary nics (like ens192, ens224) are added during provisioning
-# The overlay interface will have name ens*, be of type vmxnet3
-# and not  have inet address configured
-# This function uses this logic to find the overlay interface and
-# return as vmware_physical_interface.
-function get_vmware_physical_iface() {
-    local vmware_int=''
-    local iface=''
-    local iface_list=`ip -o link show | awk -F': ' '{print $2}'`
-    iface_list=`echo "$iface_list" | grep ens`
-    for iface in $iface_list; do
-        local intf_type=`ethtool -i $iface | grep driver | cut -f 2 -d ' '`
-        if [[ $intf_type != "vmxnet3" ]]; then
-             continue;
-        else
-             ip addr show dev $iface | grep 'inet ' > /dev/null 2>&1
-             if [[ $? == 0 ]]; then
-                  continue;
-             else
-                  vmware_int=$iface
-             fi
-        fi
-    done
-    if [[ "$vmware_int" == '' ]]; then
-        echo "ERROR: vmware_physical_interface not configured"
-        exit -1
-    fi
-    echo $vmware_int
-}
-
 function disable_chksum_offload() {
     local intf=$1
     local intf_type=`ethtool -i $intf | grep driver | cut -f 2 -d ' '`
@@ -891,11 +859,6 @@ function cleanup_lbaas_netns_config() {
 function cleanup_contrail_cni_config() {
     rm -f /opt/cni/bin/contrail-k8s-cni
     rm -f /etc/cni/net.d/10-contrail.conf
-}
-
-function cleanup_mesos_cni_config() {
-    rm -f /opt/mesosphere/active/cni/contrail-cni-plugin
-    rm -f /opt/mesosphere/etc/dcos/network/cni/contrail-cni-plugin.conf
 }
 
 # generic remove vhost functionality

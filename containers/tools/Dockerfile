@@ -14,7 +14,6 @@ LABEL name=$CONTAINER_NAME \
 RUN \
       source /etc/os-release ; \
       pkgs='sudo openssh-clients bzip2 contrail-tools contrail-vrouter-dpdk-tools' ; \
-      pkgs+=' python-paramiko python-yaml python-crypto python-prettytable' ; \
       yum install -y $pkgs ; \
       yum clean all -y ; \
       rm -rf /var/cache/yum ; \

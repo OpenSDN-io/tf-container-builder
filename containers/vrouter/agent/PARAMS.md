@@ -7,7 +7,6 @@
 | **Cloud orchestration**            |                                                     |
 | CLOUD_ORCHESTRATOR                 | none                                                |
 | HYPERVISOR_TYPE                    | kvm                                                 |
-| HYPERVISOR_TYPE                    | vmware                                              |
 | **Collector**                      |                                                     |
 | COLLECTOR_SERVERS                  | $ANALYTICS_NODES with $COLLECTOR_PORT               |
 | STATS_COLLECTOR_DESTINATION_PATH   |                                                     |

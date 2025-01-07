@@ -22,8 +22,7 @@ init_tls
 
 orchestration_manager=${CLOUD_ORCHESTRATOR,,}
 
-if [[ "$orchestration_manager" == 'kubernetes' || \
-      "$orchestration_manager" == 'mesos' ]]; then
+if [[ "$orchestration_manager" == 'kubernetes' ]]; then
   orchestration_manager='none'
 fi
 
