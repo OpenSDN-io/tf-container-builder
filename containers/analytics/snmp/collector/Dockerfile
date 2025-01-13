@@ -15,7 +15,8 @@ LABEL name=$CONTAINER_NAME \
 COPY entrypoint.sh /
 
 RUN set -e ; \
-    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "tf_snmp_collector==0.1.dev0"
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "tf_snmp_collector==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/local/bin/tf-snmp-collector", "-c", "/etc/contrail/tf-snmp-collector.conf", "--device-config-file", "/etc/contrail/device.ini"]

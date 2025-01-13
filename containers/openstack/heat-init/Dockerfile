@@ -18,7 +18,7 @@ COPY *.sh /
 RUN \
     mkdir -p /opt/contrail/site-packages && \
     python3 -m pip install --no-deps -t /opt/contrail/site-packages --no-compile --extra-index-url $PIP_REPOSITORY \
-        "contrail_api_client==0.1.dev0" \
-        "contrail_heat==0.1.dev0"
+        "contrail_api_client==0.1.dev0" "contrail_heat==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 ENTRYPOINT ["/entrypoint.sh"]

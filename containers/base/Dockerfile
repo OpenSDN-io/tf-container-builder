@@ -28,6 +28,7 @@ RUN \
     rm -rf /tmp/utils ; \
     # for debug purposes
     python3 -m pip install --no-compile remote-pdb ; \
+    rm -rf /root/.cache ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     ldconfig

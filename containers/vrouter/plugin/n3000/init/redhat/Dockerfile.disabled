@@ -13,6 +13,7 @@ LABEL name=$CONTAINER_NAME                                                   \
 SHELL ["/bin/bash", "-c"]
 
 RUN yes | python3 -m pip install intelhex || true                          && \
+    rm -rf /root/.cache                                                    && \
     yum install -y contrail-vrouter-dpdk-n3000-tools pciutils dhclient     && \
     rpm -Uvh --nodeps $(repoquery -q --location opae-libs)                 && \
     rpm -Uvh --nodeps $(repoquery -q --location opae-devel)                && \

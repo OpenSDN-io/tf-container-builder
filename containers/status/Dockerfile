@@ -14,7 +14,8 @@ LABEL name=$CONTAINER_NAME \
 RUN yum install -y podman lsof ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
-    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "nodemgr==0.1.dev0"
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "nodemgr==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 COPY contrail-status.py /root
 COPY entrypoint.sh /

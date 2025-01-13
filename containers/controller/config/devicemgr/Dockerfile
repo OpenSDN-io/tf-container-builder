@@ -29,7 +29,8 @@ RUN set -e ; \
     download_package https://github.com Juniper/ansible-junos-stdlib/archive/2.4.2.tar.gz Juniper.junos ; \
     ansible-galaxy install Juniper.junos ; \
     rm -f Juniper.junos ; \
-    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "device_manager==0.1.dev0" "fabric_ansible==0.1.dev0"
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "device_manager==0.1.dev0" "fabric_ansible==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 COPY *.sh /
 

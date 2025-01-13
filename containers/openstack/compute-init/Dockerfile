@@ -26,6 +26,7 @@ RUN set -e ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     python3 -m pip install --no-deps -t /opt/contrail/site-packages --no-compile --extra-index-url $PIP_REPOSITORY \
-        "nova_contrail_vif==0.1.dev0" "contrail-vrouter-api==0.1.dev0"
+        "nova_contrail_vif==0.1.dev0" "contrail-vrouter-api==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 ENTRYPOINT ["/entrypoint.sh"]

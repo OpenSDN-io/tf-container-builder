@@ -16,6 +16,7 @@ COPY *.sh /
 
 RUN set -e ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
-        "contrail-api-server==0.1.dev0" "vnc_openstack==0.1.dev0" "contrail_issu==0.1.dev0"
+        "contrail-api-server==0.1.dev0" "vnc_openstack==0.1.dev0" "contrail_issu==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 ENTRYPOINT ["/entrypoint.sh"]

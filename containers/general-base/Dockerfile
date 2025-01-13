@@ -66,6 +66,7 @@ RUN \
     yum install -y python3 python3-pip ; \
     # pip9 is too old and breaks install of gevent with c++ errors
     python3 -m pip install --upgrade pip setuptools ; \
+    rm -rf /root/.cache ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     groupadd --gid $CONTRAIL_GID --system $CONTRAIL_USER ; \

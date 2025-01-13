@@ -18,7 +18,8 @@ RUN yum install -y contrail-vrouter-agent ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
-        "contrail-vrouter-api==0.1.dev0"
+        "contrail-vrouter-api==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 COPY *.sh /
 

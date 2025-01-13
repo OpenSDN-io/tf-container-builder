@@ -19,7 +19,8 @@ RUN set -e ; \
     rm -rf /var/cache/yum ; \
     ldconfig ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
-        "contrail-vrouter-api==0.1.dev0" "opencontrail-vrouter-netns==0.1.dev0"
+        "contrail-vrouter-api==0.1.dev0" "opencontrail-vrouter-netns==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 COPY *.sh /
 # /etc/dhcp/dhclient-script is allowed by apparmor to execute

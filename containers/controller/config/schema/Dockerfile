@@ -15,7 +15,8 @@ LABEL name=$CONTAINER_NAME \
 COPY *.sh /
 
 RUN set -e ; \
-    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "schema_transformer==0.1.dev0"
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "schema_transformer==0.1.dev0" ; \
+    rm -rf /root/.cache
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/local/bin/contrail-schema", "--conf_file", "/etc/contrail/contrail-schema.conf", "--conf_file", "/etc/contrail/contrail-keystone-auth.conf"]

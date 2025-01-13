@@ -15,8 +15,9 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
 RUN set -e ; \
-    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "kube_manager==0.1.dev0"
-  
+    python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "kube_manager==0.1.dev0" ; \
+    rm -rf /root/.cache
+
 COPY entrypoint.sh /
 
 ENTRYPOINT ["/entrypoint.sh"]
