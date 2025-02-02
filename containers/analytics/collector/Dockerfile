@@ -13,8 +13,7 @@ LABEL name=$CONTAINER_NAME \
 
 COPY entrypoint.sh /
 
-RUN sed -e '/^tsflags=nodocs/d' -i /etc/yum.conf ; \
-    yum install -y contrail-analytics ; \
+RUN yum install -y contrail-analytics ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum
 

@@ -9,6 +9,7 @@ ARG PIP_REPOSITORY
 # note: ldconfig looks strange. contrail-lib installs shared libraries but do not call it...
 # WARNING! all pip deps must be installed with pinned version to avoid breakages when pypi is upgraded.
 RUN \
+    sed -e '/^tsflags=nodocs/d' -i /etc/yum.conf ; \
     BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
     if [[ -n "$BASE_EXTRA_RPMS" ]] ; then \
         echo "INFO: contrail-base: install $BASE_EXTRA_RPMS" ; \
@@ -17,7 +18,7 @@ RUN \
         [ -d /etc/pki/rpm-gpg ] && rpm --import /etc/pki/rpm-gpg/* ; \
     fi ; \
     # net-tools has netstat which is used by tf-test inside kubemanager container
-    yum install -y nc gcc python3-devel contrail-lib net-tools ; \
+    yum install -y nc gcc python3-devel contrail-lib contrail-docs net-tools ; \
     # NOTE: utils must be placed into /opt/contrail/utils
     # TODO: rework utils with extra_scripts in setup.py
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "contrail_config_utils==0.1.dev0" ; \
