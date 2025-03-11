@@ -49,6 +49,8 @@ wget -nv -t3 -P dist/kafka/2.6.3 https://archive.apache.org/dist/kafka/2.6.3/kaf
 wget -nv -t3 -P opensdn-io/tf-third-party-cache/blob/master/redis https://github.com/opensdn-io/tf-third-party-cache/blob/master/redis/redis40u-4.0.14-2.el7.ius.x86_64.rpm?raw=true
 # from 2011.L3, 21.3
 wget -nv -t3 -P opensdn-io/tf-third-party-cache/blob/master/redis https://github.com/opensdn-io/tf-third-party-cache/blob/master/redis/redis-6.0.15-1.el7.remi.x86_64.rpm?raw=true
+# for rocky9
+wget -nv -t3 -P opensdn-io/tf-third-party-cache/blob/master/redis https://github.com/opensdn-io/tf-third-party-cache/blob/master/redis/redis-6.0.19-1.el9.remi.x86_64.rpm?raw=true
 
 wget -nv -t3 -P Juniper/ansible-junos-stdlib/archive https://github.com/Juniper/ansible-junos-stdlib/archive/2.4.2.tar.gz
 
