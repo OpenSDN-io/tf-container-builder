@@ -3,6 +3,8 @@
 ARG LINUX_DISTR=centos
 ARG LINUX_DISTR_VER=7.9.2009
 FROM $LINUX_DISTR:$LINUX_DISTR_VER
+# Redefine ARG after FROM (to make them available in the rest of the Dockerfile)
+ARG LINUX_DISTR=centos
 
 ARG SITE_MIRROR
 ARG VENDOR_NAME
@@ -53,6 +55,10 @@ RUN \
         fi ; \
         yum-config-manager --enable $YUM_ENABLE_REPOS ; \
         yum clean metadata ; \
+    fi ; \
+    if [[ "$LINUX_DISTR" == "centos" ]]; then \
+        for file in /etc/yum.repos.d/CentOS-* ; do grep -v mirrorlist= "$file" > "$file".new && mv "$file".new "$file" ; done ; \
+        sed -i 's|#\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* ; \
     fi ; \
     yum update -y -x "redhat-release*" -x "coreutils*"  \
     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \

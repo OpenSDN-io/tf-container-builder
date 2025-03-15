@@ -5,9 +5,11 @@ ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/contrail-general-base:${CONTRAIL_CONTAINER_TAG}
 ARG BASE_EXTRA_RPMS=""
 ARG PIP_REPOSITORY
+ARG LINUX_DISTR=centos
 
 # note: ldconfig looks strange. contrail-lib installs shared libraries but do not call it...
 # WARNING! all pip deps must be installed with pinned version to avoid breakages when pypi is upgraded.
+# BASE_EXTRA_RPMS by default has link to openstack repo with old centos which must be patched also
 RUN \
     BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
     if [[ -n "$BASE_EXTRA_RPMS" ]] ; then \
@@ -15,6 +17,10 @@ RUN \
         yum install -y $BASE_EXTRA_RPMS ; \
         echo "INFO: importing gpg keys from any newly installed repos" ; \
         [ -d /etc/pki/rpm-gpg ] && rpm --import /etc/pki/rpm-gpg/* ; \
+        if [[ "$LINUX_DISTR" == "centos" ]]; then \
+            for file in /etc/yum.repos.d/rdo-* ; do grep -v mirrorlist= "$file" > "$file".new && mv "$file".new "$file" ; done ; \
+            sed -i 's|#\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/rdo-* ; \
+        fi ; \
     fi ; \
     # net-tools has netstat which is used by tf-test inside kubemanager container
     yum install -y nc gcc python3-devel contrail-lib net-tools ; \
