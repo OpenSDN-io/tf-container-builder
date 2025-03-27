@@ -29,7 +29,7 @@ fi
 # TODO: it is expected that ssl dirs are byt default, it is needed to detect dirs and
 # do mount volumes appropriately
 
-tmp_file=/host/usr/bin/contrail-status.tmp.${RANDOM}
+tmp_file=/host/usr/bin/opensdn-status.tmp.${RANDOM}
 cat > $tmp_file << EOM
 #!/bin/bash
 if [[ -n "${SERVER_CA_CERTFILE}" ]] && [[ -e ${SERVER_CA_CERTFILE} ]] ; then
@@ -80,8 +80,10 @@ if ((\$? == 0)); then
 fi
 EOM
 
-echo "INFO: generated contrail-status"
+echo "INFO: generated opensdn-status (prev: contrail-status)"
 cat $tmp_file
 
 chmod 755 $tmp_file
-mv -f $tmp_file /host/usr/bin/contrail-status
+cp -f $tmp_file /host/usr/bin/contrail-status
+cp -f $tmp_file /host/usr/bin/opensdn-status
+rm -f $tmp_file

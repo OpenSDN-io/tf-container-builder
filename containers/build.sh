@@ -121,13 +121,13 @@ function process_container() {
   log "Building args: $build_arg_opts" | append_log_file $logfile true
   local target_name="${CONTRAIL_REGISTRY}/${container_name}:${tag}"
 
-  #TODO: remove after full switch to "tf-" prefix
+  #TODO: remove after full switch to "opensdn-" prefix
   if [[ "$container_name" =~ ^contrail- ]]; then
-    local tf_target_name="${CONTRAIL_REGISTRY}/$(echo $container_name | sed 's/contrail-/tf-/'):${tag}"
-    local tf_target_name_build_option="-t $tf_target_name"
+    local opensdn_target_name="${CONTRAIL_REGISTRY}/$(echo $container_name | sed 's/contrail-/opensdn-/'):${tag}"
+    local opensdn_target_name_build_option="-t $opensdn_target_name"
   fi
 
-  sudo docker build -t $target_name $tf_target_name_build_option \
+  sudo docker build -t $target_name $opensdn_target_name_build_option \
     ${build_arg_opts} -f $docker_file ${opts} $dir 2>&1 | append_log_file $logfile
   exit_code=${PIPESTATUS[0]}
   local duration=$(date +"%s")
@@ -137,9 +137,9 @@ function process_container() {
     sudo docker push $target_name 2>&1 | append_log_file $logfile
     exit_code=${PIPESTATUS[0]}
 
-    #TODO: remove after full switch to "tf-" prefix
-    if [[ -n "$tf_target_name" ]]; then
-      sudo docker push $tf_target_name  2>&1 | append_log_file $logfile
+    #TODO: remove after full switch to "opensdn-" prefix
+    if [[ -n "$opensdn_target_name" ]]; then
+      sudo docker push $opensdn_target_name  2>&1 | append_log_file $logfile
     fi
   fi
   duration=$(date +"%s")

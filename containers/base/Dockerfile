@@ -2,7 +2,7 @@
 
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
-FROM ${CONTRAIL_REGISTRY}/contrail-general-base:${CONTRAIL_CONTAINER_TAG}
+FROM ${CONTRAIL_REGISTRY}/opensdn-general-base:${CONTRAIL_CONTAINER_TAG}
 ARG BASE_EXTRA_RPMS=""
 ARG PIP_REPOSITORY
 ARG LINUX_DISTR=centos
@@ -22,7 +22,7 @@ RUN \
             sed -i 's|#\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/rdo-* ; \
         fi ; \
     fi ; \
-    # net-tools has netstat which is used by tf-test inside kubemanager container
+    # net-tools has netstat which is used by opensdn-test inside kubemanager container
     yum install -y nc gcc python3-devel contrail-lib net-tools ; \
     # NOTE: utils must be placed into /opt/contrail/utils
     # TODO: rework utils with extra_scripts in setup.py

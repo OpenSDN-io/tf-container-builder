@@ -69,7 +69,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: contrail-analyticsdb-config
+  name: opensdn-analyticsdb-config
   namespace: kube-system
 data:
   JVM_EXTRA_OPTS: {{ JVM_EXTRA_OPTS }}
@@ -86,7 +86,7 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: contrail-configdb-config
+  name: opensdn-configdb-config
   namespace: kube-system
 data:
   JVM_EXTRA_OPTS: {{ JVM_EXTRA_OPTS }}
@@ -150,7 +150,7 @@ spec:
       hostNetwork: true
       containers:
       - name: config-zookeeper
-        image: "{{CONTRAIL_REGISTRY}}/contrail-external-zookeeper:{{CONTRAIL_CONTAINER_TAG}}"
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-external-zookeeper:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         env:
         - name: NODE_TYPE
@@ -178,18 +178,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-analyticsdb
+  name: opensdn-analyticsdb
   namespace: kube-system
   labels:
-    app: contrail-analyticsdb
+    app: opensdn-analyticsdb
 spec:
   selector:
     matchLabels:
-      app: contrail-analyticsdb
+      app: opensdn-analyticsdb
   template:
     metadata:
       labels:
-        app: contrail-analyticsdb
+        app: opensdn-analyticsdb
     spec:
       affinity:
         nodeAffinity:
@@ -204,17 +204,17 @@ spec:
         effect: NoSchedule
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         env:
         - name: NODE_TYPE
           value: "database"
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         securityContext:
           privileged: true
         volumeMounts:
@@ -223,8 +223,8 @@ spec:
         - mountPath: /host/var/lib
           name: host-var-lib
       containers:
-      - name: contrail-analyticsdb-nodemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analyticsdb-nodemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -232,7 +232,7 @@ spec:
         - configMapRef:
             name: env
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         env:
         - name: NODE_TYPE
           value: database
@@ -240,13 +240,13 @@ spec:
           value: "2"
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/run
           name: var-run
         - mountPath: /run/runc
           name: run-runc
-      - name: contrail-analyticsdb-provisioner
-        image: "{{CONTRAIL_REGISTRY}}/contrail-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analyticsdb-provisioner
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -256,7 +256,7 @@ spec:
         - configMapRef:
             name: defaults-env
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         env:
         - name: NODE_TYPE
           value: database
@@ -264,9 +264,9 @@ spec:
           value: "2"
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-analyticsdb
-        image: "{{CONTRAIL_REGISTRY}}/contrail-external-cassandra:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-analyticsdb
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-external-cassandra:{{CONTRAIL_CONTAINER_TAG}}"
         securityContext:
           capabilities:
             add: ["SYS_NICE"]
@@ -276,14 +276,14 @@ spec:
           value: database
         envFrom:
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         volumeMounts:
         - mountPath: /var/lib/cassandra
           name: analyticsdb-data
         - mountPath: /var/log/cassandra
           name: analyticsdb-logs
-      - name: contrail-analytics-query-engine
-        image: "{{CONTRAIL_REGISTRY}}/contrail-analytics-query-engine:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-query-engine
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-analytics-query-engine:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -297,7 +297,7 @@ spec:
             name: configzookeeperenv
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
@@ -307,7 +307,7 @@ spec:
       - name: analyticsdb-logs
         hostPath:
           path: /var/log/contrail/database
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
       - name: var-run
@@ -326,18 +326,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-configdb
+  name: opensdn-configdb
   namespace: kube-system
   labels:
-    app: contrail-configdb
+    app: opensdn-configdb
 spec:
   selector:
     matchLabels:
-      app: contrail-configdb
+      app: opensdn-configdb
   template:
     metadata:
       labels:
-        app: contrail-configdb
+        app: opensdn-configdb
     spec:
       affinity:
         nodeAffinity:
@@ -352,8 +352,8 @@ spec:
         effect: NoSchedule
       hostNetwork: true
       containers:
-      - name: contrail-configdb
-        image: "{{CONTRAIL_REGISTRY}}/contrail-external-cassandra:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-configdb
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-external-cassandra:{{CONTRAIL_CONTAINER_TAG}}"
         securityContext:
           capabilities:
             add: ["SYS_NICE"]
@@ -363,20 +363,20 @@ spec:
           value: config-database
         envFrom:
         - configMapRef:
-            name: contrail-configdb-config
+            name: opensdn-configdb-config
         volumeMounts:
         - mountPath: /var/lib/cassandra
           name: configdb-data
         - mountPath: /var/log/cassandra
           name: configdb-logs
-      - name: contrail-config-database-nodemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-config-database-nodemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
             name: env
         - configMapRef:
-            name: contrail-configdb-config
+            name: opensdn-configdb-config
         env:
         - name: NODE_TYPE
           value: config-database
@@ -384,13 +384,13 @@ spec:
           value: "2"
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/run
           name: var-run
         - mountPath: /run/runc
           name: run-runc
-      - name: contrail-config-database-provisioner
-        image: "{{CONTRAIL_REGISTRY}}/contrail-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-config-database-provisioner
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -398,7 +398,7 @@ spec:
         - configMapRef:
             name: defaults-env
         - configMapRef:
-            name: contrail-configdb-config
+            name: opensdn-configdb-config
         env:
         - name: NODE_TYPE
           value: config-database
@@ -406,7 +406,7 @@ spec:
           value: "2"
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
@@ -425,7 +425,7 @@ spec:
       - name: host-usr-bin
         hostPath:
           path: /usr/bin
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
 
@@ -433,18 +433,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-analytics
+  name: opensdn-analytics
   namespace: kube-system
   labels:
-    app: contrail-analytics
+    app: opensdn-analytics
 spec:
   selector:
     matchLabels:
-      app: contrail-analytics
+      app: opensdn-analytics
   template:
     metadata:
       labels:
-        app: contrail-analytics
+        app: opensdn-analytics
     spec:
       affinity:
         nodeAffinity:
@@ -459,14 +459,14 @@ spec:
         effect: NoSchedule
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
         env:
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
             name: env
@@ -474,8 +474,8 @@ spec:
         - mountPath: /host/usr/bin
           name: host-usr-bin
       containers:
-      - name: contrail-analytics-api
-        image: "{{CONTRAIL_REGISTRY}}/contrail-analytics-api:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-api
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-analytics-api:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -484,9 +484,9 @@ spec:
             name: configzookeeperenv
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-analytics-collector
-        image: "{{CONTRAIL_REGISTRY}}/contrail-analytics-collector:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-analytics-collector
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-analytics-collector:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           capabilities:
@@ -496,9 +496,9 @@ spec:
             name: env
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-analytics-nodemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-analytics-nodemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -510,13 +510,13 @@ spec:
           value: analytics
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/run
           name: var-run
         - mountPath: /run/runc
           name: run-runc
-      - name: contrail-analytics-provisioner
-        image: "{{CONTRAIL_REGISTRY}}/contrail-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-provisioner
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -530,7 +530,7 @@ spec:
           value: analytics
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
@@ -543,7 +543,7 @@ spec:
       - name: host-usr-bin
         hostPath:
           path: /usr/bin
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
 
@@ -551,18 +551,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-analytics-snmp
+  name: opensdn-analytics-snmp
   namespace: kube-system
   labels:
-    app: contrail-analytics-snmp
+    app: opensdn-analytics-snmp
 spec:
   selector:
     matchLabels:
-      app: contrail-analytics-snmp
+      app: opensdn-analytics-snmp
   template:
     metadata:
       labels:
-        app: contrail-analytics-snmp
+        app: opensdn-analytics-snmp
     spec:
       affinity:
         nodeAffinity:
@@ -577,19 +577,19 @@ spec:
         effect: NoSchedule
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         env:
         - name: NODE_TYPE
           value: "analytics-snmp"
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
             name: env
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         securityContext:
           privileged: true
         volumeMounts:
@@ -598,8 +598,8 @@ spec:
         - mountPath: /host/var/lib
           name: host-var-lib
       containers:
-      - name: contrail-analytics-snmp-collector
-        image: "{{CONTRAIL_REGISTRY}}/contrail-analytics-snmp-collector:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-snmp-collector
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-analytics-snmp-collector:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -608,12 +608,12 @@ spec:
             name: env
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         env:
         - name: NODE_TYPE
           value: analytics-snmp
-      - name: contrail-analytics-snmp-topology
-        image: "{{CONTRAIL_REGISTRY}}/contrail-analytics-snmp-topology:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-snmp-topology
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-analytics-snmp-topology:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -622,12 +622,12 @@ spec:
             name: env
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         env:
         - name: NODE_TYPE
           value: analytics-snmp
-      - name: contrail-analytics-snmp-nodemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-snmp-nodemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -635,19 +635,19 @@ spec:
         - configMapRef:
             name: env
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         env:
         - name: NODE_TYPE
           value: analytics-snmp
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/run
           name: var-run
         - mountPath: /run/runc
           name: run-runc
-      - name: contrail-analytics-snmp-provisioner
-        image: "{{CONTRAIL_REGISTRY}}/contrail-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-snmp-provisioner
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -657,17 +657,17 @@ spec:
         - configMapRef:
             name: defaults-env
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         env:
         - name: NODE_TYPE
           value: analytics-snmp
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
       - name: host-var-lib
@@ -686,18 +686,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-analytics-alarm
+  name: opensdn-analytics-alarm
   namespace: kube-system
   labels:
-    app: contrail-analytics-alarm
+    app: opensdn-analytics-alarm
 spec:
   selector:
     matchLabels:
-      app: contrail-analytics-alarm
+      app: opensdn-analytics-alarm
   template:
     metadata:
       labels:
-        app: contrail-analytics-alarm
+        app: opensdn-analytics-alarm
     spec:
       affinity:
         nodeAffinity:
@@ -712,19 +712,19 @@ spec:
         effect: NoSchedule
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         env:
         - name: NODE_TYPE
           value: "analytics-alarm"
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
             name: env
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         securityContext:
           privileged: true
         volumeMounts:
@@ -734,7 +734,7 @@ spec:
           name: host-var-lib
       containers:
       - name: kafka
-        image: "{{ CONTRAIL_REGISTRY }}/contrail-external-kafka:{{ CONTRAIL_CONTAINER_TAG }}"
+        image: "{{ CONTRAIL_REGISTRY }}/opensdn-external-kafka:{{ CONTRAIL_CONTAINER_TAG }}"
         imagePullPolicy: "IfNotPresent"
         securityContext:
           privileged: true
@@ -751,8 +751,8 @@ spec:
         volumeMounts:
         - mountPath: /var/log/kafka
           name: kafka-logs
-      - name: contrail-analytics-alarm-gen
-        image: "{{CONTRAIL_REGISTRY}}/contrail-analytics-alarm-gen:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-alarm-gen
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-analytics-alarm-gen:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -763,12 +763,12 @@ spec:
             name: configzookeeperenv
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         env:
         - name: NODE_TYPE
           value: analytics-alarm
-      - name: contrail-analytics-alarm-nodemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-alarm-nodemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -776,19 +776,19 @@ spec:
         - configMapRef:
             name: env
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         env:
         - name: NODE_TYPE
           value: analytics-alarm
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/run
           name: var-run
         - mountPath: /run/runc
           name: run-runc
-      - name: contrail-analytics-alarm-provisioner
-        image: "{{CONTRAIL_REGISTRY}}/contrail-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-analytics-alarm-provisioner
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
@@ -798,17 +798,17 @@ spec:
         - configMapRef:
             name: defaults-env
         - configMapRef:
-            name: contrail-analyticsdb-config
+            name: opensdn-analyticsdb-config
         env:
         - name: NODE_TYPE
           value: analytics-alarm
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
       - name: host-var-lib
@@ -830,18 +830,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-controller-control
+  name: opensdn-controller-control
   namespace: kube-system
   labels:
-    app: contrail-controller-control
+    app: opensdn-controller-control
 spec:
   selector:
     matchLabels:
-      app: contrail-controller-control
+      app: opensdn-controller-control
   template:
     metadata:
       labels:
-        app: contrail-controller-control
+        app: opensdn-controller-control
     spec:
       affinity:
         nodeAffinity:
@@ -856,14 +856,14 @@ spec:
         effect: NoSchedule
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
         env:
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
             name: env
@@ -871,8 +871,8 @@ spec:
         - mountPath: /host/usr/bin
           name: host-usr-bin
       containers:
-      - name: contrail-controller-control
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-control-control:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-controller-control
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-control-control:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           capabilities:
@@ -882,9 +882,9 @@ spec:
             name: env
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-controller-control-dns
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-control-dns:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-controller-control-dns
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-control-dns:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           capabilities:
@@ -896,9 +896,9 @@ spec:
         - mountPath: /etc/contrail
           name: dns-config
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-controller-control-named
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-control-named:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-controller-control-named
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-control-named:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -909,9 +909,9 @@ spec:
         - mountPath: /etc/contrail
           name: dns-config
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-controller-nodemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-controller-nodemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -923,13 +923,13 @@ spec:
           value: control
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/run
           name: var-run
         - mountPath: /run/runc
           name: run-runc
-      - name: contrail-controller-provisioner
-        image: "{{CONTRAIL_REGISTRY}}/contrail-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-controller-provisioner
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -943,11 +943,11 @@ spec:
           value: control
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
       - name: var-run
@@ -965,18 +965,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-controller-config
+  name: opensdn-controller-config
   namespace: kube-system
   labels:
-    app: contrail-controller-config
+    app: opensdn-controller-config
 spec:
   selector:
     matchLabels:
-      app: contrail-controller-config
+      app: opensdn-controller-config
   template:
     metadata:
       labels:
-        app: contrail-controller-config
+        app: opensdn-controller-config
     spec:
       affinity:
         nodeAffinity:
@@ -991,14 +991,14 @@ spec:
         effect: NoSchedule
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
         env:
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
             name: env
@@ -1006,8 +1006,8 @@ spec:
         - mountPath: /host/usr/bin
           name: host-usr-bin
       containers:
-      - name: contrail-controller-config-api
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-config-api:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-controller-config-api
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-config-api:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1016,9 +1016,9 @@ spec:
             name: configzookeeperenv
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-controller-config-devicemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-config-devicemgr:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-controller-config-devicemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-config-devicemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1027,9 +1027,9 @@ spec:
             name: configzookeeperenv
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-controller-config-schema
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-config-schema:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-controller-config-schema
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-config-schema:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1038,9 +1038,9 @@ spec:
             name: configzookeeperenv
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-controller-config-svcmonitor
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-config-svcmonitor:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-controller-config-svcmonitor
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-config-svcmonitor:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1049,9 +1049,9 @@ spec:
             name: configzookeeperenv
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-controller-config-nodemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-controller-config-nodemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1069,13 +1069,13 @@ spec:
           value: "2"
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/run
           name: var-run
         - mountPath: /run/runc
           name: run-runc
-      - name: contrail-controller-config-provisioner
-        image: "{{CONTRAIL_REGISTRY}}/contrail-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-controller-config-provisioner
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1091,11 +1091,11 @@ spec:
           value: "2"
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
       - name: var-run
@@ -1111,18 +1111,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-controller-webui
+  name: opensdn-controller-webui
   namespace: kube-system
   labels:
-    app: contrail-controller-webui
+    app: opensdn-controller-webui
 spec:
   selector:
     matchLabels:
-      app: contrail-controller-webui
+      app: opensdn-controller-webui
   template:
     metadata:
       labels:
-        app: contrail-controller-webui
+        app: opensdn-controller-webui
     spec:
       affinity:
         nodeAffinity:
@@ -1137,14 +1137,14 @@ spec:
         effect: NoSchedule
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
         env:
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
             name: env
@@ -1152,28 +1152,28 @@ spec:
         - mountPath: /host/usr/bin
           name: host-usr-bin
       containers:
-      - name: contrail-controller-webui-job
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-webui-job:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-controller-webui-job
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-webui-job:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
             name: env
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
-      - name: contrail-controller-webui-web
-        image: "{{CONTRAIL_REGISTRY}}/contrail-controller-webui-web:{{CONTRAIL_CONTAINER_TAG}}"
+          name: opensdn-logs
+      - name: opensdn-controller-webui-web
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-webui-web:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
             name: env
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
       - name: host-usr-bin
@@ -1213,7 +1213,7 @@ spec:
       hostNetwork: true
       containers:
       - name: redis
-        image: "{{CONTRAIL_REGISTRY}}/contrail-external-redis:{{CONTRAIL_CONTAINER_TAG}}"
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-external-redis:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1261,7 +1261,7 @@ spec:
       hostNetwork: true
       containers:
       - name: rabbitmq
-        image: "{{CONTRAIL_REGISTRY}}/contrail-external-rabbitmq:{{CONTRAIL_CONTAINER_TAG}}"
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-external-rabbitmq:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         env:
         - name: NODE_TYPE
@@ -1293,18 +1293,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-kube-manager
+  name: opensdn-kube-manager
   namespace: kube-system
   labels:
-    app: contrail-kube-manager
+    app: opensdn-kube-manager
 spec:
   selector:
     matchLabels:
-      app: contrail-kube-manager
+      app: opensdn-kube-manager
   template:
     metadata:
       labels:
-        app: contrail-kube-manager
+        app: opensdn-kube-manager
     spec:
       affinity:
         nodeAffinity:
@@ -1323,14 +1323,14 @@ spec:
       automountServiceAccountToken: false
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
         env:
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
             name: env
@@ -1338,8 +1338,8 @@ spec:
         - mountPath: /host/usr/bin
           name: host-usr-bin
       containers:
-      - name: contrail-kube-manager
-        image: "{{CONTRAIL_REGISTRY}}/contrail-kubernetes-kube-manager:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-kube-manager
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-kubernetes-kube-manager:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1348,18 +1348,18 @@ spec:
             name: kube-manager-config
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /tmp/serviceaccount
           name: pod-secret
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
       - name: pod-secret
         secret:
-          secretName: contrail-kube-manager-token
+          secretName: opensdn-kube-manager-token
       - name: host-usr-bin
         hostPath:
           path: /usr/bin
@@ -1367,18 +1367,18 @@ spec:
 apiVersion: apps/v1
 kind: DaemonSet
 metadata:
-  name: contrail-agent
+  name: opensdn-agent
   namespace: kube-system
   labels:
-    app: contrail-agent
+    app: opensdn-agent
 spec:
   selector:
     matchLabels:
-      app: contrail-agent
+      app: opensdn-agent
   template:
     metadata:
       labels:
-        app: contrail-agent
+        app: opensdn-agent
     spec:
       #Disable affinity for single node setup
       affinity:
@@ -1399,21 +1399,21 @@ spec:
       automountServiceAccountToken: false
       hostNetwork: true
       initContainers:
-      - name: contrail-node-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-node-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-node-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-node-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
           privileged: true
         env:
         - name: CONTRAIL_STATUS_IMAGE
-          value: "{{CONTRAIL_REGISTRY}}/contrail-status:{{CONTRAIL_CONTAINER_TAG}}"
+          value: "{{CONTRAIL_REGISTRY}}/opensdn-status:{{CONTRAIL_CONTAINER_TAG}}"
         envFrom:
         - configMapRef:
             name: env
         volumeMounts:
         - mountPath: /host/usr/bin
           name: host-usr-bin
-      - name: contrail-vrouter-kernel-init-dpdk
+      - name: opensdn-vrouter-kernel-init-dpdk
         image: "{{CONTRAIL_REGISTRY}}/{{VROUTER_KERNEL_INIT_IMAGE}}:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         securityContext:
@@ -1432,8 +1432,8 @@ spec:
           name: host-etc-contrail
         - mountPath: /var/run
           name: var-run
-      - name: contrail-kubernetes-cni-init
-        image: "{{CONTRAIL_REGISTRY}}/contrail-kubernetes-cni-init:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-kubernetes-cni-init
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-kubernetes-cni-init:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1448,15 +1448,15 @@ spec:
         - mountPath: /host/log_cni
           name: var-log-contrail-cni
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       containers:
-      - name: contrail-vrouter-agent-dpdk
-        image: "{{CONTRAIL_REGISTRY}}/contrail-vrouter-agent-dpdk:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-vrouter-agent-dpdk
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-vrouter-agent-dpdk:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         # TODO: Priveleged mode is requied because w/o it the device /dev/net/tun
         # is not present in the container. The mounting it into container
         # doesnt help because of permissions are not enough syscalls,
-        # e.g. https://github.com/Juniper/contrail-controller/blob/master/src/vnsw/agent/contrail/linux/pkt0_interface.cc: 48.
+        # e.g. https://github.com/Juniper/opensdn-controller/blob/master/src/vnsw/agent/contrail/linux/pkt0_interface.cc: 48.
         securityContext:
           privileged: true
         envFrom:
@@ -1474,20 +1474,20 @@ spec:
         - mountPath: /var/run
           name: var-run
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/lib/contrail
           name: var-lib-contrail
         - mountPath: /var/crashes
           name: var-crashes
         - mountPath: /tmp/serviceaccount
           name: pod-secret
-      - name: contrail-vrouter-agent
-        image: "{{CONTRAIL_REGISTRY}}/contrail-vrouter-agent:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-vrouter-agent
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-vrouter-agent:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         # TODO: Priveleged mode is requied because w/o it the device /dev/net/tun
         # is not present in the container. The mounting it into container
         # doesnt help because of permissions are not enough syscalls,
-        # e.g. https://github.com/Juniper/contrail-controller/blob/master/src/vnsw/agent/contrail/linux/pkt0_interface.cc: 48.
+        # e.g. https://github.com/Juniper/opensdn-controller/blob/master/src/vnsw/agent/contrail/linux/pkt0_interface.cc: 48.
         securityContext:
           privileged: true
         envFrom:
@@ -1512,15 +1512,15 @@ spec:
         - mountPath: /usr/src
           name: usr-src
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/lib/contrail
           name: var-lib-contrail
         - mountPath: /var/crashes
           name: var-crashes
         - mountPath: /tmp/serviceaccount
           name: pod-secret
-      - name: contrail-agent-nodemgr
-        image: "{{CONTRAIL_REGISTRY}}/contrail-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-agent-nodemgr
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1530,15 +1530,15 @@ spec:
           value: vrouter
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
         - mountPath: /var/run
           name: var-run
         - mountPath: /run/runc
           name: run-runc
         - mountPath: /var/lib/contrail/loadbalancer
           name: lb-nodemgr
-      - name: contrail-agent-provisioner
-        image: "{{CONTRAIL_REGISTRY}}/contrail-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
+      - name: opensdn-agent-provisioner
+        image: "{{CONTRAIL_REGISTRY}}/opensdn-provisioner:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
         envFrom:
         - configMapRef:
@@ -1550,7 +1550,7 @@ spec:
           value: vrouter
         volumeMounts:
         - mountPath: /var/log/contrail
-          name: contrail-logs
+          name: opensdn-logs
       imagePullSecrets:
       - name: {{ KUBERNETES_SECRET_CONTRAIL_REPO }}
       volumes:
@@ -1574,7 +1574,7 @@ spec:
           path: /run/runc
       - name: pod-secret
         secret:
-          secretName: contrail-kube-manager-token
+          secretName: opensdn-kube-manager-token
       - name: usr-src
         hostPath:
           path: /usr/src
@@ -1596,7 +1596,7 @@ spec:
       - name: var-log-contrail-cni
         hostPath:
           path: /var/log/contrail/cni
-      - name: contrail-logs
+      - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
       - name: host-usr-bin
@@ -1614,7 +1614,7 @@ spec:
 kind: ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
-  name: contrail-kube-manager
+  name: opensdn-kube-manager
   namespace: kube-system
 rules:
   - apiGroups: ["*"]
@@ -1624,27 +1624,27 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: contrail-kube-manager
+  name: opensdn-kube-manager
   namespace: kube-system
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: contrail-kube-manager
+  name: opensdn-kube-manager
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: contrail-kube-manager
+  name: opensdn-kube-manager
 subjects:
 - kind: ServiceAccount
-  name: contrail-kube-manager
+  name: opensdn-kube-manager
   namespace: kube-system
 ---
 apiVersion: v1
 kind: Secret
 metadata:
-  name: contrail-kube-manager-token
+  name: opensdn-kube-manager-token
   namespace: kube-system
   annotations:
-    kubernetes.io/service-account.name: contrail-kube-manager
+    kubernetes.io/service-account.name: opensdn-kube-manager
 type: kubernetes.io/service-account-token

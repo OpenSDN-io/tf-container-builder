@@ -67,8 +67,6 @@ export CONTAINER_NAME_PREFIX=${CONTAINER_NAME_PREFIX:-'contrail'}
 [ -z "$CONTRAIL_CONTAINER_TAG" ] && [ -n "$CONTRAIL_VERSION" ] && CONTRAIL_CONTAINER_TAG=$CONTRAIL_VERSION
 export CONTRAIL_CONTAINER_TAG=${CONTRAIL_CONTAINER_TAG:-'dev'}
 
-default_packages_url="https://s3-us-west-2.amazonaws.com/contrailrhel7/contrail-install-packages-${CONTRAIL_CONTAINER_TAG}.el7.noarch.rpm"
-export CONTRAIL_INSTALL_PACKAGES_URL=${CONTRAIL_INSTALL_PACKAGES_URL:-$default_packages_url}
 export CONTRAIL_REGISTRY=${CONTRAIL_REGISTRY:-'auto'}
 export CONTRAIL_REGISTRY_PUSH=${CONTRAIL_REGISTRY_PUSH:-1}
 export CONTRAIL_REPOSITORY=${CONTRAIL_REPOSITORY:-'auto'}
@@ -201,13 +199,13 @@ export REDIS_SSL_CACERTFILE=${REDIS_SSL_CACERTFILE-${SERVER_CA_CERTFILE}}
 
 # VRouter kernel module init image.
 if [[ "$VROUTER_DPDK" == True ]] ; then
-    export VROUTER_KERNEL_INIT_IMAGE='contrail-vrouter-kernel-init-dpdk'
+    export VROUTER_KERNEL_INIT_IMAGE='opensdn-vrouter-kernel-init-dpdk'
 elif [[ "$LINUX_DISTR" =~ 'ubuntu' ]] ; then
-    export VROUTER_KERNEL_INIT_IMAGE='contrail-vrouter-kernel-build-init'
+    export VROUTER_KERNEL_INIT_IMAGE='opensdn-vrouter-kernel-build-init'
 elif [[ "$LINUX_DISTR" =~ 'rocky' ]] ; then
-    export VROUTER_KERNEL_INIT_IMAGE='contrail-vrouter-kernel-init'
+    export VROUTER_KERNEL_INIT_IMAGE='opensdn-vrouter-kernel-init'
 else
-    export VROUTER_KERNEL_INIT_IMAGE='contrail-vrouter-kernel-init-centos'
+    export VROUTER_KERNEL_INIT_IMAGE='opensdn-vrouter-kernel-init-centos'
 fi
 
 # export vendor label info for containers
