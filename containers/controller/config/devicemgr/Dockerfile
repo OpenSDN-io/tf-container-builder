@@ -19,10 +19,9 @@ LABEL name=$CONTAINER_NAME \
 # pin cryptography - newer version requires rust compiler just for install.
 # but we don't want to install this useless component
 RUN set -e ; \
-    yum install -y libffi-devel ; \
+    yum install -y libffi-devel contrail-fabric-ansible iputils ; \
     python3 -m pip install "cryptography<3.5" ; \
     python3 -m pip install --no-compile --no-binary :all: ansible ansible-core ; \
-    yum install -y iputils ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     source /functions.sh ; \

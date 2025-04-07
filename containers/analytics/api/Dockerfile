@@ -16,7 +16,10 @@ COPY entrypoint.sh /
 
 RUN set -e ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "opserver==0.1.dev0" ; \
-    rm -rf /root/.cache
+    rm -rf /root/.cache ; \
+    yum install -y contrail-docs ; \
+    yum clean all -y ; \
+    rm -rf /var/cache/yum
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/local/bin/contrail-analytics-api", "-c", "/etc/contrail/contrail-analytics-api.conf", "-c", "/etc/contrail/contrail-keystone-auth.conf"]
