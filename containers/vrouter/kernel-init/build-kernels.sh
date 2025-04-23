@@ -46,7 +46,7 @@ kernels="
   vault/rocky/9.0/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-70.30.1.el9_0.x86_64.rpm
   vault/rocky/9.0/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-70.30.1.el9_0.x86_64.rpm
 "
-build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-70.30.1.el9_0.x86_64"
+build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-70.30.1.el9_0.x86_64" &
 # rocky9 kernel for 9.1
 kernels="
   vault/rocky/9.1/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-162.23.1.el9_1.x86_64.rpm
@@ -54,7 +54,7 @@ kernels="
   vault/rocky/9.1/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-162.23.1.el9_1.x86_64.rpm
   vault/rocky/9.1/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-162.23.1.el9_1.x86_64.rpm
 "
-build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-162.23.1.el9_1.x86_64"
+build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-162.23.1.el9_1.x86_64" &
 # TODO: build 9.2, 9.3, 9.4
 # rocky9 kernel for 9.2
 kernels="
@@ -64,7 +64,7 @@ kernels="
   vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-284.30.1.el9_2.x86_64.rpm
   vault/rocky/9.2/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-284.30.1.el9_2.x86_64.rpm
 "
-build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-284.30.1.el9_2.x86_64"
+build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-284.30.1.el9_2.x86_64" &
 # rocky9 kernel for 9.3
 # TODO: maybe use images from https://dl.rockylinux.org/vault/rocky or https://download.rockylinux.org/pub/rocky
 kernels="
@@ -74,4 +74,6 @@ kernels="
   vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-362.13.1.el9_3.x86_64.rpm
   vault/rocky/9.3/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-362.13.1.el9_3.x86_64.rpm
 "
-build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-362.13.1.el9_3.x86_64"
+build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-362.13.1.el9_3.x86_64" &
+
+wait
