@@ -25,7 +25,7 @@ if [[ -e /etc/contrail ]] ; then
   vol_opts+=' -v /etc/contrail:/etc/contrail:ro'
 fi
 
-image=$(echo ${CONTRAIL_STATUS_IMAGE} | sed 's/opensdn-status:/opensdn-tools:/')
+image=$(echo ${CONTRAIL_STATUS_IMAGE} | sed 's/-status:/-tools:/')
 tmp_suffix="--rm --pid host --net host --privileged ${image}"
 tmp_file=/host/usr/bin/opensdn-tools.tmp.${RANDOM}
 cat > $tmp_file << EOM
