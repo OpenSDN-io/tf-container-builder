@@ -61,7 +61,7 @@ else
   export OPENSTACK_VERSION=${OPENSTACK_VERSION:-'queens'}
 fi
 
-export CONTAINER_NAME_PREFIX=${CONTAINER_NAME_PREFIX:-'opensdn'}
+export CONTAINER_NAME_PREFIX=${CONTAINER_NAME_PREFIX:-'contrail'}
 # CONTRAIL_VERSION is deprecated.
 # For Compatibility with Juniper CI. Will be removed.
 [ -z "$CONTRAIL_CONTAINER_TAG" ] && [ -n "$CONTRAIL_VERSION" ] && CONTRAIL_CONTAINER_TAG=$CONTRAIL_VERSION

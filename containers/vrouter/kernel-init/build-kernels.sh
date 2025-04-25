@@ -76,4 +76,4 @@ kernels="
 "
 build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-362.13.1.el9_3.x86_64" &
 
-wait -n
+wait
