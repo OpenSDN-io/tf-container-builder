@@ -25,7 +25,7 @@ function build_kernel() {
   local kernels_list="$1"
   local original_site=$2
   local kver=$3
-  kernels=""
+  local kernels=""
   for kernel in $kernels_list ; do
     kernel_name=$(echo $kernel | awk -F'/' '{print $NF}' )
     download_package $original_site $kernel /tmp/$kernel_name --no-check-certificate
@@ -90,4 +90,12 @@ kernels="
 "
 build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-503.14.1.el9_5.x86_64" &
 
-wait -n
+wait
+
+for k in "5.14.0-284.30.1.el9_2.x86_64" "5.14.0-362.13.1.el9_3.x86_64" "5.14.0-503.14.1.el9_5.x86_64" ; do
+  if [ ! -f /opt/contrail/vrouter-kernel-modules//vrouter.ko ]; then
+    echo "ERROR: there is no built module for kernerl $k"
+    exit 1
+  fi
+done
+
