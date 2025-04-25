@@ -14,9 +14,10 @@ LABEL name=$CONTAINER_NAME \
 
 COPY *.sh /
 
+# schema_transformer is required to be able to run db_manage
 RUN set -e ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
-        "contrail-api-server==0.1.dev0" "vnc_openstack==0.1.dev0" "contrail_issu==0.1.dev0" ; \
+        "contrail-api-server==0.1.dev0" "vnc_openstack==0.1.dev0" "contrail_issu==0.1.dev0" "schema_transformer==0.1.dev0" ; \
     rm -rf /root/.cache ; \
     yum install -y contrail-docs ; \
     yum clean all -y ; \
