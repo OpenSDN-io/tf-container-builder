@@ -84,23 +84,16 @@ kernels="
 build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-362.13.1.el9_3.x86_64"
 
 
-# failed with:
-# from /usr/src/vrouter-master-1_6_1_7-3/linux/vrouter_mod.c:9:
-# /usr/src/vrouter-master-1_6_1_7-3/linux/vrouter_mod.c: In function 'lh_soft_reset':
-# x/workqueue.h:694:9: error: call to '__warn_flushing_systemwide_wq' declared with attribute warning: Please avoid flushing system-wide workqueues. [-Werror=attribute-warning]
-# 694 |         __warn_flushing_systemwide_wq();                                      |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# /usr/src/vrouter-master-1_6_1_7-3/linux/vrouter_mod.c:2272:5: note: in expansion of macro 'flush_scheduled_work'
-# 2272 |     flush_scheduled_work();
 # rocky9 kernel for 9.5
 # TODO: maybe use images from https://dl.rockylinux.org/vault/rocky or https://download.rockylinux.org/pub/rocky
-#kernels="
-#  vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-503.14.1.el9_5.x86_64.rpm
-#  vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-503.14.1.el9_5.x86_64.rpm
-#  vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-503.14.1.el9_5.x86_64.rpm
-#  vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-503.14.1.el9_5.x86_64.rpm
-#  vault/rocky/9.5/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-503.14.1.el9_5.x86_64.rpm
-#"
-#build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-503.14.1.el9_5.x86_64"
+kernels="
+  vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-503.14.1.el9_5.x86_64.rpm
+  vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-503.14.1.el9_5.x86_64.rpm
+  vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-503.14.1.el9_5.x86_64.rpm
+  vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-503.14.1.el9_5.x86_64.rpm
+  vault/rocky/9.5/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-503.14.1.el9_5.x86_64.rpm
+"
+build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-503.14.1.el9_5.x86_64"
 
 
 find /opt/contrail/vrouter-kernel-modules/ | grep vrouter
