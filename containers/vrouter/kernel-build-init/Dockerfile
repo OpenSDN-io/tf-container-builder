@@ -44,15 +44,15 @@ RUN \
     echo "${contrail_version}" > /contrail_version && \
     export DEBIAN_FRONTEND=noninteractive && \
     apt-get update && \
-    apt-get install -y --no-install-recommends dkms libelf-dev g++ && \
-    apt-get install -y --no-install-recommends dnf rpm2cpio cpio ca-certificates && \
+    apt-get install -y --no-install-recommends dkms libelf-dev g++ gcc-12 && \
+    apt-get install -y --no-install-recommends dnf rpm2cpio cpio ca-certificates curl && \
     dnf install -y contrail-vrouter-source && \
     mv /usr/src/* /opt/contrail/src/ && \
     vrouter_path=$(find /opt/contrail/src -type f -name "contrail-vrouter-*.tar.gz") && \
     cd  /vrouter_src && \
     tar -xf "${vrouter_path}" && \
     cd /contrail_tools && \
-    dnf install --downloadonly -y contrail-vrouter-utils && \
+    (cd /var/cache/dnf; for u in `dnf repoquery contrail-vrouter-utils --location`; do curl -LO "$u"; done) && \
     find /var/cache/dnf -name "contrail-vrouter-utils*.rpm" && \
     rpm2cpio $(find /var/cache/dnf -name "contrail-vrouter-utils*.rpm") | cpio -iuvd && \
     cd .. && \
