@@ -13,7 +13,7 @@ LABEL name=$CONTAINER_NAME \
 
 COPY *.sh /
 
-RUN \
+RUN set -e ; \
     /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' && \
     source /etc/os-release && \
     if [[ "$ID" == 'rhel' && "${PLATFORM_ID//*:/}" == 'el8' ]] ; then \

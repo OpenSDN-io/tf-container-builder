@@ -18,7 +18,8 @@ COPY *.sh /
 
 # vim-common is needed because of xxd tool
 
-RUN /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' && \
+RUN set -e ; \
+    /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' && \
     source /functions.sh && \
     source /etc/os-release && \
     ver=$(echo $VERSION_ID | cut -d '.' -f 1) && \

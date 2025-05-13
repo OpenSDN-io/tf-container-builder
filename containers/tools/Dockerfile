@@ -11,7 +11,7 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
 # tshark is needed for sandump tool which is included into contrail-tools package
-RUN \
+RUN set -e ; \
       source /etc/os-release ; \
       pkgs='sudo openssh-clients bzip2 contrail-tools contrail-vrouter-dpdk-tools' ; \
       yum install -y $pkgs ; \

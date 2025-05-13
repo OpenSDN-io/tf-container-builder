@@ -9,7 +9,8 @@ LABEL name=$CONTAINER_NAME \
       description="Prepares the host operating system for the contrail vrouter kernel interface." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN rpm -Uvh --nodeps $(repoquery -q --location contrail-vrouter) && \
+RUN set -e ; \
+    rpm -Uvh --nodeps $(repoquery -q --location contrail-vrouter) && \
     yum clean all -y && \
     rm -rf /var/cache/yum
 

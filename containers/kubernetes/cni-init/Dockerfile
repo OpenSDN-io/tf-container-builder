@@ -10,7 +10,7 @@ LABEL name=$CONTAINER_NAME \
       description="Contrail provides support for Container Network Interface for Kubernetes." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN \
+RUN set -e ; \
     source /functions.sh && \
     download_package https://github.com containernetworking/cni/releases/download/v0.3.0/cni-v0.3.0.tgz /opt/cni-v0.3.0.tgz && \
     yum install -y contrail-k8s-cni && \

@@ -6,7 +6,7 @@ ENV NODE_TYPE=vrouter
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
 # removing network-scripts: this folder will mounted from the host (or not used in Ubuntu) so the one installed by initscripts package in container is removed.
-RUN \
+RUN set -e ; \
     source /etc/os-release ; \
     pkgs='NetworkManager initscripts ethtool pciutils sudo contrail-vrouter-utils' ; \
     yum install -y $pkgs ; \

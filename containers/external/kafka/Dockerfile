@@ -21,7 +21,7 @@ ENV KAFKA_DIR=/opt/kafka \
 
 COPY *.sh /
 
-RUN \
+RUN set -e ; \
     KAFKA_DISTRO_NAME="kafka_2.12-2.6.3" && \
     for item in `ls /__*` ; do mv $item /${item:3} ; done && \
     yum install -y java java-1.8.0-openjdk zip && \

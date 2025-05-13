@@ -10,7 +10,7 @@ ARG LINUX_DISTR=centos
 # note: ldconfig looks strange. contrail-lib installs shared libraries but do not call it...
 # WARNING! all pip deps must be installed with pinned version to avoid breakages when pypi is upgraded.
 # BASE_EXTRA_RPMS by default has link to openstack repo with old centos which must be patched also
-RUN \
+RUN set -e ; \
     sed -e '/^tsflags=nodocs/d' -i /etc/yum.conf ; \
     BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
     if [[ -n "$BASE_EXTRA_RPMS" ]] ; then \

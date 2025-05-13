@@ -15,7 +15,7 @@ COPY *.sh /
 # don't install deps to minimize footprint
 # at deploy step all files will be copied into parent contnaier
 # which has all those packages
-RUN \
+RUN set -e ; \
     mkdir -p /opt/contrail/site-packages && \
     python3 -m pip install --no-deps -t /opt/contrail/site-packages --no-compile --extra-index-url $PIP_REPOSITORY \
         "contrail_api_client==0.1.dev0" "contrail_heat==0.1.dev0" ; \

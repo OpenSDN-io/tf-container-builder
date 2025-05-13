@@ -6,7 +6,8 @@ ENV NODE_TYPE=analytics-snmp
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
 # required to install python's snmp package
-RUN yum install -y net-snmp-devel ; \
+RUN set -e ; \
+    yum install -y net-snmp-devel ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum
 

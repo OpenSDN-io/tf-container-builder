@@ -26,7 +26,7 @@ COPY *.sh /
 COPY __network-functions-vrouter-kernel  __network-functions-vrouter  __network-functions-vrouter-kernel-env /
 COPY __ifup-vhost __ifdown-vhost __dhclient-vhost0.conf /
 
-RUN \
+RUN set -e ; \
     mkdir -p /opt/contrail && \
     for item in `ls /__*` ; do mv $item /${item:3} ; done && \
     dnf -y update-minimal --security --sec-severity=Important --sec-severity=Critical && \
