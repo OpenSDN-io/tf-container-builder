@@ -28,7 +28,7 @@ COPY *.sh /
 # TODO: pin jdk version
 # https://issues.apache.org/jira/projects/CASSANDRA/issues/CASSANDRA-17581?filter=allissues
 # (it can be unpinned after cassandra be upgraded >= 3.11.13)
-RUN \
+RUN set -e ; \
     CASSANDRA_VERSION=3.11.3 && \
     set -ex && for item in `ls /__*` ; do mv $item /${item:3} ; done && \
     yum install -y numactl which jemalloc && \

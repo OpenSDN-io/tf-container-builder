@@ -6,7 +6,8 @@ ARG BASE_EXTRA_RPMS=""
 ENV NODE_TYPE=webui
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
-RUN BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
+RUN set -e ; \
+    BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
     if [[ -n "$BASE_EXTRA_RPMS" ]] ; then \
         echo "INFO: contrail-base: install $BASE_EXTRA_RPMS" ; \
         yum install -y $BASE_EXTRA_RPMS ; \

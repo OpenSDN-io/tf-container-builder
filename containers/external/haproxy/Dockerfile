@@ -11,7 +11,8 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN yum install -y haproxy && \
+RUN set -e ; \
+    yum install -y haproxy && \
     usermod -a -G $CONTRAIL_GID haproxy && \
     yum clean all -y && \
     rm -rf /var/cache/yum

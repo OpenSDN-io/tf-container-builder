@@ -45,7 +45,7 @@ COPY *.sh /
 
 # do not upgrade coreutils: https://bugzilla.redhat.com/show_bug.cgi?id=1764152
 
-RUN \
+RUN set -e ; \
     source /etc/os-release ; \
     YUM_ENABLE_REPOS=$(echo $YUM_ENABLE_REPOS | tr -d '"') ; \
     if [[ -n "$YUM_ENABLE_REPOS" ]] ; then \

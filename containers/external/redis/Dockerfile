@@ -14,7 +14,7 @@ LABEL name=$CONTAINER_NAME \
 
 COPY *.sh /
 
-RUN \
+RUN set -e ; \
     REDIS_RPM_NAME=redis-6.0.15-1.el7.remi.x86_64 && \
     set -ex && for item in `ls /__*` ; do mv $item /${item:3} ; done && \
     source /functions.sh && \

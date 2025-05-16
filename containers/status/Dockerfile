@@ -11,7 +11,8 @@ LABEL name=$CONTAINER_NAME \
       description="Display a list of all components of a Contrail server node and report their current status of active or inactive." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-RUN yum install -y podman lsof ; \
+RUN set -e ; \
+    yum install -y podman lsof ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "nodemgr==0.1.dev0" ; \
