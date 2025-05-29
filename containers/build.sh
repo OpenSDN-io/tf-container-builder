@@ -73,13 +73,13 @@ function process_container() {
     return
   fi
   local start_time=$(date +"%s")
-  # if variable CONTRAIL_CONTAINER_NAME has been set up - use its value as builded container name
-  # use CONTRAIL_CONTAINER_NAME for build the only conainer
-  if [[ -z "${CONTRAIL_CONTAINER_NAME}" ]] ; then
+  # if variable CUSTOM_CONTAINER_NAME has been set up - use its value as builded container name
+  # use CUSTOM_CONTAINER_NAME for build the only src containers
+  if [[ -z "${CUSTOM_CONTAINER_NAME}" ]] ; then
     local container_name=`echo ${dir#"./"} | tr "/" "-"`
     local container_name="${CONTAINER_NAME_PREFIX}-${container_name}"
   else
-    local container_name=${CONTRAIL_CONTAINER_NAME}
+    local container_name=${CUSTOM_CONTAINER_NAME}
   fi
 
   local tag="${CONTRAIL_CONTAINER_TAG}"
