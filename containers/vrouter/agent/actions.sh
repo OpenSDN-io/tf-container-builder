@@ -114,17 +114,11 @@ function prepare_agent_config_vars() {
         done
     fi
 
-    local IS_VLAN_ENABLED IS_ENCRYPTION_SUPPORTED_FLAG
+    local IS_VLAN_ENABLED
     if is_vlan $PHYS_INT; then
         IS_VLAN_ENABLED="true"
     else
         IS_VLAN_ENABLED="false"
-    fi
-
-    if is_encryption_supported ; then
-        IS_ENCRYPTION_SUPPORTED_FLAG="true"
-    else
-        IS_ENCRYPTION_SUPPORTED_FLAG="false"
     fi
 
     local hugepages_option=""
@@ -336,14 +330,6 @@ EOM
         fi
     fi
 
-    local crypt_interface_option=""
-    if [[ "$IS_ENCRYPTION_SUPPORTED_FLAG" == "true" ]]; then
-        read -r -d '' crypt_interface_option << EOM || true
-[CRYPT]
-crypt_interface=$VROUTER_CRYPT_INTERFACE
-EOM
-    fi
-
     local hugepages_option=""
     local xmpp_certs_config sandesh_client_config collector_stats_config
     if (( HUGE_PAGES_1GB > 0 )) ; then
@@ -459,8 +445,6 @@ $qos_queueing_option
 
 $priority_group_option
 
-$crypt_interface_option
-
 [SESSION]
 slo_destination = $SLO_DESTINATION
 sample_destination = $SAMPLE_DESTINATION
@@ -527,20 +511,6 @@ function start_agent() {
 
         local vrouter_agent_process=$!
         echo $vrouter_agent_process > /var/run/vrouter-agent.pid
-
-        # This is to ensure decrypt interface is
-        # plumbed on vrouter for processing.
-        # it will be interim only till vrouter
-        # agent natively have the support for
-        # decrypt interface in 5.0.1
-        if is_encryption_supported ; then
-            if ! add_vrouter_decrypt_intf $VROUTER_DECRYPT_INTERFACE ; then
-                echo "ERROR: decrypt interface was not configured. exiting..."
-                exit 1
-            fi
-        else
-            echo "INFO: Kernel version does not support vrouter to vrouter encryption - Not adding $VROUTER_DECRYPT_INTERFACE to vrouter"
-        fi
 
         echo "INFO: vrouter agent process PID: $vrouter_agent_process"
 
@@ -611,19 +581,6 @@ function vhost0_init() {
     if ! check_vrouter_agent_settings ; then
         echo "FATAL: settings are not correct. Exiting..."
         exit 2
-    fi
-
-    if is_encryption_supported ; then
-        if ! init_crypt0 $VROUTER_CRYPT_INTERFACE ; then
-            echo "ERROR: crypt interface was not added. exiting..."
-            exit 1
-        fi
-        if ! init_decrypt0 $VROUTER_DECRYPT_INTERFACE $VROUTER_DECRYPT_KEY ; then
-            echo "ERROR: decrypt interface was not added. exiting..."
-            exit 1
-        fi
-    else
-        echo "INFO: Kernel version does not support the driver required for vrouter to vrouter encryption"
     fi
 
     init_sriov

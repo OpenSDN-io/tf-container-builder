@@ -21,9 +21,6 @@ function trap_vrouter_agent_hup() {
     term_process $(cat /var/run/vrouter-agent.pid)
 }
 
-#Agents constants
-REQUIRED_KERNEL_VROUTER_ENCRYPTION='4.4.0'
-
 function get_default_gateway_for_nic() {
   local nic=$1
   ip route show dev $nic | grep default | head -n 1 | awk '{print $3}'
@@ -919,86 +916,6 @@ function quit_root_process() {
     local mypid=$(cat /my.pid)
     [ -n "$mypid" ] || mypid=1
     kill -QUIT $mypid
-}
-
-# In release 5.0, vrouter to vrouter encryption
-# works only on kernels 4.4 and above
-function is_encryption_supported() {
-    local enc="${VROUTER_ENCRYPTION:-FALSE}"
-    if [[ "${enc^^}" == 'FALSE' ]]; then
-        return 1
-    fi
-    local kernel_version=`uname -r | cut -d "-" -f 1`
-    printf "${kernel_version}\n${REQUIRED_KERNEL_VROUTER_ENCRYPTION}" | sort -V | head -1 | grep -q $REQUIRED_KERNEL_VROUTER_ENCRYPTION
-}
-
-# create the ipvlan interface for
-# vrouter to vrouter datapath encryption
-function init_crypt0() {
-    local crypt_intf=$1
-    if ip link show $crypt_intf ; then
-        echo "INFO: $crypt_intf already exists"
-        return
-    fi
-
-    load_kernel_module ipvlan || { echo "ERROR: Failed to load ipvlan kernel module" && return 1; }
-    if grep -q aes /proc/cpuinfo ; then
-        load_kernel_module aesni_intel || echo "WARNING: Failed to load aesni_intel kernel module. Proceeding without aesni module."
-    fi
-
-    local mtu=`cat /sys/class/net/vhost0/mtu`
-    mtu=$((mtu-60))
-    ip link add $crypt_intf link vhost0 type ipvlan || { echo "ERROR: Failed to initialize ipvlan interface $crypt_intf" && return 1; }
-    ip link set dev $crypt_intf mtu $mtu up
-    echo "Successfully added ipvlan interface $crypt_intf"
-}
-
-function create_iptables_vrouter_encryption() {
-    local key=$1
-    # create iptables rule for marking the packets such that IPSec kernel can process such packets
-    # UDP port 6635 - MPLSoUDP, 4789 - VXLAN
-    if ! iptables -L -nvx -t mangle | grep -wq 6635 ; then
-        iptables -I OUTPUT -t mangle -p udp --dport 6635 -j MARK --set-mark $key || echo "WARNING: Failed to add iptables rule for MPLS0UDP encryption"
-    fi
-    if ! iptables -L -nvx -t mangle | grep -wq 4789 ; then
-        iptables -I OUTPUT -t mangle -p udp --dport 4789 -j MARK --set-mark $key || echo "WARNING: Failed to add iptables rule for VXLANoUDP encryption"
-    fi
-    if ! iptables -L -nvx -t mangle | grep -wq 47 ; then
-        iptables -I OUTPUT -t mangle -p gre -j MARK --set-mark $key || echo "WARNING: Failed to add iptables rule for GRE encryption"
-    fi
-}
-
-# create decrypt interface for vrouter
-# to vrouter encryption
-function init_decrypt0() {
-    local decrypt_intf=$1
-    local key=$2
-    if ip link show $decrypt_intf ; then
-        echo "INFO: $decrypt_intf already exists"
-    else
-        local mtu=`cat /sys/class/net/vhost0/mtu`
-        local l_ip=$(get_ip_for_nic vhost0)
-        ip tunnel add $decrypt_intf local $l_ip mode vti key $key || { echo "ERROR: Failed to initialize tunnel interface $decrypt_intf" && return 1; }
-        ip link set dev $decrypt_intf mtu $mtu up
-        echo "Successfully added tunnel interface $decrypt_intf and the required iptables rules"
-    fi
-    create_iptables_vrouter_encryption $key
-}
-
-# add the decrypt interface to vrouter
-# this will be required till vrouter agent
-# has the native support for decrrpt interface
-function add_vrouter_decrypt_intf() {
-    local decrypt_intf=$1
-    local mac=$(get_iface_mac vhost0)
-    if ip link show $decrypt_intf | grep -wq UP ; then
-        # wait for vif to initialize
-        sleep 2
-        if ! vif --list | grep -wq $decrypt_intf ; then
-            vif --add $decrypt_intf --mac $mac --vrf 0 --vhost-phys --type physical || { echo "ERROR: Failed to add decrypt interface $decrypt_intf to vrouter" && return 1; }
-            echo "Successfully added tunnel interface $decrypt_intf to vrouter"
-        fi
-    fi
 }
 
 # this check is required for ensuring

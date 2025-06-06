@@ -94,14 +94,9 @@
 | QOS_DEF_HW_QUEUE                   | False                                               |
 | QOS_LOGICAL_QUEUES                 | ""                                                  |
 | QOS_QUEUE_ID                       | ""                                                  |
-| REQUIRED_KERNEL_VROUTER_ENCRYPTION | 4.4.0                                               |
 | SAMPLE_DESTINATION                 | collector                                           |
 | SLO_DESTINATION                    | collector                                           |
 | VROUTER_COMPUTE_NODE_ADDRESS       |                                                     |
-| VROUTER_CRYPT_INTERFACE            | crypt0                                              |
-| VROUTER_DECRYPT_INTERFACE          | decrypt0                                            |
-| VROUTER_DECRYPT_KEY                | 15                                                  |
-| VROUTER_ENCRYPTION                 | FALSE                                               |
 | VROUTER_GATEWAY                    |                                                     |
 | **XMPP**                           |                                                     |
 | SUBCLUSTER                         | ""                                                  |
