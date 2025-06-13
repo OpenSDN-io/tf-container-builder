@@ -98,7 +98,7 @@ build_kernel "$kernels" https://dl.rockylinux.org "5.14.0-503.14.1.el9_5.x86_64"
 
 find /opt/contrail/vrouter-kernel-modules/ | grep vrouter
 
-for k in "5.14.0-284.30.1.el9_2.x86_64" "5.14.0-362.13.1.el9_3.x86_64" ; do
+for k in "5.14.0-284.30.1.el9_2.x86_64" "5.14.0-362.13.1.el9_3.x86_64" "5.14.0-503.14.1.el9_5.x86_64" ; do
   if [ ! -f /opt/contrail/vrouter-kernel-modules/$k/vrouter.ko ]; then
     echo "ERROR: there is no built module for kernerl $k"
     exit 1

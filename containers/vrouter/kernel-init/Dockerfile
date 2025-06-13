@@ -23,30 +23,22 @@ LABEL vendor=$VENDOR_NAME \
 
 COPY *.repo /etc/yum.repos.d/
 COPY *.sh /
-COPY __network-functions-vrouter-kernel  __network-functions-vrouter  __network-functions-vrouter-kernel-env /
-COPY __ifup-vhost __ifdown-vhost __dhclient-vhost0.conf /
 
+# remove all centos repos - they are cause of failure in rocky9 dnf cmd
 RUN set -e ; \
-    mkdir -p /opt/contrail && \
-    for item in `ls /__*` ; do mv $item /${item:3} ; done && \
-    dnf -y update-minimal --security --sec-severity=Important --sec-severity=Critical && \
-    pkgs="NetworkManager initscripts ethtool pciutils sudo python3-setuptools " && \
-    pkgs+="hostname iproute less wget openssl " && \
-    pkgs+="contrail-vrouter-utils contrail-lib " && \
-    dnf install -y $pkgs && \
-    dnf install -y --enablerepo=devel network-scripts &&\
-    cp -r /etc/sysconfig/network-scripts /opt/contrail/ && \
-    mkdir -p /opt/contrail/src /vrouter_src && \
-    contrail_version=${CONTRAIL_VERSION:-$CONTRAIL_CONTAINER_TAG} && \
-    echo "${contrail_version}" > /contrail_version && \
-    dnf install -y module-init-tools make gcc gcc-c++ && \
-    dnf install -y contrail-vrouter-source contrail-vrouter-utils && \
-    mv /usr/src/* /opt/contrail/src/ && \
-    vrouter_path=$(find /opt/contrail/src -type f -name "contrail-vrouter-*.tar.gz") && \
-    cd  /vrouter_src && \
-    tar -xf "${vrouter_path}" && \
-    /build-kernels.sh && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum
+    mkdir -p /opt/contrail ; \
+    for item in `ls /__*` ; do mv $item /${item:3} ; done ; \
+    dnf clean all -y ; dnf makecache ; \
+    find /etc/yum.repos.d/ | grep -i centos | xargs rm ; ls -l /etc/yum.repos.d/ ; \
+    dnf install -y wget make gcc gcc-c++ contrail-vrouter-source ; \
+    mkdir -p /opt/contrail/src /vrouter_src ; \
+    contrail_version=${CONTRAIL_VERSION:-$CONTRAIL_CONTAINER_TAG} ; \
+    echo "${contrail_version}" > /contrail_version ; \
+    mv /usr/src/* /opt/contrail/src/ ; \
+    vrouter_path=$(find /opt/contrail/src -type f -name "contrail-vrouter-*.tar.gz") ; \
+    cd  /vrouter_src ; \
+    tar -xf "${vrouter_path}" ; \
+    /build-kernels.sh ; \
+    dnf clean all -y
 
 ENTRYPOINT ["/entrypoint.sh"]

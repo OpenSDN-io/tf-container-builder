@@ -30,7 +30,6 @@ get_lists_kernels_versions () {
 }
 
 install_kernel_modules () {
-
   local modules=$1
   local kernels=$2
   local sorted_list
