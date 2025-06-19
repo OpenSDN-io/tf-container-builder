@@ -24,12 +24,11 @@ LABEL vendor=$VENDOR_NAME \
 COPY *.repo /etc/yum.repos.d/
 COPY *.sh /
 
-# remove all centos repos - they may be a cause of failure in rocky9 dnf cmd
-# retry dnf makecache - some repo in upstream has broken metadata
+# remove all centos repos - they are cause of failure in rocky9 dnf cmd
 RUN set -e ; \
     mkdir -p /opt/contrail ; \
     for item in `ls /__*` ; do mv $item /${item:3} ; done ; \
-    dnf clean all -y ; dnf makecache || dnf makecache || dnf makecache ; \
+    dnf clean all -y ; dnf makecache ; \
     find /etc/yum.repos.d/ | grep -i centos | xargs rm ; ls -l /etc/yum.repos.d/ ; \
     dnf install -y wget make gcc gcc-c++ contrail-vrouter-source ; \
     mkdir -p /opt/contrail/src /vrouter_src ; \
