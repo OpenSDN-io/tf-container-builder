@@ -253,7 +253,7 @@ if [[ "${leader_node}" != "$my_node" ]] ; then
   leader_nodename=contrail@$leader_node
   while true; do
     rabbitmqctl --node "${RABBITMQ_NODENAME}" shutdown || true
-    /docker-entrypoint.sh rabbitmq-server -detached || exit 1
+    /usr/local/bin/docker-entrypoint.sh rabbitmq-server -detached || exit 1
 
     # NB. working ping doesn't mean the process is able to report status
     while ! rabbitmqctl --node $RABBITMQ_NODENAME ping ; do
@@ -291,5 +291,6 @@ if [[ "${leader_node}" != "$my_node" ]] ; then
   done
   rabbitmqctl --node "${RABBITMQ_NODENAME}" shutdown
 fi
-echo "INFO: $(date): /docker-entrypoint.sh $@"
-exec  /docker-entrypoint.sh "$@"
+
+echo "INFO: $(date): /usr/local/bin/docker-entrypoint.sh $@"
+exec /usr/local/bin/docker-entrypoint.sh "$@"

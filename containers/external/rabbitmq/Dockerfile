@@ -1,49 +1,55 @@
-ARG CONTRAIL_REGISTRY
-ARG CONTRAIL_CONTAINER_TAG
-FROM ${CONTRAIL_REGISTRY}/opensdn-general-base:${CONTRAIL_CONTAINER_TAG}
+FROM rabbitmq:3.10.7-management
 
-ARG SITE_MIRROR
+ARG VENDOR_NAME
+ARG VENDOR_DOMAIN
 ARG CONTAINER_NAME
-ENV SERVICE_NAME=rabbitmq \
+ARG CONTRAIL_CONTAINER_TAG
+ARG LC_ALL="en_US.UTF-8"
+ARG LANG="en_US.UTF-8"
+ARG LANGUAGE="en_US.UTF-8"
+
+# These definitions are just for build purposes and must not be changed at runtime
+ENV VENDOR_DOMAIN=$VENDOR_DOMAIN \
+    VENDOR_NAME=$VENDOR_NAME \
+    CONTRAIL_GID=1999 \
+    CONTRAIL_UID=1999 \
+    CONTRAIL_USER=contrail \
+    CONTRAIL_VERSION=$CONTRAIL_CONTAINER_TAG \
+    LC_ALL=$LC_ALL \
+    LANG=$LANG \
+    LANGUAGE=$LANGUAGE \
+    SERVICE_NAME=rabbitmq \
     RABBITMQ_LOGS=- \
     RABBITMQ_SASL_LOGS=- \
     CONTAINER_NAME=$CONTAINER_NAME
-LABEL name=$CONTAINER_NAME \
+
+LABEL vendor=$VENDOR_NAME \
+      version=$CONTRAIL_CONTAINER_TAG \
+      release="5.1.0" \
+      name=$CONTAINER_NAME \
       summary="Contrail RabbitMQ" \
       description="Contrail Rabbitmq is the message bus that different Contrail processes subscribe to." \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
+# Add required license as text file in Liceses directory
+RUN mkdir /licenses
+COPY __licensing.txt /licenses/licensing.txt
+
 COPY *.sh /
 
-# vim-common is needed because of xxd tool
-
-RUN set -e ; \
-    /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' && \
-    source /functions.sh && \
-    source /etc/os-release && \
-    ver=$(echo $VERSION_ID | cut -d '.' -f 1) && \
-    if [[ ${ver} == 8 ]]; then \
-        RABBITMQ_VERSION="3.10.7" && \
-        ERLANG_VERSION="25.0.4"; \
-    else \
-        RABBITMQ_VERSION="3.7.28" && \
-        ERLANG_VERSION="21.3.8.21"; \
-    fi && \
-    download_package https://packagecloud.io rabbitmq/erlang/packages/el/${ver}/erlang-${ERLANG_VERSION}-1.el${ver}.x86_64.rpm/download.rpm erlang.rpm && \
-    download_package https://packagecloud.io rabbitmq/rabbitmq-server/packages/el/${ver}/rabbitmq-server-${RABBITMQ_VERSION}-1.el${ver}.noarch.rpm/download.rpm rabbitmq-server.rpm && \ 
-    yum install -y erlang.rpm rabbitmq-server.rpm vim-common && \
-    usermod -a -G $CONTRAIL_GID rabbitmq && \
-    usermod -d /var/lib/rabbitmq rabbitmq && \
-    rabbitmq-plugins enable --offline rabbitmq_management && \
-    rm -f *rpm && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum
-
-VOLUME "/var/lib/rabbitmq"
-
-EXPOSE 15671 15672 4369 5671 5672 25672
+# due to changes in debian repos apt-transport-https is needed for
+# update but it can't be installed without update. thus error in
+# first update should be ignored.
+RUN /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' && \
+    export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update || /bin/true && \
+    apt-get -fy install bind9-host xxd && \
+    groupadd --gid $CONTRAIL_GID --system $CONTRAIL_USER && \
+    usermod -a -G $CONTRAIL_GID rabbitmq
 
 ENTRYPOINT ["/contrail-entrypoint.sh"]
 
 CMD ["rabbitmq-server"]
+
+ENV CONTRAIL_VERSION=$CONTRAIL_CONTAINER_TAG
