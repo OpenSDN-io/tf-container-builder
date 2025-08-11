@@ -15,6 +15,7 @@ cd $CACHE_DIR
 wget -nv -t3 -P containernetworking/cni/releases/download/v0.3.0 https://github.com/containernetworking/cni/releases/download/v0.3.0/cni-v0.3.0.tgz
 wget -nv -t3 -P opensdn-io/tf-third-party-cache/raw/master/tshark https://github.com/opensdn-io/tf-third-party-cache/raw/master/tshark/tshark3_2.tar.bz2
 wget -nv -t3 -P dnsmasq  http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.80.tar.xz
+wget -nv -t3 -P dnsmasq  http://www.thekelleys.org.uk/dnsmasq/dnsmasq-2.90.tar.xz
 
 wget -nv -t3 -P rabbitmq/erlang/packages/el/7/erlang-21.3.8.21-1.el7.x86_64.rpm https://packagecloud.io/rabbitmq/erlang/packages/el/7/erlang-21.3.8.21-1.el7.x86_64.rpm/download.rpm
 wget -nv -t3 -P rabbitmq/rabbitmq-server/packages/el/7/rabbitmq-server-3.7.20-1.el7.noarch.rpm https://packagecloud.io/rabbitmq/rabbitmq-server/packages/el/7/rabbitmq-server-3.7.20-1.el7.noarch.rpm/download.rpm
@@ -25,6 +26,9 @@ wget -nv -t3 -P rabbitmq/rabbitmq-server/packages/el/8/rabbitmq-server-3.7.28-1.
 # for ubi8 rabbit 3.10
 wget -nv -t3 -P rabbitmq/rabbitmq-server/packages/el/8/rabbitmq-server-3.10.7-1.el8.noarch.rpm https://packagecloud.io/rabbitmq/rabbitmq-server/packages/el/8/rabbitmq-server-3.10.7-1.el8.noarch.rpm/download.rpm
 wget -nv -t3 -P rabbitmq/erlang/packages/el/8/erlang-25.0.4-1.el8.x86_64.rpm https://packagecloud.io/rabbitmq/erlang/packages/el/8/erlang-25.0.4-1.el8.x86_64.rpm/download.rpm
+# for rocky9
+wget -nv -t3 -P rabbitmq/rabbitmq-server/packages/el/8/rabbitmq-server-3.12.13-1.el8.noarch.rpm https://packagecloud.io/rabbitmq/rabbitmq-server/packages/el/8/rabbitmq-server-3.12.13-1.el8.noarch.rpm/download.rpm
+wget -nv -t3 -P rabbitmq/erlang/packages/el/8/erlang-25.3.2.15-1.el8.x86_64.rpm https://packagecloud.io/rabbitmq/erlang/packages/el/8/erlang-25.3.2.15-1.el8.x86_64.rpm/download.rpm
 
 wget -nv -t3 -P pip/2.7 https://bootstrap.pypa.io/pip/2.7/get-pip.py
 
