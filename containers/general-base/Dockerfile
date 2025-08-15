@@ -65,7 +65,7 @@ RUN set -e ; \
     fi ; \
     yum update -y -x "redhat-release*" -x "coreutils*"  \
     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \
-    pkgs="hostname iproute less wget openssl" ; \
+    pkgs="hostname iproute less wget openssl glibc-langpack-en rsync" ; \
     GENERAL_EXTRA_RPMS=$(echo $GENERAL_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
     if [[ -n "$GENERAL_EXTRA_RPMS" ]] ; then \
         pkgs+=" $GENERAL_EXTRA_RPMS" ; \

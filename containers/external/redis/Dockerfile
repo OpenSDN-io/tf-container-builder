@@ -15,8 +15,14 @@ LABEL name=$CONTAINER_NAME \
 COPY *.sh /
 
 RUN set -e ; \
-    REDIS_RPM_NAME=redis-6.0.15-1.el7.remi.x86_64 && \
-    set -ex && for item in `ls /__*` ; do mv $item /${item:3} ; done && \
+    source /etc/os-release && \
+    ver=$(echo $VERSION_ID | cut -d '.' -f 1) && \
+    if [[ ${ver} == 9 ]]; then \
+        REDIS_RPM_NAME=redis-6.0.19-1.el9.remi.x86_64 ; \
+    else \
+        REDIS_RPM_NAME=redis-6.0.15-1.el7.remi.x86_64 ; \
+    fi && \
+    for item in `ls /__*` ; do mv $item /${item:3} ; done && \
     source /functions.sh && \
     download_package https://github.com opensdn-io/tf-third-party-cache/blob/master/redis/${REDIS_RPM_NAME}.rpm?raw=true ${REDIS_RPM_NAME}.rpm && \
     yum install ${REDIS_RPM_NAME}.rpm -y && \

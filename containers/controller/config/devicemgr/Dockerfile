@@ -20,7 +20,8 @@ LABEL name=$CONTAINER_NAME \
 # but we don't want to install this useless component
 RUN set -e ; \
     yum install -y libffi-devel contrail-fabric-ansible iputils ; \
-    python3 -m pip install "cryptography<3.5" ; \
+    # ansible-core requires importlib-resources to be installed
+    python3 -m pip install "cryptography<3.5" "importlib-resources<5.1"; \
     python3 -m pip install --no-compile --no-binary :all: ansible ansible-core ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \

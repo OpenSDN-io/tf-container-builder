@@ -18,6 +18,8 @@ RUN set -e ; \
     source /etc/os-release && \
     if [[ "$ID" == 'rhel' && "${PLATFORM_ID//*:/}" == 'el8' ]] ; then \
         RSYSLOG_VERSION=8.37.0 ; \
+    elif [[ "${PLATFORM_ID//*:/}" == 'el9' ]] ; then \
+        RSYSLOG_VERSION=8.2310.0 ; \
     else \
         RSYSLOG_VERSION=8.24.0 ; \
     fi && \

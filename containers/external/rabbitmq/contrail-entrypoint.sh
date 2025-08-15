@@ -188,7 +188,7 @@ if [[ -n "$RABBITMQ_MIRRORED_QUEUE_MODE" ]] ; then
     {
       "vhost": "/",
       "name": "ha",
-      "pattern": "^(?!amq\.).*",
+      "pattern": "^(?!amq\\\.).*",
       "definition": {
           "ha-mode": "$RABBITMQ_MIRRORED_QUEUE_MODE",
           "ha-sync-mode": "automatic",
