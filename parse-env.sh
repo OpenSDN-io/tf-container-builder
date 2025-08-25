@@ -80,9 +80,6 @@ fi
 export CONTRAIL_PARALLEL_BUILD=${CONTRAIL_PARALLEL_BUILD:-'false'}
 export CONTRAIL_KEEP_LOG_FILES=${CONTRAIL_KEEP_LOG_FILES:-'false'}
 
-export GENERAL_EXTRA_RPMS=${GENERAL_EXTRA_RPMS-""}
-# use some stable OpenStack repo for Contrail's dependencies
-export BASE_EXTRA_RPMS=${BASE_EXTRA_RPMS-"https://repos.fedorapeople.org/repos/openstack/EOL/openstack-queens/rdo-release-queens-2.noarch.rpm"}
 export DOCKER_REPO=${DOCKER_REPO:-'https://download.docker.com/linux/centos/docker-ce.repo'}
 
 export CONTROLLER_NODES=${CONTROLLER_NODES:-$HOST_IP}

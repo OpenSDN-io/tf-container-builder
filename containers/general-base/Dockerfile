@@ -19,8 +19,6 @@ LABEL vendor=$VENDOR_NAME \
 RUN mkdir /licenses
 COPY licensing.txt /licenses
 
-ARG GENERAL_EXTRA_RPMS=""
-ARG YUM_ENABLE_REPOS=""
 ARG LC_ALL="en_US.UTF-8"
 ARG LANG="en_US.UTF-8"
 ARG LANGUAGE="en_US.UTF-8"
@@ -47,15 +45,6 @@ COPY *.sh /
 # remove all not-this-OS repos
 RUN set -e ; \
     source /etc/os-release ; \
-    YUM_ENABLE_REPOS=$(echo $YUM_ENABLE_REPOS | tr -d '"') ; \
-    if [[ -n "$YUM_ENABLE_REPOS" ]] ; then \
-        echo "INFO: contrail-general-base: enable repos $YUM_ENABLE_REPOS" ; \
-        if ! type -p yum-config-manager ; then \
-            yum install -y yum-utils ; \
-        fi ; \
-        yum-config-manager --enable $YUM_ENABLE_REPOS ; \
-        yum clean metadata ; \
-    fi ; \
     if [[ "$LINUX_DISTR" == "centos" ]]; then \
         for file in /etc/yum.repos.d/CentOS-* ; do grep -v mirrorlist= "$file" > "$file".new && mv "$file".new "$file" ; done ; \
         sed -i 's|#\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* ; \
@@ -65,12 +54,7 @@ RUN set -e ; \
     fi ; \
     yum update -y -x "redhat-release*" -x "coreutils*"  \
     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \
-    pkgs="hostname iproute less wget openssl glibc-langpack-en rsync" ; \
-    GENERAL_EXTRA_RPMS=$(echo $GENERAL_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
-    if [[ -n "$GENERAL_EXTRA_RPMS" ]] ; then \
-        pkgs+=" $GENERAL_EXTRA_RPMS" ; \
-    fi ; \
-    yum install -y $pkgs ; \
+    yum install -y hostname iproute less wget openssl glibc-langpack-en rsync ; \
     source /functions.sh ; \
     yum install -y python3 python3-pip ; \
     # pip9 is too old and breaks install of gevent with c++ errors

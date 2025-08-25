@@ -3,22 +3,10 @@ ARG CONTRAIL_CONTAINER_TAG
 FROM ${CONTRAIL_REGISTRY}/opensdn-general-base:${CONTRAIL_CONTAINER_TAG}
 
 ARG LINUX_DISTR=centos
-ARG BASE_EXTRA_RPMS=""
 ENV NODE_TYPE=webui
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
 RUN set -e ; \
-    BASE_EXTRA_RPMS=$(echo $BASE_EXTRA_RPMS | tr -d '"' | tr ',' ' ') ; \
-    if [[ -n "$BASE_EXTRA_RPMS" ]] ; then \
-        echo "INFO: contrail-base: install $BASE_EXTRA_RPMS" ; \
-        yum install -y $BASE_EXTRA_RPMS ; \
-        echo "INFO: importing gpg keys from any newly installed repos" ; \
-        [ -d /etc/pki/rpm-gpg ] && rpm --import /etc/pki/rpm-gpg/* ; \
-        if [[ "$LINUX_DISTR" == "centos" ]]; then \
-            for file in /etc/yum.repos.d/rdo-* ; do grep -v mirrorlist= "$file" > "$file".new && mv "$file".new "$file" ; done ; \
-            sed -i 's|#\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/rdo-* ; \
-        fi ; \
-    fi ; \
     source /etc/os-release && \
     ver=$(echo $VERSION_ID | cut -d '.' -f 1) ; \
     if [[ ${ver} == 9 ]]; then \
