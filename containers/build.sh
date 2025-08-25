@@ -91,13 +91,12 @@ function process_container() {
   build_arg_opts+=" --build-arg SITE_MIRROR=${SITE_MIRROR}"
   build_arg_opts+=" --build-arg LINUX_DISTR_VER=${LINUX_DISTR_VER}"
   build_arg_opts+=" --build-arg LINUX_DISTR=${LINUX_DISTR}"
-  build_arg_opts+=" --build-arg GENERAL_EXTRA_RPMS=\"${GENERAL_EXTRA_RPMS}\""
-  build_arg_opts+=" --build-arg BASE_EXTRA_RPMS=\"${BASE_EXTRA_RPMS}\""
   build_arg_opts+=" --build-arg CONTAINER_NAME=${container_name}"
   build_arg_opts+=" --build-arg UBUNTU_DISTR_VERSION=${UBUNTU_DISTR_VERSION}"
   build_arg_opts+=" --build-arg UBUNTU_DISTR=${UBUNTU_DISTR}"
   build_arg_opts+=" --build-arg VENDOR_NAME=${VENDOR_NAME}"
   build_arg_opts+=" --build-arg VENDOR_DOMAIN=${VENDOR_DOMAIN}"
+  build_arg_opts+=" --build-arg BUILD_IMAGE=tf-dev-sandbox:compile"
 
   if [[ -f ./$dir/.externals ]]; then
     local item=''

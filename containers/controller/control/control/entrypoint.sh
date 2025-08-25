@@ -62,4 +62,7 @@ set_vnc_api_lib_ini
 
 upgrade_old_logs "contrail-control"
 
+# do setcap here instead of in dockerfile - there it adds one more layer with contrail-control and increase image by its size
+setcap cap_net_bind_service+ep /usr/bin/contrail-control
+
 run_service "$@"

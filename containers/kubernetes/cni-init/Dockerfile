@@ -1,5 +1,8 @@
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM $BUILD_IMAGE AS build
+
 FROM ${CONTRAIL_REGISTRY}/opensdn-base:${CONTRAIL_CONTAINER_TAG}
 
 ARG SITE_MIRROR
@@ -10,12 +13,10 @@ LABEL name=$CONTAINER_NAME \
       description="Contrail provides support for Container Network Interface for Kubernetes." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
+COPY --from=build /root/work/build/production/container/cni/bin/kube_cni /usr/bin/contrail-k8s-cni
 RUN set -e ; \
-    source /functions.sh && \
-    download_package https://github.com containernetworking/cni/releases/download/v0.3.0/cni-v0.3.0.tgz /opt/cni-v0.3.0.tgz && \
-    yum install -y contrail-k8s-cni && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum
+    source /functions.sh ; \
+    download_package https://github.com containernetworking/cni/releases/download/v0.3.0/cni-v0.3.0.tgz /opt/cni-v0.3.0.tgz
 
 COPY entrypoint.sh /
 

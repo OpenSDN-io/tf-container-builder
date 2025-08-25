@@ -13,8 +13,7 @@ LABEL name=$CONTAINER_NAME \
 # tshark is needed for sandump tool which is included into contrail-tools package
 RUN set -e ; \
       source /etc/os-release ; \
-      pkgs='sudo openssh-clients bzip2 contrail-tools contrail-vrouter-dpdk-tools' ; \
-      yum install -y $pkgs ; \
+      yum install -y sudo openssh-clients bzip2 contrail-tools contrail-vrouter-dpdk-tools ; \
       yum clean all -y ; \
       rm -rf /var/cache/yum ; \
       source /functions.sh ; \

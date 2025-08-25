@@ -81,12 +81,6 @@ if [[ ! -f ${DNS_NAMED_CONFIG_DIRECTORY}/${DNS_NAMED_CONFIG_FILE} ]] ; then
     cp /opt/contrail_dns/contrail-named.conf ${DNS_NAMED_CONFIG_DIRECTORY}/${DNS_NAMED_CONFIG_FILE}
 fi
 
-file_apply_config_py=${DNS_NAMED_CONFIG_DIRECTORY}/applynamedconfig.py
-if [[ ! -f "$file_apply_config_py" ]] ; then
-    echo "INFO: copy /opt/contrail_dns/applynamedconfig.py to $file_apply_config_py"
-    cp /opt/contrail_dns/applynamedconfig.py $file_apply_config_py
-fi
-
 add_ini_params_from_env DNS /etc/contrail/contrail-dns.conf
 
 set_third_party_auth_config

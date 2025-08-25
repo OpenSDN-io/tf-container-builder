@@ -8,8 +8,7 @@ LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 # removing network-scripts: this folder will mounted from the host (or not used in Ubuntu) so the one installed by initscripts package in container is removed.
 RUN set -e ; \
     source /etc/os-release ; \
-    pkgs='NetworkManager initscripts ethtool pciutils sudo contrail-vrouter-utils' ; \
-    yum install -y $pkgs ; \
+    yum install -y NetworkManager initscripts ethtool pciutils sudo contrail-vrouter-utils ; \
     yum clean all -y ; \
     if [[ "$ID" == 'rhel' && "${PLATFORM_ID//*:/}" == 'el8' ]] ; then \
         rm -f /usr/sbin/ifup /usr/sbin/ifdown && \

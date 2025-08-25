@@ -1,5 +1,8 @@
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM $BUILD_IMAGE AS build
+
 FROM ${CONTRAIL_REGISTRY}/opensdn-controller-control-base:${CONTRAIL_CONTAINER_TAG}
 
 ARG CONTAINER_NAME
@@ -11,7 +14,20 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
+COPY --from=build /root/work/build/sbin/contrail-named /usr/bin/contrail-named
+COPY --from=build /root/work/build/lib/libisc*so /usr/lib/
+COPY --from=build /root/work/build/lib/libdns*so /usr/lib/
+COPY --from=build /root/work/build/lib/libns*so /usr/lib/
+
 COPY entrypoint.sh /
+
+RUN set -e ; \
+    if [ ! -f /etc/authbind/byport/53 ]; then \
+        touch /etc/authbind/byport/53 ; \
+        chown contrail. /etc/authbind/byport/53 ; \
+        chmod 0755 /etc/authbind/byport/53 ; \
+    fi ; \
+    ldconfig
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["/usr/bin/contrail-named","-f","-u","contrail","-c","/etc/contrail/dns/contrail-named.conf"]

@@ -1,5 +1,8 @@
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM $BUILD_IMAGE AS build
+
 FROM ${CONTRAIL_REGISTRY}/opensdn-analytics-base:${CONTRAIL_CONTAINER_TAG}
 
 ARG CONTAINER_NAME
@@ -13,8 +16,16 @@ LABEL name=$CONTAINER_NAME \
 
 COPY entrypoint.sh /
 
+COPY --from=build /root/work/build/production/analytics/vizd /usr/bin/contrail-collector
 RUN set -e ; \
-    yum install -y contrail-analytics ; \
+    source /etc/os-release && \
+    ver=$(echo $VERSION_ID | cut -d '.' -f 1) ; \
+    if [[ ${ver} == 9 ]]; then \
+        pkgs="boost" ; \
+    else \
+        pkgs="boost169" ; \
+    fi ; \
+    yum install -y $pkgs protobuf redis cassandra-cpp-driver libzookeeper librdkafka1 ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum
 

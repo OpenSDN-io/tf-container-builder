@@ -1,5 +1,8 @@
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM $BUILD_IMAGE AS build
+
 FROM ${CONTRAIL_REGISTRY}/opensdn-controller-config-base:${CONTRAIL_CONTAINER_TAG}
 ARG PIP_REPOSITORY
 
@@ -18,8 +21,9 @@ LABEL name=$CONTAINER_NAME \
 
 # pin cryptography - newer version requires rust compiler just for install.
 # but we don't want to install this useless component
+COPY --from=build /root/work/build/production/config/fabric-ansible/ansible-playbooks/dist/fabric_ansible_playbooks-0.1.dev0.tar.gz /opt/contrail/fabric_ansible_playbooks/
 RUN set -e ; \
-    yum install -y libffi-devel contrail-fabric-ansible iputils ; \
+    yum install -y libffi-devel iputils ; \
     # ansible-core requires importlib-resources to be installed
     python3 -m pip install "cryptography<3.5" "importlib-resources<5.1"; \
     python3 -m pip install --no-compile --no-binary :all: ansible ansible-core ; \

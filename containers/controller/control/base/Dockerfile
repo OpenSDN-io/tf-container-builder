@@ -6,10 +6,14 @@ ENV NODE_TYPE=control
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
 RUN set -e ; \
-    yum install -y contrail-control contrail-dns ; \
-    mkdir -p /opt/contrail_dns ; \
-    cp -r /etc/contrail/dns/* /opt/contrail_dns/ ; \
-    chown -R contrail:contrail /etc/contrail/ ; \
+    source /etc/os-release && \
+    ver=$(echo $VERSION_ID | cut -d '.' -f 1) ; \
+    if [[ ${ver} == 9 ]]; then \
+        pkgs="boost" ; \
+    else \
+        pkgs="boost169" ; \
+    fi ; \
+    yum install -y $pkgs authbind cassandra-cpp-driver ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum
 

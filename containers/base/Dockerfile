@@ -1,17 +1,26 @@
 # This is the base for contrail specific children
 
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM $BUILD_IMAGE AS build
+
 FROM ${CONTRAIL_REGISTRY}/opensdn-general-base:${CONTRAIL_CONTAINER_TAG}
 ARG PIP_REPOSITORY
 ARG LINUX_DISTR=centos
 
-# note: ldconfig looks strange. contrail-lib installs shared libraries but do not call it...
+# contrail-lib package - copy libs here to minimize size of several leaf images
+# maybe we have to extract one more base image for c++ binaries
+COPY --from=build /root/work/build/lib/libipfix.so* /usr/lib/
+COPY --from=build /root/work/build/lib/liblog4cplus.so /usr/lib/
+COPY --from=build /root/work/build/lib/liblog4cplus-2.1.so* /usr/lib/
+
 # WARNING! all pip deps must be installed with pinned version to avoid breakages when pypi is upgraded.
 RUN set -e ; \
     sed -e '/^tsflags=nodocs/d' -i /etc/yum.conf ; \
-    # net-tools has netstat which is used by opensdn-test inside kubemanager container
-    yum install -y nc gcc python3-devel contrail-lib net-tools ; \
+    # net-tools has netstat which is used in vrouter-dpdk, opensdn-status and by opensdn-test inside kubemanager container
+    # libatomic libuv userspace-rcu tbb - for c++ binaries
+    yum install -y nc gcc python3-devel net-tools libatomic libuv userspace-rcu tbb ; \
     # NOTE: utils must be placed into /opt/contrail/utils
     # TODO: rework utils with extra_scripts in setup.py
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "contrail_config_utils==0.1.dev0" ; \
