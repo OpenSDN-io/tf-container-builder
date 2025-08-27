@@ -1,58 +1,53 @@
-ARG CONTRAIL_REGISTRY
-ARG CONTRAIL_CONTAINER_TAG
-FROM ${CONTRAIL_REGISTRY}/opensdn-general-base:${CONTRAIL_CONTAINER_TAG}
+FROM zookeeper:3.7.1
 
-ARG SITE_MIRROR
+ARG VENDOR_NAME
+ARG VENDOR_DOMAIN
+
 ARG CONTAINER_NAME
-ENV SERVICE_NAME=zookeeper \
+ARG CONTRAIL_CONTAINER_TAG
+
+ARG LC_ALL="en_US.UTF-8"
+ARG LANG="en_US.UTF-8"
+ARG LANGUAGE="en_US.UTF-8"
+
+# These definitions are just for build purposes and must not be changed at runtime
+ENV VENDOR_DOMAIN=$VENDOR_DOMAIN \
+    VENDOR_NAME=$VENDOR_NAME \
+    CONTRAIL_GID=1999 \
+    CONTRAIL_UID=1999 \
+    CONTRAIL_USER=contrail \
+    CONTRAIL_VERSION=$CONTRAIL_CONTAINER_TAG \
+    LC_ALL=$LC_ALL \
+    LANG=$LANG \
+    LANGUAGE=$LANGUAGE \
+    SERVICE_NAME=zookeeper \
     CONTAINER_NAME=$CONTAINER_NAME
-LABEL name=$CONTAINER_NAME \
+
+LABEL vendor=$VENDOR_NAME \
+      version=$CONTRAIL_CONTAINER_TAG \
+      release="5.1.0" \
+      name=$CONTAINER_NAME \
       summary="Contrail Zookeeper" \
       description="Contrail uses the Apache ZooKeeper process to maintain synchronization of Contrail configuration, analytics and database running on the different instances of controllers." \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-ARG ZOO_VERSION="3.7.1"
-ARG ZOO_DISTRO_NAME="apache-zookeeper-${ZOO_VERSION}-bin"
-
-ENV ZOO_CONF_DIR=/conf \
-    ZOO_DATA_DIR=/data \
-    ZOO_DATA_LOG_DIR=/datalog \
-    ZOO_LOG_DIR=/logs \
-    ZOO_TICK_TIME=2000 \
-    ZOO_INIT_LIMIT=5 \
-    ZOO_SYNC_LIMIT=2 \
-    ZOO_AUTOPURGE_PURGEINTERVAL=0 \
-    ZOO_AUTOPURGE_SNAPRETAINCOUNT=3 \
-    ZOO_MAX_CLIENT_CNXNS=60 \
-    ZOO_USER="zookeeper" \
-    ZOO_GROUP="zookeeper" \
-    PATH=$PATH:/${ZOO_DISTRO_NAME}/bin \
-    ZOOCFGDIR=/conf
+# Add required license as text file in Liceses directory
+RUN mkdir /licenses
+COPY __licensing.txt /licenses/licensing.txt
 
 COPY *.sh /
 
-RUN set -ex && for item in `ls /__*` ; do mv $item /${item:3} ; done && \
-    yum install -y java java-1.8.0-openjdk nmap-ncat && \
-    groupadd -f -g 1000 $ZOO_GROUP && adduser -u 1000 -M -g $ZOO_GROUP $ZOO_USER && \
-    usermod -a -G $CONTRAIL_GID $ZOO_USER && \
-    mkdir -p "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR" "$ZOO_LOG_DIR" && \
-    chown -R ${ZOO_USER}:${ZOO_GROUP} "$ZOO_DATA_LOG_DIR" "$ZOO_DATA_DIR" "$ZOO_CONF_DIR" "$ZOO_LOG_DIR" && \
-    source /functions.sh && \
-    download_package https://archive.apache.org dist/zookeeper/zookeeper-${ZOO_VERSION}/${ZOO_DISTRO_NAME}.tar.gz ${ZOO_DISTRO_NAME}.tar.gz && \
-    tar -xzvf $ZOO_DISTRO_NAME.tar.gz && \
-    rm -rf  $ZOO_DISTRO_NAME.tar.gz && \
-    mv "${ZOO_DISTRO_NAME}/conf/"* "$ZOO_CONF_DIR" && \
-    chown -R ${ZOO_USER}:${ZOO_GROUP} $ZOO_DISTRO_NAME && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum
-
-WORKDIR ${ZOO_DISTRO_NAME}
-
-VOLUME ["$ZOO_DATA_DIR", "$ZOO_DATA_LOG_DIR", "$ZOO_LOG_DIR"]
-
-EXPOSE 2181 2888 3888
+RUN /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' ; \
+    export DEBIAN_FRONTEND=noninteractive ; \
+    apt-get update || /bin/true ; \
+    apt-get -y install python3-minimal ; \
+    groupadd --gid $CONTRAIL_GID --system $CONTRAIL_USER ; \
+    usermod -a -G $CONTRAIL_GID zookeeper ; \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENTRYPOINT ["/contrail-entrypoint.sh"]
 
 CMD ["zkServer.sh", "start-foreground"]
+
+ENV CONTRAIL_VERSION=$CONTRAIL_CONTAINER_TAG

@@ -78,16 +78,4 @@ done
 # to prevent errors if some folder are absent (not mounted or not created)
 mkdir -p "$ZOO_DATA_DIR" "$ZOO_DATA_LOG_DIR" "$ZOO_LOG_DIR"
 
-# Write myid only if it doesn't exist
-if [[ ! -f "$ZOO_DATA_DIR/myid" ]]; then
-    echo "${ZOO_MY_ID}" > "$ZOO_DATA_DIR/myid"
-fi
-#w/a for upgrade from 3.4 to 3.6 zookeeper
-#hhttps://issues.apache.org/jira/browse/ZOOKEEPER-3056
-touch ${ZOO_DATA_DIR}/snapshot.0
-
-chown -R ${ZOO_USER}:${ZOO_GROUP}  "$ZOO_DATA_DIR" "$ZOO_DATA_LOG_DIR" "$ZOO_LOG_DIR" "$ZOO_CONF_DIR"
-CONTRAIL_UID=$( id -u ${ZOO_USER} )
-CONTRAIL_GID=$( id -g ${ZOO_GROUP} )
-
-do_run_service "$@"
+/docker-entrypoint.sh "$@"
