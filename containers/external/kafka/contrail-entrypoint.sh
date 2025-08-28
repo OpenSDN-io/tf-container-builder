@@ -4,8 +4,6 @@ set -e
 
 source /common.sh
 
-export JAVA_HOME=$(find /usr/lib/jvm/ -name java-1.8.0*)/jre
-export PATH=$JAVA_HOME/bin:$PATH
 : ${KAFKA_LISTEN_ADDRESS='auto'}
 my_ip=''
 my_index=1
@@ -120,4 +118,4 @@ chmod -R 750 "$LOG_DIR"
 CONTRAIL_UID=$(id -u $KAFKA_USER)
 CONTRAIL_GID=$(id -g $KAFKA_GROUP)
 
-do_run_service "$@"
+exec "$KAFKA_DIR/bin/kafka-server-start.sh" "$CONFIG"
