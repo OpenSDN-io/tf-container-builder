@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-HAPROXY_FILE=/etc/haproxy/haproxy.cfg
+HAPROXY_FILE=/usr/local/etc/haproxy/haproxy.cfg
 cat > $HAPROXY_FILE << EOM
 global
         tune.maxrewrite 1024
