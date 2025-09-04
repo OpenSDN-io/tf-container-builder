@@ -213,6 +213,14 @@ spec:
           name: host-usr-bin
         - mountPath: /host/var/lib
           name: host-var-lib
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       containers:
       - name: opensdn-analyticsdb-nodemgr
         image: "{{CONTRAIL_REGISTRY}}/opensdn-nodemgr:{{CONTRAIL_CONTAINER_TAG}}"
@@ -313,6 +321,19 @@ spec:
       - name: host-var-lib
         hostPath:
           path: /var/lib
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -464,6 +485,14 @@ spec:
         volumeMounts:
         - mountPath: /host/usr/bin
           name: host-usr-bin
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       containers:
       - name: opensdn-analytics-api
         image: "{{CONTRAIL_REGISTRY}}/opensdn-analytics-api:{{CONTRAIL_CONTAINER_TAG}}"
@@ -537,6 +566,18 @@ spec:
       - name: opensdn-logs
         hostPath:
           path: /var/log/contrail
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
 
 ---
 apiVersion: apps/v1
@@ -588,6 +629,14 @@ spec:
           name: host-usr-bin
         - mountPath: /host/var/lib
           name: host-var-lib
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       containers:
       - name: opensdn-analytics-snmp-collector
         image: "{{CONTRAIL_REGISTRY}}/opensdn-analytics-snmp-collector:{{CONTRAIL_CONTAINER_TAG}}"
@@ -673,6 +722,19 @@ spec:
       - name: host-usr-bin
         hostPath:
           path: /usr/bin
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -723,6 +785,14 @@ spec:
           name: host-usr-bin
         - mountPath: /host/var/lib
           name: host-var-lib
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       containers:
       - name: kafka
         image: "{{ CONTRAIL_REGISTRY }}/opensdn-external-kafka:{{ CONTRAIL_CONTAINER_TAG }}"
@@ -817,6 +887,19 @@ spec:
       - name: kafka-logs
         hostPath:
           path: /var/log/contrail/kafka
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -861,6 +944,14 @@ spec:
         volumeMounts:
         - mountPath: /host/usr/bin
           name: host-usr-bin
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       containers:
       - name: opensdn-controller-control
         image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-control-control:{{CONTRAIL_CONTAINER_TAG}}"
@@ -952,6 +1043,19 @@ spec:
       - name: host-usr-bin
         hostPath:
           path: /usr/bin
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -996,6 +1100,14 @@ spec:
         volumeMounts:
         - mountPath: /host/usr/bin
           name: host-usr-bin
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       containers:
       - name: opensdn-controller-config-api
         image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-config-api:{{CONTRAIL_CONTAINER_TAG}}"
@@ -1098,6 +1210,19 @@ spec:
       - name: host-usr-bin
         hostPath:
           path: /usr/bin
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -1142,6 +1267,14 @@ spec:
         volumeMounts:
         - mountPath: /host/usr/bin
           name: host-usr-bin
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       containers:
       - name: opensdn-controller-webui-job
         image: "{{CONTRAIL_REGISTRY}}/opensdn-controller-webui-job:{{CONTRAIL_CONTAINER_TAG}}"
@@ -1170,6 +1303,19 @@ spec:
       - name: host-usr-bin
         hostPath:
           path: /usr/bin
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -1328,6 +1474,14 @@ spec:
         volumeMounts:
         - mountPath: /host/usr/bin
           name: host-usr-bin
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       containers:
       - name: opensdn-kube-manager
         image: "{{CONTRAIL_REGISTRY}}/opensdn-kubernetes-kube-manager:{{CONTRAIL_CONTAINER_TAG}}"
@@ -1354,6 +1508,19 @@ spec:
       - name: host-usr-bin
         hostPath:
           path: /usr/bin
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
+
 ---
 apiVersion: apps/v1
 kind: DaemonSet
@@ -1404,6 +1571,14 @@ spec:
         volumeMounts:
         - mountPath: /host/usr/bin
           name: host-usr-bin
+        - mountPath: /etc/timezone
+          name: host-etc-timezone
+        - mountPath: /etc/sysctl.d
+          name: host-etc-sysctl-d
+        - mountPath: /etc/localtime
+          name: host-etc-localtime
+        - mountPath: /etc/hosts
+          name: host-etc-hosts
       - name: opensdn-vrouter-kernel-init
         image: "{{CONTRAIL_REGISTRY}}/{{VROUTER_KERNEL_INIT_IMAGE}}:{{CONTRAIL_CONTAINER_TAG}}"
         imagePullPolicy: ""
@@ -1570,6 +1745,19 @@ spec:
       - name: lb-nodemgr
         hostPath:
           path: /var/lib/contrail/loadbalancer
+      - name: host-etc-timezone
+        hostPath:
+          path: /etc/timezone
+      - name: host-etc-sysctl-d
+        hostPath:
+          path: /etc/sysctl.d
+      - name: host-etc-localtime
+        hostPath:
+          path: /etc/localtime
+      - name: host-etc-hosts
+        hostPath:
+          path: /etc/hosts
+
 # Meta information section
 ---
 kind: ClusterRole
