@@ -54,7 +54,7 @@ RUN set -e ; \
     fi ; \
     yum update -y -x "redhat-release*" -x "coreutils*"  \
     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \
-    yum install -y hostname iproute less wget openssl glibc-langpack-en rsync ; \
+    yum install -y hostname iproute less wget openssl glibc-langpack-en rsync procps-ng ; \
     source /functions.sh ; \
     yum install -y python3 python3-pip ; \
     # pip9 is too old and breaks install of gevent with c++ errors
