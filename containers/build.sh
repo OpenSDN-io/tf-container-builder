@@ -142,6 +142,9 @@ function process_container() {
     err "Building $container_name failed, duration: $duration seconds" 2>&1 | append_log_file $logfile true
     was_errors=1
   fi
+
+  sudo docker images 2>&1 | append_log_file $logfile true
+
   return $exit_code
 }
 
