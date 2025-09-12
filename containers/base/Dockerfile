@@ -11,12 +11,18 @@ ARG LINUX_DISTR=centos
 
 # contrail-lib package - copy libs here to minimize size of several leaf images
 # maybe we have to extract one more base image for c++ binaries
-COPY --from=build /root/work/build/lib/libipfix.so* /usr/lib/
-COPY --from=build /root/work/build/lib/liblog4cplus.so /usr/lib/
-COPY --from=build /root/work/build/lib/liblog4cplus-2.1.so* /usr/lib/
+COPY --from=build /root/contrail/build/usr/lib/libipfix.so.1.0 /usr/lib/
+COPY --from=build /root/contrail/build/usr/lib/liblog4cplus-2.1.so.9.0.1 /usr/lib/
+COPY --from=build /root/contrail/build/usr/lib/liblog4cplusU-2.1.so.9.0.1 /usr/lib/
 
+# COPY copies content instead of symlink - create symlinks manually
 # WARNING! all pip deps must be installed with pinned version to avoid breakages when pypi is upgraded.
 RUN set -e ; \
+    ln -s /usr/lib/libipfix.so.1.0 /usr/lib/libipfix.so ; \
+    ln -s /usr/lib/liblog4cplus-2.1.so.9.0.1 /usr/lib/liblog4cplus-2.1.so ; \
+    ln -s /usr/lib/liblog4cplus-2.1.so.9.0.1 /usr/lib/liblog4cplus-2.1.so.9 ; \
+    ln -s /usr/lib/liblog4cplusU-2.1.so.9.0.1 /usr/lib/liblog4cplusU-2.1.so ; \
+    ln -s /usr/lib/liblog4cplusU-2.1.so.9.0.1 /usr/lib/liblog4cplusU-2.1.so.9 ; \
     sed -e '/^tsflags=nodocs/d' -i /etc/yum.conf ; \
     # net-tools has netstat which is used in vrouter-dpdk, opensdn-status and by opensdn-test inside kubemanager container
     # libatomic libuv userspace-rcu tbb - for c++ binaries

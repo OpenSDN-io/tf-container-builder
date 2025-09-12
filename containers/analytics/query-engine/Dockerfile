@@ -18,7 +18,8 @@ LABEL name=$CONTAINER_NAME \
 
 COPY entrypoint.sh /
 
-COPY --from=build /root/work/build/production/query_engine/qed /usr/bin/contrail-query-engine
+# cassandra-cpp-driver of version 2.17.1 has bug with callbacks, doesn't work
+COPY --from=build /root/contrail/build/usr/bin/contrail-query-engine /usr/bin/contrail-query-engine
 RUN set -e ; \
     source /etc/os-release && \
     ver=$(echo $VERSION_ID | cut -d '.' -f 1) ; \

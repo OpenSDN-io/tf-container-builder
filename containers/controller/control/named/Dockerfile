@@ -14,10 +14,10 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/work/build/sbin/contrail-named /usr/bin/contrail-named
-COPY --from=build /root/work/build/lib/libisc*so /usr/lib/
-COPY --from=build /root/work/build/lib/libdns*so /usr/lib/
-COPY --from=build /root/work/build/lib/libns*so /usr/lib/
+COPY --from=build /root/contrail/build/usr/bin/contrail-named /usr/bin/contrail-named
+COPY --from=build /root/contrail/build/usr/lib/libisc*so /usr/lib/
+COPY --from=build /root/contrail/build/usr/lib/libdns*so /usr/lib/
+COPY --from=build /root/contrail/build/usr/lib/libns*so /usr/lib/
 
 COPY entrypoint.sh /
 

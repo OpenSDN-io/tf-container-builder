@@ -1,5 +1,8 @@
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM ${BUILD_IMAGE} AS build
+
 FROM ${CONTRAIL_REGISTRY}/opensdn-vrouter-base:${CONTRAIL_CONTAINER_TAG}
 ARG PIP_REPOSITORY
 
@@ -12,12 +15,31 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
+COPY --from=build /root/contrail/build/usr/lib/libisc-9.21.3.so /usr/lib/
+COPY --from=build /root/contrail/build/usr/lib/libisccc-9.21.3.so /usr/lib/
+COPY --from=build /root/contrail/build/usr/lib/libisccfg-9.21.3.so /usr/lib/
+
+COPY --from=build /root/contrail/build/usr/bin/contrail-vrouter-agent /usr/bin/
+COPY --from=build /root/contrail/build/usr/bin/contrail-vrouter-agent-health-check.py /usr/bin/
+COPY --from=build /root/contrail/build/usr/bin/contrail_crypt_tunnel_client.py /usr/bin/
+COPY --from=build /root/contrail/build/Version /contrail_build_version
+
+# COPY copies content instead of symlink - create symlinks manually
 RUN set -e ; \
-    yum install -y iptables dhclient contrail-vrouter-agent haproxy libvirt-client ; \
-    rpm -qi contrail-vrouter-agent | awk '/Version/{print($3)}' > /contrail_build_version ; \
+    ln -s /usr/lib/libisc-9.21.3.so /usr/lib/libisc.so ; \
+    ln -s /usr/lib/libisccc-9.21.3.so /usr/lib/libisccc.so ; \
+    ln -s /usr/lib/libisccfg-9.21.3.so /usr/lib/libisccfg.so ; \
+    ldconfig ; \
+    source /etc/os-release && \
+    ver=$(echo $VERSION_ID | cut -d '.' -f 1) ; \
+    if [[ ${ver} == 9 ]]; then \
+        pkgs="boost" ; \
+    else \
+        pkgs="boost169" ; \
+    fi ; \
+    yum install -y $pkgs gperftools-libs iptables dhclient haproxy libvirt-client ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
-    ldconfig ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
         "contrail-vrouter-api==0.1.dev0" "opencontrail-vrouter-netns==0.1.dev0" ; \
     rm -rf /root/.cache
