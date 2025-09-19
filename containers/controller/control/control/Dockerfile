@@ -14,7 +14,7 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/contrail/build/usr/bin/contrail-control /usr/bin/contrail-control
+COPY --from=build /root/contrail/buildroot/usr/bin/contrail-control /usr/bin/contrail-control
 
 COPY entrypoint.sh /
 

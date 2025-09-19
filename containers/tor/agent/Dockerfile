@@ -17,14 +17,14 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/contrail/build/usr/lib/libisc-9.21.3.so /usr/lib/
-COPY --from=build /root/contrail/build/usr/lib/libisccc-9.21.3.so /usr/lib/
-COPY --from=build /root/contrail/build/usr/lib/libisccfg-9.21.3.so /usr/lib/
+COPY --from=build /root/contrail/buildroot/usr/lib/libisc-9.21.3.so /usr/lib/
+COPY --from=build /root/contrail/buildroot/usr/lib/libisccc-9.21.3.so /usr/lib/
+COPY --from=build /root/contrail/buildroot/usr/lib/libisccfg-9.21.3.so /usr/lib/
 
 # TODO: restore it for rocky9 build
-#COPY --from=build /root/contrail/build/usr/bin/contrail-tor-agent /usr/bin/
-COPY --from=build /root/contrail/build/usr/bin/contrail-vrouter-agent-health-check.py /usr/bin/
-COPY --from=build /root/contrail/build/usr/bin/contrail_crypt_tunnel_client.py /usr/bin/
+#COPY --from=build /root/contrail/buildroot/usr/bin/contrail-tor-agent /usr/bin/
+COPY --from=build /root/contrail/buildroot/usr/bin/contrail-vrouter-agent-health-check.py /usr/bin/
+COPY --from=build /root/contrail/buildroot/usr/bin/contrail_crypt_tunnel_client.py /usr/bin/
 
 RUN set -e ; \
     ln -s /usr/lib/libisc-9.21.3.so /usr/lib/libisc.so ; \

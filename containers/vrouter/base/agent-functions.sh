@@ -349,7 +349,7 @@ function bind_devs_to_driver() {
         local nic=$(get_ifname_by_pci $n)
         echo "INFO: Binding device $n to driver $driver ..."
         save_pci_info $n
-        if ! /opt/contrail/bin/dpdk_nic_bind.py --force --bind="$driver" $n ; then
+        if ! /usr/bin/dpdk_nic_bind.py --force --bind="$driver" $n ; then
             echo "ERROR: Failed to bind $n to driver $driver"
             return 1
         fi

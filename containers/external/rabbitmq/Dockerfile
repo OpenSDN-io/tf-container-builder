@@ -33,7 +33,6 @@ LABEL vendor=$VENDOR_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
 # Add required license as text file in Liceses directory
-RUN mkdir /licenses
 COPY __licensing.txt /licenses/licensing.txt
 
 COPY *.sh /

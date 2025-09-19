@@ -1,5 +1,8 @@
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM ${BUILD_IMAGE} AS build
+
 FROM rockylinux:9.3
 
 ARG VENDOR_NAME
@@ -24,21 +27,20 @@ LABEL vendor=$VENDOR_NAME \
 COPY *.repo /etc/yum.repos.d/
 COPY *.sh /
 
+COPY --from=build /root/contrail/buildroot/usr/src/modules/contrail-vrouter.tar.gz /opt/contrail/src/
+
 # remove all centos repos - they are cause of failure in rocky9 dnf cmd
 RUN set -e ; \
-    mkdir -p /opt/contrail ; \
     for item in `ls /__*` ; do mv $item /${item:3} ; done ; \
-    dnf clean all -y ; dnf makecache ; \
     find /etc/yum.repos.d/ | grep -i centos | xargs -r rm ; ls -l /etc/yum.repos.d/ ; \
-    dnf install -y wget make gcc gcc-c++ contrail-vrouter-source ; \
-    mkdir -p /opt/contrail/src /vrouter_src ; \
+    dnf clean all -y ; dnf makecache ; \
+    dnf install -y wget make gcc gcc-c++ ; \
+    dnf clean all -y ; \
+    mkdir -p /vrouter_src ; \
     contrail_version=${CONTRAIL_VERSION:-$CONTRAIL_CONTAINER_TAG} ; \
     echo "${contrail_version}" > /contrail_version ; \
-    mv /usr/src/* /opt/contrail/src/ ; \
-    vrouter_path=$(find /opt/contrail/src -type f -name "contrail-vrouter-*.tar.gz") ; \
-    cd  /vrouter_src ; \
-    tar -xf "${vrouter_path}" ; \
-    /build-kernels.sh ; \
-    dnf clean all -y
+    cd /vrouter_src ; \
+    tar -xf /opt/contrail/src/contrail-vrouter.tar.gz ; \
+    /build-kernels.sh
 
 ENTRYPOINT ["/entrypoint.sh"]

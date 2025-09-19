@@ -14,14 +14,14 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/contrail/build/usr/bin/contrail-dns /usr/bin/contrail-dns
-COPY --from=build /root/contrail/build/usr/bin/contrail-rndc /usr/bin/contrail-rndc
-COPY --from=build /root/contrail/build/usr/bin/contrail-rndc-confgen /usr/bin/contrail-rndc-confgen
-COPY --from=build /root/contrail/build/usr/bin//applynamedconfig.py /etc/contrail/dns/applynamedconfig.py
+COPY --from=build /root/contrail/buildroot/usr/bin/contrail-dns /usr/bin/contrail-dns
+COPY --from=build /root/contrail/buildroot/usr/bin/contrail-rndc /usr/bin/contrail-rndc
+COPY --from=build /root/contrail/buildroot/usr/bin/contrail-rndc-confgen /usr/bin/contrail-rndc-confgen
+COPY --from=build /root/contrail/buildroot/usr/bin//applynamedconfig.py /etc/contrail/dns/applynamedconfig.py
 # libs for contrail-rndc
-COPY --from=build /root/contrail/build/usr/lib/libisc*so /usr/lib/
-COPY --from=build /root/contrail/build/usr/lib/libdns*so /usr/lib/
-COPY --from=build /root/contrail/build/usr/lib/libns*so /usr/lib/
+COPY --from=build /root/contrail/buildroot/usr/lib/libisc*so /usr/lib/
+COPY --from=build /root/contrail/buildroot/usr/lib/libdns*so /usr/lib/
+COPY --from=build /root/contrail/buildroot/usr/lib/libns*so /usr/lib/
 
 COPY entrypoint.sh /
 

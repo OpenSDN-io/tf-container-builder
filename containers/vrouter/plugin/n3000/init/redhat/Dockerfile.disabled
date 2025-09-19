@@ -12,6 +12,9 @@ LABEL name=$CONTAINER_NAME                                                   \
 
 SHELL ["/bin/bash", "-c"]
 
+# n3000-tools
+# /usr/bin/n3kflow-dump
+# /usr/bin/n3k-info
 RUN yes | python3 -m pip install intelhex || true                          && \
     rm -rf /root/.cache                                                    && \
     yum install -y contrail-vrouter-dpdk-n3000-tools pciutils dhclient     && \

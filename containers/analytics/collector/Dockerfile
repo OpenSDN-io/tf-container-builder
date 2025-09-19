@@ -17,7 +17,7 @@ LABEL name=$CONTAINER_NAME \
 COPY entrypoint.sh /
 
 # cassandra-cpp-driver of version 2.17.1 has bug with callbacks, doesn't work
-COPY --from=build /root/contrail/build/usr/bin/contrail-collector /usr/bin/contrail-collector
+COPY --from=build /root/contrail/buildroot/usr/bin/contrail-collector /usr/bin/contrail-collector
 RUN set -e ; \
     source /etc/os-release && \
     ver=$(echo $VERSION_ID | cut -d '.' -f 1) ; \

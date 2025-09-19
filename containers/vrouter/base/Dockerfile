@@ -1,14 +1,20 @@
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM ${BUILD_IMAGE} AS build
+
 FROM ${CONTRAIL_REGISTRY}/opensdn-base:${CONTRAIL_CONTAINER_TAG}
 
 ENV NODE_TYPE=vrouter
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
+COPY --from=build /root/contrail/buildroot/usr/bin/vif /usr/bin/
+COPY --from=build /root/contrail/buildroot/usr/bin/qosmap /usr/bin/
+
 # removing network-scripts: this folder will mounted from the host (or not used in Ubuntu) so the one installed by initscripts package in container is removed.
 RUN set -e ; \
     source /etc/os-release ; \
-    yum install -y NetworkManager initscripts ethtool pciutils sudo contrail-vrouter-utils ; \
+    yum install -y NetworkManager initscripts ethtool pciutils ; \
     yum clean all -y ; \
     if [[ "$ID" == 'rhel' && "${PLATFORM_ID//*:/}" == 'el8' ]] ; then \
         rm -f /usr/sbin/ifup /usr/sbin/ifdown && \

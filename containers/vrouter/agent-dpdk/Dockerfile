@@ -1,5 +1,8 @@
+ARG BUILD_IMAGE
 ARG CONTRAIL_REGISTRY
 ARG CONTRAIL_CONTAINER_TAG
+FROM ${BUILD_IMAGE} AS build
+
 FROM ${CONTRAIL_REGISTRY}/opensdn-vrouter-base:${CONTRAIL_CONTAINER_TAG}
 
 ARG SITE_MIRROR
@@ -11,6 +14,10 @@ LABEL name=$CONTAINER_NAME \
       description="DPDK support for Contrail vrouter agent" \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
+
+COPY --from=build /root/contrail/buildroot/usr/bin/contrail-vrouter-dpdk /usr/bin/
+COPY --from=build /root/contrail/buildroot/usr/bin/dpdk_nic_bind.py /usr/bin/
+COPY --from=build /root/contrail/buildroot/opt/contrail/ddp/mplsogreudp.pkg /opt/contrail/ddp/
 
 RUN set -e ; \
     source /functions.sh && \
@@ -27,7 +34,7 @@ RUN set -e ; \
     rm -rf /usr/tmp/*ice*
 
 RUN \
-    yum install -y dhclient contrail-vrouter-dpdk ; \
+    yum install -y dhclient which liburcu2 userspace-rcu libnl3 numactl-libs rdma-core==47mlnx1-1.47329 libibverbs==47mlnx1-1.47329 ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     ldconfig

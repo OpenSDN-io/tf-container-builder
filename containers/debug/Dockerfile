@@ -11,7 +11,7 @@ LABEL name=$CONTAINER_NAME \
       description="The image contains debug symbols for build and may be used to debug Contrail processes." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/contrail/build/manifest.xml /manifest.xml
+COPY --from=build /root/contrail/buildroot/manifest.xml /manifest.xml
 # TODO: debug packages are unavailable in CI jobs, ignore errors
 RUN set -e ; \
     yum install -y contrail-debuginfo || true && \
