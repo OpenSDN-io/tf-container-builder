@@ -1,7 +1,7 @@
 # This is the general base for all: non-contrail specfic like external and for contrail specific
 
-ARG LINUX_DISTR=centos
-ARG LINUX_DISTR_VER=7.9.2009
+ARG LINUX_DISTR=rockylinux
+ARG LINUX_DISTR_VER=9.3
 FROM $LINUX_DISTR:$LINUX_DISTR_VER
 # Redefine ARG after FROM (to make them available in the rest of the Dockerfile)
 ARG LINUX_DISTR=centos
