@@ -34,7 +34,7 @@ RUN set -e ; \
     rm -rf /usr/tmp/*ice*
 
 RUN \
-    yum install -y dhclient which liburcu2 userspace-rcu libnl3 numactl-libs rdma-core==47mlnx1-1.47329 libibverbs==47mlnx1-1.47329 ; \
+    yum install -y dhclient which liburcu2 libnl3 numactl-libs rdma-core==47mlnx1-1.47329 libibverbs==47mlnx1-1.47329 ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     ldconfig
