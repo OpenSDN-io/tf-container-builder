@@ -8,7 +8,9 @@ FROM ${CONTRAIL_REGISTRY}/opensdn-base:${CONTRAIL_CONTAINER_TAG}
 ENV NODE_TYPE=analytics-snmp
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
-COPY --from=build /root/contrail/buildroot/usr/share/mibs/netsnmp /usr/share/mibs/netsnmp
+ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/share/mibs/netsnmp /usr/share/mibs/netsnmp
+
 # required to install python's snmp package
 RUN set -e ; \
     yum install -y "net-snmp-devel-1:5.9.1-17.el9" ; \

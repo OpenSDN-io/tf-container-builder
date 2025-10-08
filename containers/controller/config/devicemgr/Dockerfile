@@ -19,9 +19,11 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
+ARG BUILD_ROOT
 # pin cryptography - newer version requires rust compiler just for install.
 # but we don't want to install this useless component
-COPY --from=build /root/contrail/buildroot/opt/fabric_ansible_playbooks-0.1.dev0.tar.gz /opt/
+COPY --from=build ${BUILD_ROOT}/opt/fabric_ansible_playbooks-0.1.dev0.tar.gz /opt/
+
 RUN set -e ; \
     yum install -y libffi-devel iputils ; \
     # ansible-core requires importlib-resources to be installed

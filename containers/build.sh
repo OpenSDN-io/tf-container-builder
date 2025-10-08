@@ -97,6 +97,7 @@ function process_container() {
   build_arg_opts+=" --build-arg VENDOR_NAME=${VENDOR_NAME}"
   build_arg_opts+=" --build-arg VENDOR_DOMAIN=${VENDOR_DOMAIN}"
   build_arg_opts+=" --build-arg BUILD_IMAGE=tf-dev-sandbox:compile"
+  build_arg_opts+=" --build-arg BUILD_ROOT=${BUILD_ROOT}"
 
   if [[ -f ./$dir/.externals ]]; then
     local item=''

@@ -13,7 +13,8 @@ LABEL name=$CONTAINER_NAME \
       description="Sidecar container with libraries for nova-compute." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/contrail/buildroot/usr/bin/vrouter-port-control.py /opt/contrail/bin/
+ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/bin/vrouter-port-control.py /opt/contrail/bin/
 COPY vrouter-port-control /opt/contrail/bin/
 COPY *.sh /
 

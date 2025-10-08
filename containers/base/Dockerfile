@@ -9,11 +9,12 @@ FROM ${CONTRAIL_REGISTRY}/opensdn-general-base:${CONTRAIL_CONTAINER_TAG}
 ARG PIP_REPOSITORY
 ARG LINUX_DISTR=centos
 
+ARG BUILD_ROOT
 # contrail-lib package - copy libs here to minimize size of several leaf images
 # maybe we have to extract one more base image for c++ binaries
-COPY --from=build /root/contrail/buildroot/usr/lib/libipfix.so.1.0 /usr/lib/
-COPY --from=build /root/contrail/buildroot/usr/lib/liblog4cplus-2.1.so.9.0.1 /usr/lib/
-COPY --from=build /root/contrail/buildroot/usr/lib/liblog4cplusU-2.1.so.9.0.1 /usr/lib/
+COPY --from=build ${BUILD_ROOT}/usr/lib/libipfix.so.1.0 /usr/lib/
+COPY --from=build ${BUILD_ROOT}/usr/lib/liblog4cplus-2.1.so.9.0.1 /usr/lib/
+COPY --from=build ${BUILD_ROOT}/usr/lib/liblog4cplusU-2.1.so.9.0.1 /usr/lib/
 
 # COPY copies content instead of symlink - create symlinks manually
 # WARNING! all pip deps must be installed with pinned version to avoid breakages when pypi is upgraded.

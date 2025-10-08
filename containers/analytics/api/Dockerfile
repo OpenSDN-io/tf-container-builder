@@ -17,12 +17,14 @@ LABEL name=$CONTAINER_NAME \
 
 COPY entrypoint.sh /
 
+ARG BUILD_ROOT
 # contrail-analytics-api/* -> contrail-analytics-api/*
-COPY --from=build /root/contrail/buildroot/usr/share/doc/contrail-analytics-api /usr/share/doc/contrail-analytics-api
+COPY --from=build ${BUILD_ROOT}/usr/share/doc/contrail-analytics-api /usr/share/doc/contrail-analytics-api
 # html/* -> html/*
-COPY --from=build /root/contrail/buildroot/usr/share/doc/contrail-docs /usr/share/doc/contrail-docs
+COPY --from=build ${BUILD_ROOT}/usr/share/doc/contrail-docs /usr/share/doc/contrail-docs
 # additional files from sandesh generation
-COPY --from=build /root/contrail/buildroot/opt/python/opserver /usr/local/lib/python3.9/site-packages/opserver
+COPY --from=build ${BUILD_ROOT}/opt/python/opserver /usr/local/lib/python3.9/site-packages/opserver
+
 RUN set -e ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "opserver==0.1.dev0" ; \
     rm -rf /root/.cache

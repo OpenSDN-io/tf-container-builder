@@ -9,9 +9,10 @@ ARG LINUX_DISTR=centos
 ENV NODE_TYPE=webui
 LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 
+ARG BUILD_ROOT
 # contrail-config/html/* -> contrail-config/html/*
-COPY --from=build /root/contrail/buildroot/usr/src/contrail/contrail-web-controller /usr/src/contrail/contrail-web-controller
-COPY --from=build /root/contrail/buildroot/usr/src/contrail/contrail-web-core /usr/src/contrail/contrail-web-core
+COPY --from=build ${BUILD_ROOT}/usr/src/contrail/contrail-web-controller /usr/src/contrail/contrail-web-controller
+COPY --from=build ${BUILD_ROOT}/usr/src/contrail/contrail-web-core /usr/src/contrail/contrail-web-core
 RUN set -e ; \
     source /etc/os-release && \
     ver=$(echo $VERSION_ID | cut -d '.' -f 1) ; \

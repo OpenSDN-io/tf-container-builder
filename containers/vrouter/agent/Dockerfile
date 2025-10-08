@@ -15,14 +15,15 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/contrail/buildroot/usr/lib/libisc-9.21.3.so /usr/lib/
-COPY --from=build /root/contrail/buildroot/usr/lib/libisccc-9.21.3.so /usr/lib/
-COPY --from=build /root/contrail/buildroot/usr/lib/libisccfg-9.21.3.so /usr/lib/
+ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/lib/libisc-9.21.3.so /usr/lib/
+COPY --from=build ${BUILD_ROOT}/usr/lib/libisccc-9.21.3.so /usr/lib/
+COPY --from=build ${BUILD_ROOT}/usr/lib/libisccfg-9.21.3.so /usr/lib/
 
-COPY --from=build /root/contrail/buildroot/usr/bin/contrail-vrouter-agent /usr/bin/
-COPY --from=build /root/contrail/buildroot/usr/bin/contrail-vrouter-agent-health-check.py /usr/bin/
-COPY --from=build /root/contrail/buildroot/usr/bin/contrail_crypt_tunnel_client.py /usr/bin/
-COPY --from=build /root/contrail/buildroot/Version /contrail_build_version
+COPY --from=build ${BUILD_ROOT}/usr/bin/contrail-vrouter-agent /usr/bin/
+COPY --from=build ${BUILD_ROOT}/usr/bin/contrail-vrouter-agent-health-check.py /usr/bin/
+COPY --from=build ${BUILD_ROOT}/usr/bin/contrail_crypt_tunnel_client.py /usr/bin/
+COPY --from=build ${BUILD_ROOT}/Version /contrail_build_version
 
 # COPY copies content instead of symlink - create symlinks manually
 # sudo is needed for vrouter-netns

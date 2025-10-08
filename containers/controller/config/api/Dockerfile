@@ -17,8 +17,10 @@ LABEL name=$CONTAINER_NAME \
 
 COPY *.sh /
 
+ARG BUILD_ROOT
 # contrail-config/html/* -> contrail-config/html/*
-COPY --from=build /root/contrail/buildroot/usr/share/doc/contrail-config/doc/source/contrail-config/html /usr/share/doc/contrail-config/doc/source/contrail-config/html
+COPY --from=build ${BUILD_ROOT}/usr/share/doc/contrail-config/doc/source/contrail-config/html /usr/share/doc/contrail-config/doc/source/contrail-config/html
+
 # schema_transformer is required to be able to run db_manage
 RUN set -e ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \

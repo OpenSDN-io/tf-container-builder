@@ -15,9 +15,10 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/contrail/buildroot/usr/bin/contrail-vrouter-dpdk /usr/bin/
-COPY --from=build /root/contrail/buildroot/usr/bin/dpdk_nic_bind.py /usr/bin/
-COPY --from=build /root/contrail/buildroot/opt/contrail/ddp/mplsogreudp.pkg /opt/contrail/ddp/
+ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/bin/contrail-vrouter-dpdk /usr/bin/
+COPY --from=build ${BUILD_ROOT}/usr/bin/dpdk_nic_bind.py /usr/bin/
+COPY --from=build ${BUILD_ROOT}/opt/contrail/ddp/mplsogreudp.pkg /opt/contrail/ddp/
 
 RUN set -e ; \
     source /functions.sh && \

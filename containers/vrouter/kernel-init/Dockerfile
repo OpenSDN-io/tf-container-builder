@@ -27,7 +27,8 @@ LABEL vendor=$VENDOR_NAME \
 COPY *.repo /etc/yum.repos.d/
 COPY *.sh /
 
-COPY --from=build /root/contrail/buildroot/usr/src/modules/contrail-vrouter.tar.gz /opt/contrail/src/
+ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/src/modules/contrail-vrouter.tar.gz /opt/contrail/src/
 
 # remove all centos repos - they are cause of failure in rocky9 dnf cmd
 RUN set -e ; \

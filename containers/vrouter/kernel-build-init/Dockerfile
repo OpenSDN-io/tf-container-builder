@@ -37,7 +37,8 @@ COPY *.repo /etc/yum.repos.d/
 # to let copy all files we have to create empty fake.list
 COPY *.list /etc/apt/
 
-COPY --from=build /root/contrail/buildroot/usr/src/modules/contrail-vrouter.tar.gz /opt/contrail/src/
+ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/src/modules/contrail-vrouter.tar.gz /opt/contrail/src/
 
 #TODO: need to get rid of apt-get update
 # tpc repo is not to be used as it os dependend

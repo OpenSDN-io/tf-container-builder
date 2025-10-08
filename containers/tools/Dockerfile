@@ -13,12 +13,13 @@ LABEL name=$CONTAINER_NAME \
       description="The image contains scripts to debug Contrail processes." \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
-COPY --from=build /root/contrail/buildroot/usr/bin/vif /usr/bin/
-COPY --from=build /root/contrail/buildroot/usr/bin/qosmap /usr/bin/
-COPY --from=build /root/contrail/buildroot/usr/bin/tools/* /usr/bin/
-COPY --from=build /root/contrail/buildroot/usr/share/lua/5.1 /usr/share/lua/5.1
-COPY --from=build /root/contrail/buildroot/usr/local/share/wireshark/init.lua /usr/local/share/wireshark/init.lua
-COPY --from=build /root/contrail/buildroot/usr/local/lib64/wireshark/plugins/*.lua /usr/local/lib64/wireshark/plugins/
+ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/bin/vif /usr/bin/
+COPY --from=build ${BUILD_ROOT}/usr/bin/qosmap /usr/bin/
+COPY --from=build ${BUILD_ROOT}/usr/bin/tools/* /usr/bin/
+COPY --from=build ${BUILD_ROOT}/usr/share/lua/5.1 /usr/share/lua/5.1
+COPY --from=build ${BUILD_ROOT}/usr/local/share/wireshark/init.lua /usr/local/share/wireshark/init.lua
+COPY --from=build ${BUILD_ROOT}/usr/local/lib64/wireshark/plugins/*.lua /usr/local/lib64/wireshark/plugins/
 
 # tshark is needed for sandump tool which is included into contrail-tools package
 RUN set -e ; \
