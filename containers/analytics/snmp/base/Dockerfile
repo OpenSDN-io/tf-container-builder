@@ -11,7 +11,7 @@ LABEL $VENDOR_DOMAIN".pod"=$NODE_TYPE
 COPY --from=build /root/contrail/buildroot/usr/share/mibs/netsnmp /usr/share/mibs/netsnmp
 # required to install python's snmp package
 RUN set -e ; \
-    yum install -y net-snmp-devel ; \
+    yum install -y "net-snmp-devel-1:5.9.1-17.el9" ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum
 
