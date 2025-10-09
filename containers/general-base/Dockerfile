@@ -43,15 +43,9 @@ COPY *.sh /
 
 # do not upgrade coreutils: https://bugzilla.redhat.com/show_bug.cgi?id=1764152
 # remove all not-this-OS repos
-RUN set -e ; \
+RUN set -ex ; \
     source /etc/os-release ; \
-    if [[ "$LINUX_DISTR" == "centos" ]]; then \
-        for file in /etc/yum.repos.d/CentOS-* ; do grep -v mirrorlist= "$file" > "$file".new && mv "$file".new "$file" ; done ; \
-        sed -i 's|#\s*baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-* ; \
-        find /etc/yum.repos.d/ | grep -i rocky | xargs -r rm ; ls -l /etc/yum.repos.d/ ; \
-    else \
-        find /etc/yum.repos.d/ | grep -i centos | xargs -r rm ; ls -l /etc/yum.repos.d/ ; \
-    fi ; \
+    find /etc/yum.repos.d/ | grep -i centos | xargs -r rm ; ls -l /etc/yum.repos.d/ ; \
     yum update -y -x "redhat-release*" -x "coreutils*"  \
     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \
     yum install -y hostname iproute less wget openssl glibc-langpack-en rsync procps-ng ; \

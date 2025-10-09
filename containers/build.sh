@@ -1,5 +1,5 @@
 #!/bin/bash
-# Builds containers. Parses common.env to take CONTRAIL_REGISTRY, CONTRAIL_REPOSITORY, CONTRAIL_CONTAINER_TAG or takes them from
+# Builds containers. Parses common.env to take CONTRAIL_REGISTRY, CONTRAIL_CONTAINER_TAG or takes them from
 # environment.
 # Parameters:
 # path: relative path (from this directory) to module(s) for selective build. Example: ./build.sh controller/webui
@@ -23,6 +23,7 @@ function log() {
 function err() {
   echo -e "$(date -u +"%Y-%m-%d %H:%M:%S,%3N"): ERROR: $@" >&2
 }
+
 function append_log_file() {
   local logfile=$1
   local always_echo=${2:-'false'}
@@ -46,7 +47,7 @@ log "External Web Cache: $SITE_MIRROR"
 log "Containers name prefix: $CONTAINER_NAME_PREFIX"
 log "Contrail container tag: $CONTRAIL_CONTAINER_TAG"
 log "Contrail registry: $CONTRAIL_REGISTRY"
-log "Contrail repository: $CONTRAIL_REPOSITORY"
+log "Pip repository: $PIP_REPOSITORY"
 log "Parallel build: $CONTRAIL_PARALLEL_BUILD"
 log "Keep log files: $CONTRAIL_KEEP_LOG_FILES"
 log "Vendor: $VENDOR_NAME"
@@ -206,7 +207,7 @@ function update_file() {
 function update_yum_repos() {
   local rfile
   for rfile in $(ls $my_dir/../*.repo.template) ; do
-    local content=$(cat "$rfile" | sed -e "s|\${CONTRAIL_REPOSITORY}|${CONTRAIL_REPOSITORY}|g")
+    local content=$(cat "$rfile")
     local dfile=$(basename $rfile | sed 's/.template//')
     update_file "general-base/$dfile" "$content"
     # this is special case - image derived directly from ubuntu image

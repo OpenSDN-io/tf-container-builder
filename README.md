@@ -17,7 +17,6 @@ Everything is tested in CentOS 7.4 / Ubuntu 16.04 for deployment to run on one/t
 * Get the project sources (e.g. with ```git clone```)
 * Configure ```common.env``` (copy ```common.env.sample``` for that and configure minimal set of parameters. Verify that CONTRAIL_INSTALL_PACKAGES_URL is configured.)
 * Run ```cd containers```
-* Run ```./setup-for-build.sh```
 * Add any number of `*.repo.template` (for CentOS) to the root of repo. These files will be evaluated with current environment and will be placed to containers to yum configuration.
 * Run ```sudo ./build.sh```
 * To use custom images instead of DockerHub images - set appropriate environment variables before build. For example:
@@ -112,7 +111,7 @@ A container usually consists of the following:
 
 Tools are located in "containers" directory
 They consist of:
-* build.sh and setup-for-build.sh
+* build.sh
   - main build scripts, usage described in section "Building containers"
 * helper scripts
   - invoked from main ones to do particular action
