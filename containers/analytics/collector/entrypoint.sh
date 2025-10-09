@@ -38,12 +38,21 @@ cassandra_server_list=$ANALYTICSDB_CQL_SERVERS
 EOM
 fi
 
+cql_servers_array=( $ANALYTICSDB_CQL_SERVERS )
+cql_list_size=${#cql_servers_array[@]}
+if [[ $cql_list_size -gt 1 ]] ; then
+  cassandra_replication_factor=2
+else
+  cassandra_replication_factor=1
+fi
+
 cat >> /etc/contrail/contrail-collector.conf << EOM
 zookeeper_server_list=$ZOOKEEPER_SERVERS
 
 [CASSANDRA]
 cassandra_use_ssl=${CASSANDRA_SSL_ENABLE,,}
 cassandra_ca_certs=$CASSANDRA_SSL_CA_CERTFILE
+replication_factor=${cassandra_replication_factor:-1}
 
 [COLLECTOR]
 port=${COLLECTOR_LISTEN_PORT:-$COLLECTOR_PORT}
