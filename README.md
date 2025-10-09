@@ -91,7 +91,7 @@ This repo consists of the following:
 * kubernetes
   - Manifests and config files serving for evaluation of containers on kubernetes without usage of any upper level orchestrators/products like ansible/JuJu/RHOSP/etc
 * samples and templates
-  - common.env.sample and contrail.repo.template - files used to store configuration parameters and description of the contrail repo with RPMs to be used during build
+  - common.env.sample - file used to store configuration parameters to be used during build
 
 
 ### Container
