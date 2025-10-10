@@ -14,8 +14,6 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
 ARG BUILD_ROOT
-COPY --from=build ${BUILD_ROOT}/usr/bin/vif /usr/bin/
-COPY --from=build ${BUILD_ROOT}/usr/bin/qosmap /usr/bin/
 COPY --from=build ${BUILD_ROOT}/usr/bin/tools/* /usr/bin/
 COPY --from=build ${BUILD_ROOT}/usr/share/lua/5.1 /usr/share/lua/5.1
 COPY --from=build ${BUILD_ROOT}/usr/local/share/wireshark/init.lua /usr/local/share/wireshark/init.lua

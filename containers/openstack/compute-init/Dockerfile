@@ -14,8 +14,7 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
 ARG BUILD_ROOT
-COPY --from=build ${BUILD_ROOT}/usr/bin/vrouter-port-control.py /opt/contrail/bin/
-COPY vrouter-port-control /opt/contrail/bin/
+COPY --from=build ${BUILD_ROOT}/usr/bin/vrouter-port-control /opt/contrail/bin/
 COPY *.sh /
 
 # don't install deps to minimize footprint
