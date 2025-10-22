@@ -20,19 +20,21 @@ COPY --from=build ${BUILD_ROOT}/usr/bin/contrail-vrouter-dpdk /usr/bin/
 COPY --from=build ${BUILD_ROOT}/usr/bin/dpdk_nic_bind.py /usr/bin/
 COPY --from=build ${BUILD_ROOT}/opt/contrail/ddp/mplsogreudp.pkg /opt/contrail/ddp/
 
+# try to install intel driver
 RUN set -e ; \
-    source /functions.sh && \
-    download_package https://downloadmirror.intel.com 30590/eng/800_series_comms_binary_package_1.3.30.0.zip /usr/tmp/downloaded_ice_comms-1.3.30.0.zip && \
-    cd /usr/tmp && \
-    yum -y install unzip && \
-    unzip -o -d /usr/tmp downloaded_ice_comms-1.3.30.0.zip && \
-    unzip -o -d /usr/tmp/ice-1.3.30.0 ice_comms-1.3.30.0.zip && \
-    mkdir -p /lib/firmware/updates/intel/ice/ddp && \
-    cp /usr/tmp/ice-1.3.30.0/ice_comms-1.3.30.0.pkg /lib/firmware/updates/intel/ice/ddp/ && \
-    cp /usr/tmp/ice-1.3.30.0/ice.pkg /lib/firmware/updates/intel/ice/ddp/ && \
-    cd /lib/firmware/updates/intel/ice/ddp && \
-    ln -sf ice_comms-1.3.30.0.pkg ice.pkg && \
-    rm -rf /usr/tmp/*ice*
+    source /functions.sh ; \
+    if download_package https://downloadmirror.intel.com 30590/eng/800_series_comms_binary_package_1.3.30.0.zip /usr/tmp/downloaded_ice_comms-1.3.30.0.zip ; then \
+      cd /usr/tmp ; \
+      yum -y install unzip ; \
+      unzip -o -d /usr/tmp downloaded_ice_comms-1.3.30.0.zip ; \
+      unzip -o -d /usr/tmp/ice-1.3.30.0 ice_comms-1.3.30.0.zip ; \
+      mkdir -p /lib/firmware/updates/intel/ice/ddp ; \
+      cp /usr/tmp/ice-1.3.30.0/ice_comms-1.3.30.0.pkg /lib/firmware/updates/intel/ice/ddp/ ; \
+      cp /usr/tmp/ice-1.3.30.0/ice.pkg /lib/firmware/updates/intel/ice/ddp/ ; \
+      cd /lib/firmware/updates/intel/ice/ddp ; \
+      ln -sf ice_comms-1.3.30.0.pkg ice.pkg ; \
+      rm -rf /usr/tmp/*ice* ; \
+    fi
 
 RUN \
     yum install -y dhclient which liburcu2 libnl3 numactl-libs rdma-core==47mlnx1-1.47329 libibverbs==47mlnx1-1.47329 ; \
