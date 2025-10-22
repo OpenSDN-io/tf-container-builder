@@ -41,19 +41,18 @@ COPY *.repo /etc/yum.repos.d/
 COPY pip.conf /etc/
 COPY *.sh /
 
-# do not upgrade coreutils: https://bugzilla.redhat.com/show_bug.cgi?id=1764152
+# add epel if it's not added with repo templates
+RUN set -ex ; \
+    if ! dnf info git-review ; then \
+      dnf -y install epel-release ; \
+    fi
+
 # remove all not-this-OS repos
 RUN set -ex ; \
     source /etc/os-release ; \
     find /etc/yum.repos.d/ | grep -i centos | xargs -r rm ; ls -l /etc/yum.repos.d/ ; \
-    yum update -y -x "redhat-release*" -x "coreutils*"  \
     yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \
-    yum install -y hostname iproute less wget openssl glibc-langpack-en rsync procps-ng ; \
-    source /functions.sh ; \
-    yum install -y python3 python3-pip ; \
-    # pip9 is too old and breaks install of gevent with c++ errors
-    python3 -m pip install --upgrade pip setuptools ; \
-    rm -rf /root/.cache ; \
+    yum install -y hostname iproute less wget openssl glibc-langpack-en rsync procps-ng python3-pip ; \
     yum clean all -y ; \
     rm -rf /var/cache/yum ; \
     groupadd --gid $CONTRAIL_GID --system $CONTRAIL_USER ; \
