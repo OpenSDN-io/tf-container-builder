@@ -1,12 +1,32 @@
-ARG CONTRAIL_REGISTRY
-ARG CONTRAIL_CONTAINER_TAG
-FROM ${CONTRAIL_REGISTRY}/opensdn-general-base:${CONTRAIL_CONTAINER_TAG}
+FROM apache/kafka:3.9.1
 
-ARG SITE_MIRROR
+ARG VENDOR_NAME
+ARG VENDOR_DOMAIN
+
 ARG CONTAINER_NAME
-ENV SERVICE_NAME=kafka \
+ARG CONTRAIL_CONTAINER_TAG
+
+ARG LC_ALL="en_US.UTF-8"
+ARG LANG="en_US.UTF-8"
+ARG LANGUAGE="en_US.UTF-8"
+
+# These definitions are just for build purposes and must not be changed at runtime
+ENV VENDOR_DOMAIN=$VENDOR_DOMAIN \
+    VENDOR_NAME=$VENDOR_NAME \
+    CONTRAIL_GID=1999 \
+    CONTRAIL_UID=1999 \
+    CONTRAIL_USER=contrail \
+    CONTRAIL_VERSION=$CONTRAIL_CONTAINER_TAG \
+    LC_ALL=$LC_ALL \
+    LANG=$LANG \
+    LANGUAGE=$LANGUAGE \
+    SERVICE_NAME=kafka \
     CONTAINER_NAME=$CONTAINER_NAME
-LABEL name=$CONTAINER_NAME \
+
+LABEL vendor=$VENDOR_NAME \
+      version=$CONTRAIL_CONTAINER_TAG \
+      release="5.1.0" \
+      name=$CONTAINER_NAME \
       summary="Contrail Kafka" \
       description="Contrail Kafka is used for streaming data in Analytics DB." \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
@@ -15,29 +35,20 @@ LABEL name=$CONTAINER_NAME \
 ENV KAFKA_DIR=/opt/kafka \
     KAFKA_CONF_DIR=/opt/kafka/config \
     LOG_DIR=/var/log/kafka \
-    KAFKA_OPTS="-XX:NumberOfGCLogFiles=10 -XX:GCLogFileSize=100M" \
-    KAFKA_USER=kafka \
-    KAFKA_GROUP=kafka
+    KAFKA_USER=appuser \
+    KAFKA_GROUP=appuser
+
+USER 0
+
+# Add required license as text file in Liceses directory
+RUN mkdir /licenses
+COPY __licensing.txt /licenses/licensing.txt
 
 COPY *.sh /
 
-RUN set -e ; \
-    KAFKA_DISTRO_NAME="kafka_2.12-2.6.3" && \
-    for item in `ls /__*` ; do mv $item /${item:3} ; done && \
-    yum install -y java java-1.8.0-openjdk zip && \
-    source /functions.sh && \
-    download_package https://archive.apache.org dist/kafka/2.6.3/$KAFKA_DISTRO_NAME.tgz $KAFKA_DISTRO_NAME.tgz --no-check-certificate && \
-    tar -xvf $KAFKA_DISTRO_NAME.tgz && \
-    mkdir -p $KAFKA_CONF_DIR $LOG_DIR && \
-    mv $KAFKA_DISTRO_NAME/* $KAFKA_DIR && \
-    zip -d $KAFKA_DIR/libs/log4j-1.2.17.jar org/apache/log4j/chainsaw/* && \
-    rm -f $KAFKA_DISTRO_NAME.tgz && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
-    groupadd -f -g 1011 kafka && adduser -M -g kafka kafka && \
-    usermod -a -G $CONTRAIL_GID $KAFKA_USER && \
-    chown -R $KAFKA_USER:$KAFKA_GROUP $LOG_DIR $KAFKA_DIR
+RUN /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' ; \
+    apk add --no-cache python3
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
-WORKDIR $KAFKA_DIR
-CMD ["bin/kafka-server-start.sh", "config/server.properties"]
+ENTRYPOINT ["/cacert_entrypoint.sh"]
+WORKDIR ${KAFKA_DIR}
+CMD ["/contrail-entrypoint.sh"]
