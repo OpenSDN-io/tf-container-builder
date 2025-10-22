@@ -1,18 +1,43 @@
-ARG CONTRAIL_REGISTRY
-ARG CONTRAIL_CONTAINER_TAG
-FROM ${CONTRAIL_REGISTRY}/opensdn-general-base:${CONTRAIL_CONTAINER_TAG}
+FROM cassandra:3.11
 
-ARG SITE_MIRROR
+ARG VENDOR_NAME
+ARG VENDOR_DOMAIN
+
 ARG CONTAINER_NAME
-ENV SERVICE_NAME=cassandra \
+ARG CONTRAIL_CONTAINER_TAG
+
+ARG LC_ALL="en_US.UTF-8"
+ARG LANG="en_US.UTF-8"
+ARG LANGUAGE="en_US.UTF-8"
+
+# These definitions are just for build purposes and must not be changed at runtime
+ENV VENDOR_DOMAIN=$VENDOR_DOMAIN \
+    VENDOR_NAME=$VENDOR_NAME \
+    CONTRAIL_GID=1999 \
+    CONTRAIL_UID=1999 \
+    CONTRAIL_USER=contrail \
+    CONTRAIL_VERSION=$CONTRAIL_CONTAINER_TAG \
+    LC_ALL=$LC_ALL \
+    LANG=$LANG \
+    LANGUAGE=$LANGUAGE \
+    SERVICE_NAME=cassandra \
     CONTAINER_NAME=$CONTAINER_NAME
-LABEL name=$CONTAINER_NAME \
+
+LABEL vendor=$VENDOR_NAME \
+      version=$CONTRAIL_CONTAINER_TAG \
+      release="5.1.0" \
+      name=$CONTAINER_NAME \
       summary="Contrail Cassandra DB" \
       description="Configuration database for Contrail Controller." \
       $VENDOR_DOMAIN".service"=$SERVICE_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
+# Add required license as text file in Liceses directory
+RUN mkdir /licenses
+COPY __licensing.txt /licenses/licensing.txt
+
 ENV CASSANDRA_HOME=/opt/cassandra \
+# Add required license as text file in Liceses directory
     CASSANDRA_CONFIG=/etc/cassandra \
     CASSANDRA_LIB=/var/lib/cassandra \
     CASSANDRA_LOG=/var/log/cassandra \
@@ -25,57 +50,17 @@ ENV CASSANDRA_HOME=/opt/cassandra \
 
 COPY *.sh /
 
-# TODO: pin jdk version
-# https://issues.apache.org/jira/projects/CASSANDRA/issues/CASSANDRA-17581?filter=allissues
-# (it can be unpinned after cassandra be upgraded >= 3.11.13)
-RUN set -e ; \
-    CASSANDRA_VERSION=3.11.3 && \
-    set -ex && for item in `ls /__*` ; do mv $item /${item:3} ; done && \
-    yum install -y numactl which jemalloc procps-ng && \
-    yum install -y --exclude="*slowdebug*" --exclude="*fastdebug*" "java-1.8.0-openjdk" && \
-    groupadd -f -g ${CASSANDRA_GID} ${CASSANDRA_GROUP} && adduser -u ${CASSANDRA_UID} -M -g ${CASSANDRA_GROUP} ${CASSANDRA_USER} && \
-    usermod -a -G $CONTRAIL_GID ${CASSANDRA_USER} && \
-    source /functions.sh && \
-    download_package https://archive.apache.org dist/cassandra/$CASSANDRA_VERSION/apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz && \
-    mkdir -p ${CASSANDRA_HOME} && \
-    tar -xzf apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz -C ${CASSANDRA_HOME} --strip-components 1 && \
-    rm -rf  apache-cassandra-$CASSANDRA_VERSION-bin.tar.gz && \
-    mv "$CASSANDRA_HOME/conf" $CASSANDRA_CONFIG && \
-    ln -sT "$CASSANDRA_CONFIG" "$CASSANDRA_HOME/conf" && \
-    mkdir -p ${CASSANDRA_LIB} ${CASSANDRA_LOG} && \
-    chown -R ${CASSANDRA_USER}:${CASSANDRA_GROUP} ${CASSANDRA_CONFIG} ${CASSANDRA_LOG} ${CASSANDRA_LIB} && \
-    ln -sT ${CASSANDRA_LIB} "${CASSANDRA_HOME}/data" && \
-    ln -sT ${CASSANDRA_LOG} "${CASSANDRA_HOME}/logs" && \
-    rm -f /opt/cassandra/lib/libthrift-* && \
-    download_package https://github.com opensdn-io/tf-third-party-cache/blob/master/libthrift/libthrift-0.13.0.jar?raw=true /opt/cassandra/lib/libthrift-0.13.0.jar && \
-    rm -f /opt/cassandra/lib/netty-all-* && \
-    download_package https://repo1.maven.org maven2/io/netty/netty-all/4.1.39.Final/netty-all-4.1.39.Final.jar /opt/cassandra/lib/netty-all-4.1.39.Final.jar && \
-    rm -f /opt/cassandra/lib/logback-* && \
-    download_package https://repo1.maven.org maven2/ch/qos/logback/logback-classic/1.2.9/logback-classic-1.2.9.jar /opt/cassandra/lib/logback-classic-1.2.9.jar && \
-    download_package https://repo1.maven.org maven2/ch/qos/logback/logback-core/1.2.9/logback-core-1.2.9.jar /opt/cassandra/lib/logback-core-1.2.9.jar && \
-# install cassandra-reaper
-    REAPER_VERSION=3.2.1 && \
-    REAPER_RPM_NAME=reaper-${REAPER_VERSION}-1.x86_64.rpm && \
-    download_package https://github.com thelastpickle/cassandra-reaper/releases/download/${REAPER_VERSION}/${REAPER_RPM_NAME} ${REAPER_RPM_NAME} && \
-    rpm -Uvh --nodeps --replacepkgs ${REAPER_RPM_NAME} && \
-    rm -f ${REAPER_RPM_NAME} && \
-    yum clean all -y && \
-    rm -rf /var/cache/yum && \
-# smoke test
-    cassandra -v && \
-# save original config
-    cp ${CASSANDRA_CONFIG}/cassandra.yaml ${CASSANDRA_CONFIG}/cassandra.origin && \
-    cp ${CASSANDRA_CONFIG}/jvm.options ${CASSANDRA_CONFIG}/jvm.options.origin && \
-    cp ${CASSANDRA_REAPER_CONFIG}/cassandra-reaper.yaml ${CASSANDRA_REAPER_CONFIG}/cassandra-reaper.origin
+RUN /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' ; \
+    export DEBIAN_FRONTEND=noninteractive ; \
+    apt-get update || /bin/true ; \
+    apt-get -y install python3-minimal ; \
+    apt-get clean ; \
+    rm -rf /var/lib/apt/lists/* ; \
+    # save original config
+    cp ${CASSANDRA_CONFIG}/cassandra.yaml ${CASSANDRA_CONFIG}/cassandra.origin ; \
+    cp ${CASSANDRA_CONFIG}/jvm.options ${CASSANDRA_CONFIG}/jvm.options.origin
 
-VOLUME $CASSANDRA_LIB
 
 ENTRYPOINT ["/contrail-entrypoint.sh"]
-# 7000: intra-node communication
-# 7001: TLS intra-node communication
-# 7199: JMX
-# 9042: CQL
-# 9160: thrift service
-EXPOSE 7000 7001 7199 9042 9160
 
 CMD ["cassandra", "-f"]
