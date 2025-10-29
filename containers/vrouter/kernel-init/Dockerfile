@@ -28,6 +28,7 @@ COPY *.repo /etc/yum.repos.d/
 COPY *.sh /
 
 ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/bin/tools/vif /usr/bin/
 COPY --from=build ${BUILD_ROOT}/usr/src/modules/contrail-vrouter.tar.gz /opt/contrail/src/
 
 # remove all centos repos - they are cause of failure in rocky9 dnf cmd

@@ -8,7 +8,11 @@ export SERVICE_NAME=kernel-init
 source /common.sh
 source /kernel-init-functions.sh
 
-copy_agent_tools_to_host
+# copy vif util to host
+if [[ -d /host/bin && ! -f /host/bin/vif ]] ; then
+  /bin/cp -f /usr/bin/vif /host/bin/vif
+  chmod +x /host/bin/vif
+fi
 
 list_dirs_modules=$(get_vrouter_dirs "/opt/contrail/.")
 list_dirs_kernels=$(get_kernel_dirs "/lib/modules/.")

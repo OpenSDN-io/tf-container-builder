@@ -38,6 +38,7 @@ COPY *.repo /etc/yum.repos.d/
 COPY *.list /etc/apt/
 
 ARG BUILD_ROOT
+COPY --from=build ${BUILD_ROOT}/usr/bin/tools/vif /usr/bin/
 COPY --from=build ${BUILD_ROOT}/usr/src/modules/contrail-vrouter.tar.gz /opt/contrail/src/
 
 #TODO: need to get rid of apt-get update

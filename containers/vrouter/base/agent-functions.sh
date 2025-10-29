@@ -74,7 +74,7 @@ function copy_agent_tools_to_host() {
         prepare_network_scripts "$netscript_dir"
     fi
     # copy vif util
-    /bin/cp -f /bin/vif /host/bin/vif
+    /bin/cp -f /usr/bin/vif /host/bin/vif
     chmod 644 /host/bin/vif
     chmod +x /host/bin/vif
 }

@@ -60,7 +60,7 @@ touch $vrouter_dir/module_compiled
 
 # copy vif util to host
 if [[ -d /host/bin && ! -f /host/bin/vif ]] ; then
-  /bin/cp -f /contrail_tools/usr/bin/vif /host/bin/vif
+  /bin/cp -f /usr/bin/vif /host/bin/vif
   chmod +x /host/bin/vif
 fi
 
