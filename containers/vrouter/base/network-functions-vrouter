@@ -106,7 +106,7 @@ function get_iface_mac() {
 
 function get_addrs_for_nic() {
     local nic=$1
-    ip addr show dev $nic | grep "inet" | grep -oP "[0-9a-f\:\.]*/[0-9]* brd [0-9\.]*|[0-9a-f\:\.]*/[0-9]*"
+    ip addr show dev $nic | grep "inet" | grep -oP "[0-9a-f\:\.]*/[0-9]*(?:\s+\S+)*\s+brd\s+[0-9\.]*|[0-9a-f\:\.]*/[0-9]*"
 }
 
 function get_iface_mtu() {
