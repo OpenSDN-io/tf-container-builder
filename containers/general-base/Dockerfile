@@ -3,8 +3,6 @@
 ARG LINUX_DISTR=rockylinux
 ARG LINUX_DISTR_VER=9.3
 FROM $LINUX_DISTR:$LINUX_DISTR_VER
-# Redefine ARG after FROM (to make them available in the rest of the Dockerfile)
-ARG LINUX_DISTR=centos
 
 ARG SITE_MIRROR
 ARG VENDOR_NAME

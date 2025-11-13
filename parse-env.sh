@@ -25,11 +25,13 @@ else
 fi
 
 # target platform info
-export LINUX_DISTR=${LINUX_DISTR:-centos}
+export LINUX_DISTR=${LINUX_DISTR:-rockylinux}
 export LINUX_DISTR_VER=${LINUX_DISTR_VER:-}
 if [[ -z "$LINUX_DISTR_VER" ]] ; then
   if [[ "$LINUX_DISTR" =~ 'centos' ]] ; then
     LINUX_DISTR_VER=7
+  elif [[ "$LINUX_DISTR" =~ 'rocky' ]] ; then
+    LINUX_DISTR_VER='9.3'
   else
     LINUX_DISTR_VER='latest'
   fi
