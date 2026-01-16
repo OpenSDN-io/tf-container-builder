@@ -20,7 +20,7 @@ COPY entrypoint.sh /
 COPY conf/* /etc/scripts/
 
 RUN set -e ; \
-    yum install -y gcc make xz && \
+    dnf install -y gcc make xz && \
     source /functions.sh && \
     download_package https://thekelleys.org.uk dnsmasq/dnsmasq-2.90.tar.xz dnsmasq-2.90.tar.xz "--no-check-certificate" && \
     tar -xvf dnsmasq-2.90.tar.xz && \
@@ -30,9 +30,9 @@ RUN set -e ; \
     make install && \
     popd && \
     rm -rf dnsmasq-2.90 && \
-    yum autoremove -y gcc make && \
+    dnf autoremove -y gcc make && \
     echo "conf-dir=/etc/dnsmasq,*.conf" > /etc/dnsmasq.conf && \
-    yum clean all -y && \
+    dnf clean all -y && \
     rm -rf /var/cache/yum
 
 ENTRYPOINT ["/entrypoint.sh"]

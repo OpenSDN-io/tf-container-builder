@@ -22,8 +22,8 @@ COPY --from=build ${BUILD_ROOT}/usr/local/lib64/wireshark/plugins/*.lua /usr/loc
 # tshark is needed for sandump tool which is included into contrail-tools package
 RUN set -e ; \
       source /etc/os-release ; \
-      yum install -y sudo openssh-clients bzip2 tcpdump wireshark socat; \
-      yum clean all -y ; \
+      dnf install -y sudo openssh-clients bzip2 tcpdump wireshark socat; \
+      dnf clean all -y ; \
       rm -rf /var/cache/yum ; \
       ln -s /usr/bin/tshark /usr/sbin/tshark3_2
 

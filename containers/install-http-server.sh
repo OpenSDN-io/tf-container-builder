@@ -15,9 +15,9 @@ case "${linux}" in
     ln -s /etc/lighttpd/conf-available/10-dir-listing.conf /etc/lighttpd/conf-enabled/
     ;;
   "centos" | "rhel" )
-    # yum install -y epel-release
+    # dnf install -y epel-release
     rpm -Uvh https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    yum install -y lighttpd createrepo
+    dnf install -y lighttpd createrepo
     sed -i 's/\(dir-listing.activate\)[ \t]*=.*/\1 = "enable"/' /etc/lighttpd/conf.d/dirlisting.conf
     sed -i 's/server.use-ipv6.*=.*enable.*/server.use-ipv6 = "disable"/g' /etc/lighttpd/lighttpd.conf
     ;;

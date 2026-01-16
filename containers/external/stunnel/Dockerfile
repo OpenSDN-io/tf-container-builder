@@ -14,8 +14,8 @@ LABEL name=$CONTAINER_NAME \
 COPY *.sh /
 RUN set -e ; \
     /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' && \
-    yum install -y stunnel && \
-    yum clean all -y && \
+    dnf install -y stunnel && \
+    dnf clean all -y && \
     rm -rf /var/cache/yum
 
 ENTRYPOINT ["/contrail-entrypoint.sh"]

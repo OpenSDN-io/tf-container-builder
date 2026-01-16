@@ -30,8 +30,8 @@ RUN set -e ; \
     else \
         pkgs="boost169" ; \
     fi ; \
-    yum install -y $pkgs protobuf redis cassandra-cpp-driver libzookeeper librdkafka ; \
-    yum clean all -y ; \
+    dnf install -y $pkgs protobuf redis cassandra-cpp-driver libzookeeper librdkafka ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum
 
 ENTRYPOINT ["/entrypoint.sh"]

@@ -28,7 +28,7 @@ RUN set -e ; \
     # net-tools has netstat which is used in vrouter-dpdk, opensdn-status and by opensdn-test inside kubemanager container
     # libatomic libuv userspace-rcu tbb - for c++ binaries
     # crudini - mostly for tf-test repo
-    yum install -y nc gcc python3-devel net-tools libatomic libuv userspace-rcu tbb crudini ; \
+    dnf install -y nc gcc python3-devel net-tools libatomic libuv userspace-rcu tbb crudini ; \
     # NOTE: utils must be placed into /opt/contrail/utils
     # TODO: rework utils with extra_scripts in setup.py
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY "contrail_config_utils==0.1.dev0" ; \
@@ -41,7 +41,7 @@ RUN set -e ; \
     # for debug purposes
     python3 -m pip install --no-compile remote-pdb ; \
     rm -rf /root/.cache ; \
-    yum clean all -y ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum ; \
     ldconfig
 

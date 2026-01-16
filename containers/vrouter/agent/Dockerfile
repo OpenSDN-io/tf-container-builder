@@ -39,8 +39,8 @@ RUN set -e ; \
     else \
         pkgs="boost169" ; \
     fi ; \
-    yum install -y $pkgs sudo gperftools-libs iptables dhclient haproxy libvirt-client ; \
-    yum clean all -y ; \
+    dnf install -y $pkgs sudo gperftools-libs iptables dhclient haproxy libvirt-client ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
         "contrail-vrouter-api==0.1.dev0" "opencontrail-vrouter-netns==0.1.dev0" ; \

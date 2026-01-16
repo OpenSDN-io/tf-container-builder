@@ -49,9 +49,9 @@ RUN set -ex ; \
 RUN set -ex ; \
     source /etc/os-release ; \
     find /etc/yum.repos.d/ | grep -i centos | xargs -r rm ; ls -l /etc/yum.repos.d/ ; \
-    yum -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \
-    yum install -y hostname iproute less wget openssl glibc-langpack-en rsync procps-ng python3-pip ; \
-    yum clean all -y ; \
+    dnf -y update-minimal --security --sec-severity=Important --sec-severity=Critical ; \
+    dnf install -y hostname iproute less wget openssl glibc-langpack-en rsync procps-ng python3-pip ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum ; \
     groupadd --gid $CONTRAIL_GID --system $CONTRAIL_USER ; \
     useradd -md /home/contrail --uid $CONTRAIL_UID --shell /sbin/nologin --system --gid $CONTRAIL_GID $CONTRAIL_USER

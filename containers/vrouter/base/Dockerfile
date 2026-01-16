@@ -15,8 +15,8 @@ COPY --from=build ${BUILD_ROOT}/usr/bin/tools/qosmap /usr/bin/
 # removing network-scripts: this folder will mounted from the host (or not used in Ubuntu) so the one installed by initscripts package in container is removed.
 RUN set -e ; \
     source /etc/os-release ; \
-    yum install -y NetworkManager initscripts ethtool pciutils ; \
-    yum clean all -y ; \
+    dnf install -y NetworkManager initscripts ethtool pciutils ; \
+    dnf clean all -y ; \
     if [[ "$ID" == 'rhel' && "${PLATFORM_ID//*:/}" == 'el8' ]] ; then \
         rm -f /usr/sbin/ifup /usr/sbin/ifdown && \
         cp /etc/sysconfig/network-scripts/ifup /etc/sysconfig/network-scripts/ifdown /usr/sbin/ ; \

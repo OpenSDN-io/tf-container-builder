@@ -25,7 +25,7 @@ RUN set -e ; \
     source /functions.sh ; \
     if download_package https://downloadmirror.intel.com 30590/eng/800_series_comms_binary_package_1.3.30.0.zip /usr/tmp/downloaded_ice_comms-1.3.30.0.zip ; then \
       cd /usr/tmp ; \
-      yum -y install unzip ; \
+      dnf -y install unzip ; \
       unzip -o -d /usr/tmp downloaded_ice_comms-1.3.30.0.zip ; \
       unzip -o -d /usr/tmp/ice-1.3.30.0 ice_comms-1.3.30.0.zip ; \
       mkdir -p /lib/firmware/updates/intel/ice/ddp ; \
@@ -37,8 +37,8 @@ RUN set -e ; \
     fi
 
 RUN \
-    yum install -y dhclient which liburcu2 libnl3 numactl-libs rdma-core==47mlnx1-1.47329 libibverbs==47mlnx1-1.47329 ; \
-    yum clean all -y ; \
+    dnf install -y dhclient which liburcu2 libnl3 numactl-libs rdma-core==47mlnx1-1.47329 libibverbs==47mlnx1-1.47329 ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum ; \
     ldconfig
 

@@ -20,9 +20,9 @@ RUN set -e ; \
         echo "ERROR: only version 9 of redhat-like OS is supported" ; \
         exit 1 ; \
     fi ; \
-    yum install -y redis nodejs-1:16.20.2 npm-1:8.19.4 ; \
+    dnf install -y redis nodejs-1:16.20.2 npm-1:8.19.4 ; \
     npm install -g coffeescript livescript ; \
-    yum clean all -y ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum ; \
     mkdir /usr/lib64/node_modules ; \
     cp -rp /usr/src/contrail/contrail-web-core/node_modules/* /usr/lib64/node_modules/ ; \

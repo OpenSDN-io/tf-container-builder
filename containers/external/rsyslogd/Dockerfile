@@ -15,8 +15,8 @@ COPY *.sh /
 
 RUN set -e ; \
     /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' ; \
-    yum -y install rsyslog ; \
-    yum clean all -y ; \
+    dnf -y install rsyslog ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum
 
 # Copy configuration files

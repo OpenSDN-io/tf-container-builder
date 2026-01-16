@@ -25,11 +25,11 @@ COPY --from=build /pip/fabric_ansible_playbooks-0.1.dev0.tar.gz /opt/
 # pin cryptography - newer version requires rust compiler just for install.
 # but we don't want to install this useless component
 RUN set -e ; \
-    yum install -y libffi-devel iputils ; \
+    dnf install -y libffi-devel iputils ; \
     # ansible-core requires importlib-resources to be installed
     python3 -m pip install "cryptography<3.5" "importlib-resources<5.1"; \
     python3 -m pip install --no-compile --no-binary :all: ansible ansible-core ; \
-    yum clean all -y ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum ; \
     source /functions.sh ; \
     download_package https://github.com Juniper/ansible-junos-stdlib/archive/2.4.2.tar.gz Juniper.junos ; \

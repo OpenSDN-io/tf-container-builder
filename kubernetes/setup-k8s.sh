@@ -102,7 +102,7 @@ EOF
   if ! docker --version 2>&1 ; then
     pkgs_to_install+=' docker'
   fi
-  yum install -y \$pkgs_to_install
+  dnf install -y \$pkgs_to_install
   systemctl enable docker && systemctl start docker
   systemctl enable kubelet && systemctl start kubelet
   systemctl enable ntpd.service && systemctl start ntpd.service

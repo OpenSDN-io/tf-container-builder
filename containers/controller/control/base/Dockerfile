@@ -13,8 +13,8 @@ RUN set -e ; \
     else \
         pkgs="boost169" ; \
     fi ; \
-    yum install -y $pkgs authbind cassandra-cpp-driver ; \
-    yum clean all -y ; \
+    dnf install -y $pkgs authbind cassandra-cpp-driver ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum
 
 CMD ["/usr/bin/tail","-f","/dev/null"]

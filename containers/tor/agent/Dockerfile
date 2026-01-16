@@ -39,8 +39,8 @@ RUN set -e ; \
     else \
         pkgs="boost169" ; \
     fi ; \
-    yum install -y $pkgs gperftools-libs ; \
-    yum clean all -y ; \
+    dnf install -y $pkgs gperftools-libs ; \
+    dnf clean all -y ; \
     rm -rf /var/cache/yum ; \
     python3 -m pip install --no-compile --extra-index-url $PIP_REPOSITORY \
         "contrail-vrouter-api==0.1.dev0" ; \
