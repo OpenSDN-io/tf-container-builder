@@ -34,6 +34,9 @@ ENV VENDOR_DOMAIN=$VENDOR_DOMAIN \
     LANG=$LANG \
     LANGUAGE=$LANGUAGE
 
+# save original yum config before copying optional repo files from host
+RUN mkdir -p /etc/yum.repos.d.bak/ ; cp -f /etc/yum.repos.d/* /etc/yum.repos.d.bak/
+
 # this copy should be before yum install
 COPY *.repo /etc/yum.repos.d/
 COPY pip.conf /etc/
