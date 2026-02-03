@@ -42,8 +42,10 @@ enable_kernel_module () {
 
 # Running tested features
 available_modules=$( get_lists_modules_versions "$list_dirs_modules" )
-installed_kernels=$( get_lists_kernels_versions "$list_dirs_kernels" )
-install_kernel_modules "$available_modules" "$installed_kernels"
+installed_kernels=$( echo "$list_dirs_kernels" | awk -F "/" '{print $NF}' )
+for kver in $installed_kernels; do
+  install_kernel_module "$available_modules" "$kver"
+done
 
 # Check result
 
