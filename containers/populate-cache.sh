@@ -98,11 +98,11 @@ wget -nv -t3 -P vault/rocky/9.2/BaseOS/x86_64/os/Packages/k/ https://dl.rockylin
 wget -nv -t3 -P vault/rocky/9.2/AppStream/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.2/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-284.30.1.el9_2.x86_64.rpm
 
 # rocky9 kernel for 9.3
-wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-5.14.0-362.el9s.x86_64.rpm
-wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-core-5.14.0-362.el9s.x86_64.rpm
-wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-modules-5.14.0-362.el9s.x86_64.rpm
-wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-modules-core-5.14.0-362.el9s.x86_64.rpm
-wget -nv -t3 -P kojifiles/packages/kernel/5.14.0/362.el9s/x86_64 https://cbs.centos.org/kojifiles/packages/kernel/5.14.0/362.el9s/x86_64/kernel-devel-5.14.0-362.el9s.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.3/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-362.13.1.el9_3.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.3/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-core-5.14.0-362.13.1.el9_3.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.3/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-modules-5.14.0-362.13.1.el9_3.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.3/BaseOS/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.3/BaseOS/x86_64/os/Packages/k/kernel-modules-core-5.14.0-362.13.1.el9_3.x86_64.rpm
+wget -nv -t3 -P vault/rocky/9.3/AppStream/x86_64/os/Packages/k https://dl.rockylinux.org/vault/rocky/9.3/AppStream/x86_64/os/Packages/k/kernel-devel-5.14.0-362.13.1.el9_3.x86_64.rpm
 
 # rocky9 kernel for 9.5
 wget -nv -t3 -P vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/ https://dl.rockylinux.org/vault/rocky/9.5/BaseOS/x86_64/os/Packages/k/kernel-5.14.0-503.14.1.el9_5.x86_64.rpm 
