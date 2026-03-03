@@ -28,7 +28,7 @@ RUN set -e ; \
     else \
         pkgs="boost169" ; \
     fi ; \
-    dnf install -y $pkgs protobuf redis cassandra-cpp-driver libzookeeper librdkafka ; \
+    dnf install -y $pkgs protobuf redis cassandra-cpp-driver libzookeeper librdkafka hiredis ; \
     dnf clean all -y ; \
     rm -rf /var/cache/yum
 
