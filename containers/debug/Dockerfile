@@ -12,12 +12,8 @@ LABEL name=$CONTAINER_NAME \
       $VENDOR_DOMAIN".container.name"=$CONTAINER_NAME
 
 ARG BUILD_ROOT
+ARG DEBUGINFO_ROOT
 COPY --from=build ${BUILD_ROOT}/manifest.xml /manifest.xml
-# TODO: debug packages are unavailable in CI jobs, ignore errors
-RUN set -e ; \
-    dnf install -y contrail-debuginfo || true && \
-    dnf install -y contrail-vrouter-dpdk-debuginfo || true && \
-    dnf clean all -y && \
-    rm -rf /var/cache/yum
+COPY --from=build ${DEBUGINFO_ROOT} ${DEBUGINFO_ROOT}
 
 ENV PS1="\033[1m($CONTAINER_NAME)\033[m\017[$(id -un)@$(hostname -s) $(pwd)]$ "

@@ -52,6 +52,7 @@ fi
 
 # folder with built binaries/libs/docs/data/... files from tf-dev-sandbox container
 export BUILD_ROOT=${BUILD_ROOT:-'/buildroot'}
+export DEBUGINFO_ROOT=${DEBUGINFO_ROOT:-'/debuginfo'}
 
 export K8S_VERSION=${K8S_VERSION:-'1.15.4'}
 if [[ "$LINUX_DISTR" =~ 'ubi8' ]] ; then
