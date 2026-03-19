@@ -37,13 +37,16 @@ RUN set -e ; \
     for item in `ls /__*` ; do mv $item /${item:3} ; done ; \
     find /etc/yum.repos.d/ | grep -i centos | xargs -r rm ; ls -l /etc/yum.repos.d/ ; \
     dnf clean all -y ; dnf makecache ; \
-    dnf install -y wget make gcc gcc-c++ ; \
+    dnf install -y kmod make gcc gcc-c++ ; \
     dnf clean all -y ; \
-    mkdir -p /vrouter_src ; \
     contrail_version=${CONTRAIL_VERSION:-$CONTRAIL_CONTAINER_TAG} ; \
     echo "${contrail_version}" > /contrail_version ; \
-    cd /vrouter_src ; \
-    tar -xf /opt/contrail/src/contrail-vrouter.tar.gz ; \
-    /build-kernels.sh
+    vrouter_dir=/opt/vrouter_src/vrouter-${contrail_version} ; \
+    mkdir -p ${vrouter_dir} /vrouter/${contrail_version}/build/include /vrouter/${contrail_version}/build/dp-core ; \
+    tar -xf /opt/contrail/src/contrail-vrouter.tar.gz -C ${vrouter_dir} ; \
+    chmod -R 755 ${vrouter_dir} ; \
+    cd ${vrouter_dir} ; \
+    ./utils/dkms/gen_build_info.sh "${contrail_version}" /vrouter/${contrail_version}/build ; \
+    sed -i 's*#include <stdarg.h>*//#include <stdarg.h>*g' ${vrouter_dir}/dp-core/vr_index_table.c
 
 ENTRYPOINT ["/entrypoint.sh"]

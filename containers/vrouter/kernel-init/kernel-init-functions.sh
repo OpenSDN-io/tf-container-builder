@@ -14,51 +14,48 @@ get_vrouter_dirs () {
   find "$path" -type f -name "vrouter.ko"
 }
 
-get_kernel_dirs () {
-  local path=$1
-  find "$path" -type d -name "*.x86_64"
-}
-
 get_lists_modules_versions () {
   local list_dirs=$1
   echo "$list_dirs" | awk -F "/" '{print($(NF-1))}' | sed 's/\.el/ el/' | sort -V | sed 's/ /./1'
 }
 
-get_lists_kernels_versions () {
-  local list_dirs=$1
-  echo "$list_dirs_kernels" | awk -F "/" '{print $NF}'
-}
-
-install_kernel_modules () {
+# Install vrouter.ko for a single kernel version.
+# Finds the best matching module from available_modules for the given kernel.
+install_kernel_module () {
   local modules=$1
-  local kernels=$2
-  local sorted_list
+  local kver=$2
   local kernel_prefix_regex
-  local d
 
-  for d in $kernels ; do
-    # Enable module if we have equal version
-    if echo "$modules" | grep -q "$d" ; then
-      enable_kernel_module "$d" "$d"
-      continue
-    fi
+  if [ -z "$modules" ]; then
+    echo "ERROR: no vrouter.ko modules found"
+    return 1
+  fi
 
-    kernel_prefix_regex="^$(echo $d | cut -d. -f1,2,3)"
+  # Exact match
+  if echo "$modules" | grep -q "$kver" ; then
+    enable_kernel_module "$kver" "$kver"
+    return 0
+  fi
 
-    # Check if minor version modules exist. If not - use major version
-    if ! echo "$modules" | grep $kernel_prefix_regex | grep -vq "$d" ; then
-      kernel_prefix_regex="^$(echo $d | cut -d. -f1,2)"
-    fi
+  # Find closest version by minor release prefix (e.g. 5.14.0)
+  kernel_prefix_regex="^$(echo $kver | cut -d. -f1,2,3)"
+  if ! echo "$modules" | grep -q $kernel_prefix_regex ; then
+    kernel_prefix_regex="^$(echo $kver | cut -d. -f1,2)"
+  fi
 
-    # Add OS kernel version to list of available and sort them
-    sorted_list=$(echo -e "${modules}\n${d}" | grep $kernel_prefix_regex | sed 's/\.el/ el/' | sort -V | sed 's/ /./1')
+  local sorted_list
+  sorted_list=$(echo -e "${modules}\n${kver}" | grep $kernel_prefix_regex | sed 's/\.el/ el/' | sort -V | sed 's/ /./1')
 
-    if ! echo "$sorted_list" | grep -B1 -A1 "$d" | grep -vq "$d" ; then
-      # Enable first installed module if current kernel is upper all modules that we have
-      enable_kernel_module $(echo "$modules" | grep $kernel_prefix_regex | head -1) "$d"
-    else
-      # Enable upper version kernel module if exists or lower version if not
-      enable_kernel_module $(echo "$sorted_list" | grep -B1 -A1 "$d" | grep -v "$d" | head -1 ) "$d"
-    fi
-  done
+  local best_match
+  best_match=$(echo "$sorted_list" | grep -B1 -A1 "$kver" | grep -v "$kver" | head -1)
+  if [ -z "$best_match" ]; then
+    best_match=$(echo "$modules" | grep $kernel_prefix_regex | head -1)
+  fi
+
+  if [ -z "$best_match" ]; then
+    echo "ERROR: no compatible vrouter.ko found for kernel $kver"
+    return 1
+  fi
+
+  enable_kernel_module "$best_match" "$kver"
 }
