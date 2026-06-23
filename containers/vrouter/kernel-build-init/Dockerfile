@@ -1,6 +1,6 @@
 ARG BUILD_IMAGE
 ARG UBUNTU_DISTR=ubuntu
-ARG UBUNTU_DISTR_VERSION=24.04
+ARG UBUNTU_DISTR_VERSION=26.04
 FROM ${BUILD_IMAGE} AS build
 
 FROM $UBUNTU_DISTR:$UBUNTU_DISTR_VERSION
@@ -48,7 +48,7 @@ RUN set -e ; \
     echo "${contrail_version}" > /contrail_version ; \
     export DEBIAN_FRONTEND=noninteractive ; \
     apt-get update ; \
-    apt-get install -y --no-install-recommends dkms libelf-dev g++ gcc-12 ; \
+    apt-get install -y --no-install-recommends dkms libelf-dev g++ gcc-12 gcc-14; \
     apt-get autoremove -y ; \
     mkdir -p /vrouter_src ; \
     cd /vrouter_src ; \
