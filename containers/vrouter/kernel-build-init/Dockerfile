@@ -48,7 +48,7 @@ RUN set -e ; \
     echo "${contrail_version}" > /contrail_version ; \
     export DEBIAN_FRONTEND=noninteractive ; \
     apt-get update ; \
-    apt-get install -y --no-install-recommends dkms libelf-dev g++ gcc-12 gcc-14; \
+    apt-get install -y --no-install-recommends dkms libelf-dev g++ gcc-12 gcc-13 gcc-14 libelf-dev libdw-dev; \
     apt-get autoremove -y ; \
     mkdir -p /vrouter_src ; \
     cd /vrouter_src ; \
