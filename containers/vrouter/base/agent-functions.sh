@@ -623,24 +623,111 @@ function check_vhost0() {
     ip link sh dev vhost0 >/dev/null 2>&1 || return 1
 }
 
+# vhost0 is initialized either from the ifcfg files (rhosp) or manually, by
+# moving the addressing of the physical interface over. Only the latter needs
+# that addressing, so the decision has to be available before it is read.
+function use_ifcfg_for_vhost0() {
+    local phys_int=$1
+    # TODO: check that ID is sourced from /etc/os-release
+    # TODO: check that rhel 8 and above supports network scripts
+    [[ "$ID" == 'rhel' ]] && [[ -e /etc/sysconfig/network-scripts/ifcfg-${phys_int} || \
+        -e /etc/sysconfig/network-scripts/contrail.org.ifcfg-${phys_int} || \
+        -e /etc/sysconfig/network-scripts/ifcfg-vhost0 ]]
+}
+
 function init_vhost0() {
     # check vhost0
     if check_vhost0 ; then
         echo "INFO: vhost0 is already up"
+        if ! is_dpdk && [ -z "$L3MH_CIDR" ] ; then
+            # vhost0 holds the addressing and is known good here, so this is
+            # the place to keep the saved copy in sync with an address that
+            # has been changed (dhcp renewal, reconfiguration) since the
+            # start that moved it over
+            local up_phys_int
+            IFS=' ' read -r up_phys_int _ <<< $(get_physical_nic_and_mac)
+            [ -n "$up_phys_int" ] && save_nic_addrs $up_phys_int "$(get_underlay_addrs_for_nic vhost0)"
+        fi
         dbg_trace_agent_vers
         ensure_host_resolv_conf
         return 0
+    fi
+
+    # vhost0 exists without any addressing: a leftover of a previous agent
+    # that has died without running its teardown. Remove it, so that
+    # create_vhost0 starts from a known state and remove_vhost0 gets the
+    # chance to put the saved addressing back on the physical interface,
+    # where it is read from below.
+    # The addressing is what tells a leftover from a working vhost0 here:
+    # check_vhost0 has already failed at this point, but it only looks for
+    # an IPv4 address and so fails for a working IPv6-only vhost0 as well.
+    local phys_int_before_cleanup
+    if ! is_dpdk && ip link sh dev vhost0 >/dev/null 2>&1 && \
+        [ -z "$(get_underlay_addrs_for_nic vhost0)" ] ; then
+        IFS=' ' read -r phys_int_before_cleanup _ <<< $(get_physical_nic_and_mac)
+        if use_ifcfg_for_vhost0 $phys_int_before_cleanup ; then
+            # that path removes and re-initializes vhost0 via ifup on its own
+            phys_int_before_cleanup=''
+        else
+            echo "INFO: found a leftover vhost0 without addressing, remove it before re-init"
+            if ! remove_vhost0 ; then
+                echo "ERROR: failed to remove the leftover vhost0."
+                dbg_trace_agent_vers
+                return 1
+            fi
+        fi
     fi
 
     declare phys_int phys_int_mac addrs bind_type bind_int mtu routes
     if ! is_dpdk ; then
         # NIC case
         IFS=' ' read -r phys_int phys_int_mac <<< $(get_physical_nic_and_mac)
+        # the physical interface is resolved by the MAC of vhost0 while it
+        # exists and by the configuration once it is gone, so the two can
+        # disagree and the addressing be restored to the other interface
+        if [ -n "$phys_int_before_cleanup" ] && [ "$phys_int_before_cleanup" != "$phys_int" ] ; then
+            echo "WARNING: physical interface is $phys_int but was $phys_int_before_cleanup before the cleanup of vhost0"
+        fi
         if [ -z "$BIND_INT" ] ; then
             # read from phys dev in non OSP case only
-            addrs=$(get_addrs_for_nic $phys_int)
+            addrs=$(get_underlay_addrs_for_nic $phys_int)
             mtu=$(get_iface_mtu $phys_int)
-            routes=$(get_dev_routes $phys_int)
+            routes=$(get_underlay_routes_for_nic $phys_int)
+            # the ifcfg path takes the addressing from the ifcfg files, where
+            # an unconfigured physical interface is expected
+            if ! use_ifcfg_for_vhost0 $phys_int ; then
+                if [ -n "$addrs" ] ; then
+                    echo "INFO: addressing to move from $phys_int to vhost0: $(echo $addrs)"
+                    save_nic_addrs $phys_int "$addrs"
+                    save_nic_routes $phys_int "$routes"
+                else
+                    # The addressing is neither on the physical interface nor
+                    # on vhost0 (that does not exist yet), so the previous
+                    # agent has been stopped without moving it back and the
+                    # host network config has not been re-applied since.
+                    # Recover it from the copy saved on the last successful
+                    # start, there is no other source of it.
+                    addrs=$(load_saved_nic_addrs $phys_int)
+                    [ -n "$routes" ] || routes=$(load_saved_nic_routes $phys_int)
+                    if [ -z "$addrs" ] && [ -n "$phys_int_before_cleanup" ] && \
+                        [ "$phys_int_before_cleanup" != "$phys_int" ] ; then
+                        # the copy is keyed by interface name and the name has
+                        # changed with the removal of vhost0
+                        echo "INFO: nothing saved for $phys_int, trying $phys_int_before_cleanup"
+                        addrs=$(load_saved_nic_addrs $phys_int_before_cleanup)
+                        [ -n "$routes" ] || routes=$(load_saved_nic_routes $phys_int_before_cleanup)
+                    fi
+                    if [ -z "$addrs" ] ; then
+                        echo "ERROR: $phys_int has no addresses to move to vhost0 and there is nothing saved in $VROUTER_NIC_STATE_DIR."
+                        echo "ERROR: vhost0 cannot be initialized, re-apply the host network config for $phys_int."
+                        dbg_trace_agent_vers
+                        return 1
+                    fi
+                    # the saved copy is not verified against the current host
+                    # network config, it can be outdated
+                    echo "WARNING: $phys_int has no addresses of its own, vhost0 will be initialized from the saved copy: $(echo $addrs)"
+                fi
+            fi
         fi
         echo "INFO: creating vhost0 for nic mode: nic: $phys_int, mac=$phys_int_mac"
         if ! create_vhost0 $phys_int $phys_int_mac ; then
@@ -680,9 +767,7 @@ function init_vhost0() {
     local ret=0
     # TODO: check that ID is sourced from /etc/os-release
     # TODO: check that rhel 8 and above supports network scripts
-    if [[ "$ID" == 'rhel' ]] && [[ -e /etc/sysconfig/network-scripts/ifcfg-${phys_int} || \
-        -e /etc/sysconfig/network-scripts/contrail.org.ifcfg-${phys_int} || \
-        -e /etc/sysconfig/network-scripts/ifcfg-vhost0 ]]; then
+    if use_ifcfg_for_vhost0 $phys_int ; then
         echo "INFO: creating ifcfg-vhost0 and initialize it via ifup"
         if ! is_dpdk ; then
             ifdown ${phys_int}
@@ -707,14 +792,35 @@ function init_vhost0() {
             kill_dhcp_clients ${phys_int}
         fi
         echo "INFO: Changing physical interface to vhost in ip table"
-        echo "$addrs" | while IFS= read -r line ; do
+        # not a pipe: $ret set inside a pipeline is lost with its subshell
+        while IFS= read -r line ; do
+            [ -n "$line" ] || continue
             if ! is_dpdk ; then
                 local addr_to_del=`echo $line | cut -d ' ' -f 1`
-                ip address delete $addr_to_del dev $phys_int || { echo "ERROR: failed to del $addr_to_del from ${phys_int}." && ret=1; }
+                # the address is absent when it has been restored from the
+                # saved copy rather than read from the physical interface,
+                # and it sits on the interface resolved before the cleanup
+                # of vhost0 when the two names disagree - leaving it there
+                # would keep it assigned twice
+                local del_from=''
+                if is_addr_on_nic $phys_int $addr_to_del ; then
+                    del_from=$phys_int
+                elif [ -n "$phys_int_before_cleanup" ] && is_addr_on_nic $phys_int_before_cleanup $addr_to_del ; then
+                    del_from=$phys_int_before_cleanup
+                fi
+                if [ -n "$del_from" ] ; then
+                    ip address delete $addr_to_del dev $del_from || echo "WARNING: failed to del $addr_to_del from ${del_from}."
+                fi
             fi
             local addr_to_add=`echo $line | sed 's/brd/broadcast/'`
-            ip address add $addr_to_add dev vhost0 || { echo "ERROR: failed to add address $addr_to_add to vhost0." && ret=1; }
-        done
+            ip address add $addr_to_add dev vhost0 || echo "WARNING: failed to add address $addr_to_add to vhost0."
+        done < <(echo "$addrs")
+        # a single address that cannot be moved is not fatal by itself, an
+        # vhost0 without any address is
+        if [ -z "$(get_underlay_addrs_for_nic vhost0)" ] ; then
+            echo "ERROR: vhost0 has got no address from ${phys_int}."
+            ret=1
+        fi
         if [[ -n "$mtu" ]] ; then
             echo "INFO: set mtu"
             ip link set dev vhost0 mtu $mtu
@@ -875,11 +981,37 @@ function remove_vhost0() {
     fi
 
     echo "INFO: removing vhost0"
-    declare phys_int phys_int_mac restore_ip_cmd routes
+    declare phys_int phys_int_mac restore_ip_cmd routes vhost0_routes live_addrs
     IFS=' ' read -r phys_int phys_int_mac <<< $(get_physical_nic_and_mac)
-    restore_ip_cmd=$(gen_ip_addr_add_cmd vhost0 $phys_int)
-    routes=$(get_dev_routes vhost0)
-    del_dev_routes vhost0 "$routes"
+    live_addrs=$(get_underlay_addrs_for_nic vhost0)
+    if [ -n "$live_addrs" ] ; then
+        echo "INFO: moving addressing of vhost0 back to $phys_int: $(echo $live_addrs)"
+        restore_ip_cmd=$(gen_ip_addr_add_cmd_from_addrs "$live_addrs" $phys_int)
+        # refresh the saved copy while vhost0 still holds the addressing, so
+        # that it stays correct if the address has been changed since the
+        # last start
+        save_nic_addrs $phys_int "$live_addrs"
+    else
+        # vhost0 has no addressing to move back, either because the start
+        # being undone here has failed before moving it over or because it
+        # has been lost with a previous ungraceful death. The saved copy is
+        # the only source left for the restore.
+        # the host network config may have been re-applied in the meantime,
+        # and re-adding an address it has already put back only produces an
+        # error
+        local missing_addrs=$(filter_addrs_not_on_nic $phys_int "$(load_saved_nic_addrs $phys_int)")
+        if [ -n "$missing_addrs" ] ; then
+            echo "INFO: vhost0 has no address of its own, restoring $phys_int from the saved copy: $(echo $missing_addrs)"
+            restore_ip_cmd=$(gen_ip_addr_add_cmd_from_addrs "$missing_addrs" $phys_int)
+        fi
+    fi
+    # everything is deleted from vhost0, but only the underlay routes are
+    # restored to the physical interface, and they may have to come from the
+    # saved copy as well
+    vhost0_routes=$(get_dev_routes vhost0)
+    routes=$(get_underlay_routes_for_nic vhost0)
+    [ -n "$routes" ] || routes=$(load_saved_nic_routes $phys_int)
+    del_dev_routes vhost0 "$vhost0_routes"
     remove_vhost0_kernel || { echo "ERROR: failed to remove vhost0" && return 1; }
     restore_phys_int $phys_int "$restore_ip_cmd" "$routes"
 }

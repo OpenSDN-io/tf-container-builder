@@ -109,18 +109,119 @@ function get_addrs_for_nic() {
     ip addr show dev $nic | grep "inet" | grep -oP "[0-9a-f\:\.]*/[0-9]*(?:\s+\S+)*\s+brd\s+[0-9\.]*|[0-9a-f\:\.]*/[0-9]*"
 }
 
+# Same as get_addrs_for_nic but without IPv6 link-local addresses.
+# They are derived from the MAC and the kernel assigns them on its own,
+# so vhost0 (that inherits the MAC of the physical interface) always has
+# them already and moving them over can only fail.
+function get_addrs_for_nic_no_ll() {
+    local nic=$1
+    get_addrs_for_nic $nic | grep -v '^fe80:' || true
+}
+
+# Addresses that can carry the underlay: no link-local of either family.
+# An IPv4 link-local address is a failed DHCP (zeroconf), so it must not be
+# taken for a configured address.
+function get_underlay_addrs_for_nic() {
+    local nic=$1
+    get_addrs_for_nic_no_ll $nic | grep -v '^169\.254\.' || true
+}
+
+function is_addr_on_nic() {
+    local nic=$1
+    local addr=$2
+    ip -o addr show dev $nic | awk -v a="$addr" '$3 ~ /^inet6?$/ && $4 == a { found = 1 } END { exit !found }'
+}
+
+# Routes of the interface that have to be moved and kept, which are the ones
+# nothing recreates on its own:
+# - proto 109 is the protocol id vrouter uses for the routes it injects into
+#   vhost0. They belong to vhost0 and are put back there on every start. They
+#   do reach the physical interface otherwise, the teardown copies the routes
+#   of vhost0 over and the next start reads them back as underlay ones.
+# - proto kernel is the connected route of the subnet, which the kernel adds
+#   by itself with the address. Keeping it would also pin the source address
+#   it was generated with.
+function get_underlay_routes_for_nic() {
+    local dev=$1
+    get_dev_routes $dev | grep -vE 'proto (109|kernel)' || true
+}
+
+# Keep the addresses of the listing that the interface does not have yet.
+function filter_addrs_not_on_nic() {
+    local nic=$1
+    local addrs="$2"
+    local line
+    while IFS= read -r line ; do
+        [ -n "$line" ] || continue
+        is_addr_on_nic $nic "$(echo $line | cut -d ' ' -f 1)" && continue
+        echo "$line"
+    done <<< "$addrs"
+}
+
+# The addressing of the physical interface is moved to vhost0 on start and
+# moved back on stop, so while the agent runs the only copy of it is the one
+# in the kernel. If the agent is stopped without the move back (node disabled,
+# rebooted or the container killed) that copy is lost with vhost0 and there is
+# nothing to initialize vhost0 from on the next start. Keep a copy on disk
+# (not in /var/run, that does not survive a reboot) to recover from this.
+export VROUTER_NIC_STATE_DIR=${VROUTER_NIC_STATE_DIR:-'/var/lib/contrail/vrouter-nic-state'}
+
+# Nothing to save is not an error and must not wipe the previously saved
+# addresses: this is called on teardown as well, where vhost0 may already be
+# without addresses because the start it is undoing has failed.
+function save_nic_addrs() {
+    local nic=$1
+    local addrs="$2"
+    [ -n "$addrs" ] || return 0
+    mkdir -p $VROUTER_NIC_STATE_DIR
+    local f="$VROUTER_NIC_STATE_DIR/${nic}_ip_addresses"
+    echo "$addrs" > $f
+    echo "INFO: saved addresses of $nic to $f: $(echo $addrs)"
+}
+
+# Unlike the addresses, the routes are written even when there are none, so
+# that they cannot stay behind as a stale set belonging to older addresses.
+function save_nic_routes() {
+    local nic=$1
+    local routes="$2"
+    mkdir -p $VROUTER_NIC_STATE_DIR
+    local f="$VROUTER_NIC_STATE_DIR/${nic}_routes"
+    echo "$routes" > $f
+    echo "INFO: saved $(echo "$routes" | grep -c '[^[:space:]]') routes of $nic to $f"
+}
+
+function load_saved_nic_addrs() {
+    local nic=$1
+    local f="$VROUTER_NIC_STATE_DIR/${nic}_ip_addresses"
+    if [ ! -s "$f" ] ; then
+        echo "INFO: no saved addresses for $nic in $VROUTER_NIC_STATE_DIR" >&2
+        return 1
+    fi
+    echo "INFO: loading saved addresses of $nic from $f: $(echo $(cat $f))" >&2
+    cat $f
+}
+
+function load_saved_nic_routes() {
+    local nic=$1
+    local f="$VROUTER_NIC_STATE_DIR/${nic}_routes"
+    [ -s "$f" ] || return 1
+    echo "INFO: loading $(cat $f | grep -c '[^[:space:]]') saved routes of $nic from $f" >&2
+    cat $f
+}
+
 function get_iface_mtu() {
     local nic=$1
     cat /sys/class/net/${nic}/mtu
 }
 
-# Generate ip address add command
-function gen_ip_addr_add_cmd() {
-    local from_nic=$1
+# Generate ip address add command from an address listing, as produced by
+# get_addrs_for_nic or read back from the saved copy
+function gen_ip_addr_add_cmd_from_addrs() {
+    local addrs="$1"
     local to_nic=$2
-    local addrs=`get_addrs_for_nic $from_nic`
     declare line cmd
     while IFS= read -r line ; do
+        [ -n "$line" ] || continue
         local addr_to_add=$(echo $line | sed 's/brd/broadcast/')
         if [[ -n $cmd ]]; then
             cmd+=" && "
@@ -128,6 +229,13 @@ function gen_ip_addr_add_cmd() {
         cmd+="ip address add $addr_to_add dev $to_nic"
     done <<< "$addrs"
     echo $cmd
+}
+
+# Generate ip address add command
+function gen_ip_addr_add_cmd() {
+    local from_nic=$1
+    local to_nic=$2
+    gen_ip_addr_add_cmd_from_addrs "$(get_addrs_for_nic_no_ll $from_nic)" $to_nic
 }
 
 function get_dev_routes() {
