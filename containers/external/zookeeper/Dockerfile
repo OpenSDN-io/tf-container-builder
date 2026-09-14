@@ -1,4 +1,4 @@
-FROM zookeeper:3.7.1
+FROM zookeeper:3.9.5
 
 ARG VENDOR_NAME
 ARG VENDOR_DOMAIN
@@ -38,7 +38,8 @@ COPY __licensing.txt /licenses/licensing.txt
 
 COPY *.sh /
 
-RUN /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' ; \
+RUN set -e ; \
+    /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' ; \
     export DEBIAN_FRONTEND=noninteractive ; \
     apt-get update || /bin/true ; \
     apt-get -y install python3-minimal ; \
