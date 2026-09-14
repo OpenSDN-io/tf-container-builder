@@ -46,7 +46,8 @@ COPY __licensing.txt /licenses/licensing.txt
 
 COPY *.sh /
 
-RUN /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' ; \
+RUN set -e ; \
+    /bin/bash -c 'for item in `ls /__*` ; do mv $item /${item:3} ; done' ; \
     apk add --no-cache python3
 
 ENTRYPOINT ["/cacert_entrypoint.sh"]
