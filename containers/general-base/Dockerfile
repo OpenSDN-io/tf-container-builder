@@ -1,7 +1,7 @@
 # This is the general base for all: non-contrail specfic like external and for contrail specific
 
-ARG LINUX_DISTR=rockylinux
-ARG LINUX_DISTR_VER=9.3
+ARG LINUX_DISTR=rockylinux/rockylinux
+ARG LINUX_DISTR_VER=9.8
 FROM $LINUX_DISTR:$LINUX_DISTR_VER
 
 ARG SITE_MIRROR
