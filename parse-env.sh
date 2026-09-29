@@ -25,13 +25,14 @@ else
 fi
 
 # target platform info
-export LINUX_DISTR=${LINUX_DISTR:-rockylinux}
+# Official library rockylinux:* is frozen at 9.3; use namespaced image for newer minors.
+export LINUX_DISTR=${LINUX_DISTR:-rockylinux/rockylinux}
 export LINUX_DISTR_VER=${LINUX_DISTR_VER:-}
 if [[ -z "$LINUX_DISTR_VER" ]] ; then
   if [[ "$LINUX_DISTR" =~ 'centos' ]] ; then
     LINUX_DISTR_VER=7
   elif [[ "$LINUX_DISTR" =~ 'rocky' ]] ; then
-    LINUX_DISTR_VER='9.3'
+    LINUX_DISTR_VER='9.8'
   else
     LINUX_DISTR_VER='latest'
   fi
